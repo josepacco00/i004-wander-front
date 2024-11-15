@@ -23,8 +23,8 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-200 p-4">
-            <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+        <div className="flex min-h-screen items-center justify-center bg-white p-4">
+            <div className="w-full max-w-md bg-white rounded-lg p-8">
                 {/* Sección del logo y mensaje introductorio */}
                 <div className="flex flex-col items-center mb-6">
                     <img src={imagelogo} alt="Logo de Wander" className="logo" />
