@@ -22,7 +22,7 @@ const detailsList = [
     },
     {
         icon: card,
-        title: 'Pagos',
+        title: 'Reservas',
         data: ''
     },
 ]

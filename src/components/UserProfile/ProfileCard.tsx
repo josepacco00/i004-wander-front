@@ -5,20 +5,24 @@ const ProfileCard: React.FC = () => {
 
 
     return (
-        <div className="">
-            <h1 className='font-bold text-xl'>Perfil</h1>
-            <div className='flex my-8 space-x-4'>
-                <div className="flex flex-shrink-0 items-center justify-center w-20 h-20 overflow-hidden relative rounded-full">
+        <div className="w-full">
+
+            <h1 className='font-bold text-lg'>Perfil</h1>
+
+            <div className='flex mt-6 px-4'>
+                <div className="flex flex-shrink-0 items-center justify-center w-24 h-24 overflow-hidden relative rounded-full">
                     <img
                         className="w-auto h-auto min-w-full min-h-full object-cover transform scale-125"
                         src={person2}
                         alt=''
                     />
                 </div>
-                <div className='flex flex-col items-start space-y-4'>
-                    <h1 className='font-bold text-xl'>Maria Veller Lopez</h1>
+
+                <div className='flex flex-col justify-between ml-6'>
+                    <h1 className='font-bold text-lg'>Maria Veller Lopez</h1>
                     <Button text='Editar' />
                 </div>
+
             </div>
         </div>
 

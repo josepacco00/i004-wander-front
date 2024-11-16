@@ -10,6 +10,9 @@ export default {
         brandYellow: '#FF9D14',
         brandGrey: '#D3D3D3'
       },
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
     },
   },
   plugins: [],
