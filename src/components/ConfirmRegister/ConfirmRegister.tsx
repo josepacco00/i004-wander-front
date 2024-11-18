@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import imagelogo from "../../assets/img/imagelogo.png";
 import imageletter from "../../assets/img/imageletter.png";
 import './ConfirmRegister.css';
@@ -94,16 +95,16 @@ const ConfirmRegister: React.FC = () => {
                             <div className="flex flex-col items-center space-y-8">
                                 {/* Icono de éxito */}
                                 <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
-                                    <svg 
-                                        className="w-14 h-14 text-white" 
-                                        viewBox="0 0 24 24" 
-                                        fill="none" 
-                                        stroke="currentColor" 
+                                    <svg
+                                        className="w-14 h-14 text-white"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
                                         strokeWidth="3"
                                     >
-                                        <path 
-                                            strokeLinecap="round" 
-                                            strokeLinejoin="round" 
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
                                             d="M5 13l4 4L19 7"
                                         />
                                     </svg>
@@ -114,14 +115,16 @@ const ConfirmRegister: React.FC = () => {
                                 </h2>
 
                                 {/* Botón para iniciar sesión */}
-                                <button
-                                    onClick={() => {
-                                        console.log("Navegando al inicio de sesión");
-                                    }}
-                                    className="w-full py-4 text-white bg-brandYellow rounded-full hover:opacity-90 transition-colors"
-                                >
-                                    Iniciar Sesión
-                                </button>
+                                <Link to="/login">
+                                    <button
+                                        onClick={() => {
+                                            console.log("Navegando al inicio de sesión");
+                                        }}
+                                        className="w-[200px] py-6 text-white bg-brandYellow rounded-3xl hover:opacity-90 transition-colors mt-8"
+                                        >
+                                        Iniciar Sesión
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
