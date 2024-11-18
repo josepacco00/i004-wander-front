@@ -24,5 +24,6 @@ export interface UserBio {
 export interface UserDetails {
     email: string
     location: string,
-    phone: string
+    phone: string,
+    role: Role
 }

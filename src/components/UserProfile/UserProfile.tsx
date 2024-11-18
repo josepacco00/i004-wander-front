@@ -7,6 +7,7 @@ import ProfileCard from "./ProfileCard"
 import BioCard from "./BioCard"
 import DetailsCard from "./DetailsCard"
 import Logout from "../Logout"
+import AddExperienceButton from "./AddExperienceButton"
 
 const UserProfile: React.FC = () => {
 
@@ -28,7 +29,7 @@ const UserProfile: React.FC = () => {
         loadUserInfo()
     }, [user?._id])
 
-    const { avatar, bio, email, location, name, phone } = userInfo
+    const { avatar, bio, email, location, name, phone, role } = userInfo
 
     return (
         <div className='flex flex-col items-center mt-4'>
@@ -38,6 +39,11 @@ const UserProfile: React.FC = () => {
                     avatar={avatar}
                 />
             </div>
+            {role === 'PROVIDER' && (
+                <div className='w-full justify-center mb-12'>
+                    <AddExperienceButton />
+                </div>
+            )}
             <div className='w-full px-8 mb-12'>
                 <BioCard
                     bio={bio}
@@ -48,6 +54,7 @@ const UserProfile: React.FC = () => {
                     email={email}
                     location={location}
                     phone={phone}
+                    role={role}
                 />
             </div>
             <div className=' w-full px-8 mb-2 justify-end'>
