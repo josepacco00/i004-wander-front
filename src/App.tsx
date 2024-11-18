@@ -1,11 +1,11 @@
 import './App.css'
-import Login from './components/LoginForm/loginForm.tsx'
+import AppRoutes from './routes/AppRoutes'
+
 function App() {
-  
+
   return (
     <>
-     <h1>Wander</h1>
-     <Login />
+      <AppRoutes />
     </>
   )
 }
