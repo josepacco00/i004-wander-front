@@ -1,10 +1,16 @@
+import { useNavigate } from 'react-router-dom'
 import { UserDetails } from '../../types/user'
 import detailsList from '../../consts/userProfileFields'
 import DetailsRow from './DetailsRow'
 
 const DetailsCard: React.FC<UserDetails> = ({ email, location, phone }) => {
 
+    const navigate = useNavigate()
     const dataMap = { email, location, phone }
+
+    const handleBookingsClick = () => {
+        navigate('/bookings')
+    }
 
     return (
         <div className="w-full">
@@ -15,7 +21,13 @@ const DetailsCard: React.FC<UserDetails> = ({ email, location, phone }) => {
                     return (
                         <li key={i}>
                             <div className="py-2">
-                                <DetailsRow field={field} icon={icon} title={title} data={data} />
+                                <DetailsRow
+                                    field={field}
+                                    icon={icon}
+                                    title={title}
+                                    data={data}
+                                    onClick={field === 'bookings' ? handleBookingsClick : undefined}
+                                />
                             </div>
                         </li>
                     )
