@@ -1,29 +1,29 @@
 /* Estilos para el logo principal */
 .logo {
-    width: 200px; /* Establece un ancho más grande para el logo en pantallas pequeñas */
-    height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
-    margin-bottom: 1rem; /* Agrega un margen inferior para separar el logo del contenido siguiente */
+    width: 200px;
+    height: auto;
+    margin-bottom: 1rem;
 }
 
+/* Estilos para pantallas grandes */
 @media (min-width: 768px) {
-    /* Ajuste para pantallas grandes (tabletas y dispositivos más grandes) */
     .logo {
-        width: 250px; /* Aumenta el tamaño del logo en pantallas más grandes */
-        height: auto; /* Mantiene la proporción original sin distorsionar la imagen */
+        width: 250px;
+        height: auto;
     }
 }
 
-/* Estilos para el logo de texto (con nombre de la marca) */
+/* Estilos para el logo de texto */
 .text-logo {
-    width: 200px; /* Ajusta el tamaño del ancho del logo de texto */
-    height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
-    margin-bottom: 0.5rem; /* Agrega un margen inferior para separar el logo de texto del contenido siguiente */
+    width: 200px;
+    height: auto;
+    margin-bottom: 0.5rem;
 }
 
+/* Ajustes para pantallas grandes */
 @media (min-width: 768px) {
-    /* Ajuste para pantallas grandes (tabletas y dispositivos más grandes) */
     .text-logo {
-        width: 200px; /* Aumenta el tamaño del logo de texto en pantallas grandes */
-        height: auto; /* Mantiene la proporción sin distorsionar la imagen */
+        width: 200px;
+        height: auto;
     }
 }
