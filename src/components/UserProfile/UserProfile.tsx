@@ -8,11 +8,11 @@ import BioCard from "./BioCard"
 import DetailsCard from "./DetailsCard"
 import DetailsRow from "./DetailsRow"
 
-import logout from "../../assets/icons/incon-logout.svg"
+import logoutIcon from "../../assets/icons/icon-logout.svg"
 
 const UserProfile: React.FC = () => {
 
-    const { user } = useContext(AuthContext)
+    const { user, logout } = useContext(AuthContext)
     const [userInfo, setUserInfo] = useState<User>(userInitialValues)
 
     const loadUserInfo = async () => {
@@ -52,8 +52,8 @@ const UserProfile: React.FC = () => {
                     phone={phone}
                 />
             </div>
-            <div className='mb-2 justify-end'>
-                {/* <DetailsRow icon={logout} title="Cerrar sesión" data='' /> */}
+            <div className=' w-full px-8 mb-2 justify-end'>
+                <DetailsRow field='logout' icon={logoutIcon} title='Cerrar sesión' onClick={logout} />
             </div>
         </div>
     )

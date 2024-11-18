@@ -1,7 +1,14 @@
 import arrowRight from '../../assets/icons/icon-arrow-right.svg'
 
-const DetailsRow: React.FC<{ field: string, icon: string, title: string, data: string }> = ({ field, icon, title, data }) => {
+const DetailsRow: React.FC<{
+    field: string,
+    icon: string,
+    title: string,
+    data?: string,
+    onClick?: () => void
+}> = ({ field, icon, title, data, onClick }) => {
 
+    const titleClass = field !== 'logout' ? 'font-bold' : ''
 
     return (
         <div className="flex items-center justify-between w-full">
@@ -10,12 +17,12 @@ const DetailsRow: React.FC<{ field: string, icon: string, title: string, data: s
                     <img src={icon} className=" h-full object-contain" />
                 </div>
                 <div>
-                    <h1 className="font-bold ml-6">{title}</h1>
+                    <h1 className={`${titleClass} ml-6`}>{title}</h1>
                 </div>
             </div>
             <div className="flex items-center justify-start">
-                {field === 'bookings' ? (
-                    <img src={arrowRight} alt='ir a reservas' />
+                {field === 'bookings' || field === 'logout' ? (
+                    <img src={arrowRight} alt='ir' onClick={onClick} className='cursor-pointer' />
                 ) : (
                     <>
                         <h1 className="text-gray-500">{data}</h1>
