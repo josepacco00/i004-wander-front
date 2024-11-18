@@ -7,6 +7,10 @@ class AuthServices {
     verify(token: string) {
         return this.api.get('/verify', { headers: { Authorization: `Bearer ${token}` } })
     }
+
+    logout(token: string) {
+        return this.api.post('/logout', null, { headers: { Authorization: `Bearer ${token}` } })
+    }
 }
 
 const authServices = new AuthServices()

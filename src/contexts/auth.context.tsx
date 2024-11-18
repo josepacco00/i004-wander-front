@@ -36,28 +36,33 @@ const AuthProviderWrapper = ({ children }: AuthProviderProps) => {
         localStorage.removeItem('authToken')
     }
 
-    const logout = () => {
+    const logout = async () => {
+        const token = localStorage.getItem('authToken')
+        if (token) {
+            try {
+                await authServices.logout(token)
+            } catch (error) {
+                console.error("Error during logout:", error)
+            }
+        }
         setIsLoading(false)
         setUser(null)
         removeToken()
     }
 
-    const authenticateUser = (onSuccess = () => { }) => {
-
+    const authenticateUser = async (onSuccess = () => { }) => {
         const token = localStorage.getItem("authToken")
 
         if (token) {
-            authServices
-                .verify(token)
-                .then(({ data }: { data: User }) => {
-                    setUser(data)
-                    setIsLoading(false)
-                    onSuccess()
-                })
-                .catch((err) => {
-                    console.error("Authentication error:", err)
-                    logout()
-                })
+            try {
+                const { data }: { data: User } = await authServices.verify(token)
+                setUser(data)
+                setIsLoading(false)
+                onSuccess()
+            } catch (err) {
+                console.error("Authentication error:", err)
+                logout()
+            }
         } else {
             logout()
         }
