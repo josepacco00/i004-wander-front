@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 // import PrivateRoute from './PrivateRoutes'
 import Register from '../components/Register/Register'
 import UserProfile from '../components/UserProfile/UserProfile'
+import Login from '../components/LoginForm/LoginForm'
+import ConfirmRegister from '../components/ConfirmRegister/ConfirmRegister'
 
 const AppRoutes = () => {
 
@@ -11,6 +13,8 @@ const AppRoutes = () => {
             <Route path="/" element={<h1>Home Page</h1>} />
             <Route path="/register" element={<Register />} />
             <Route path="/user-profile" element={<UserProfile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/confirm-register" element={<ConfirmRegister />} />
 
             {/* <Route element={<PrivateRoute />}>
                 <Route path="/UserProfile" element={<UserProfile />} />
