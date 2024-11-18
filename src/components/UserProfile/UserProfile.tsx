@@ -8,11 +8,9 @@ import BioCard from "./BioCard"
 import DetailsCard from "./DetailsCard"
 import Logout from "../Logout"
 
-import logoutIcon from "../../assets/icons/icon-logout.svg"
-
 const UserProfile: React.FC = () => {
 
-    const { user, logout } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
     const [userInfo, setUserInfo] = useState<User>(userInitialValues)
 
     const loadUserInfo = async () => {
