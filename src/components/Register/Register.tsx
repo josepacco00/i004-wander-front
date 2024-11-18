@@ -11,17 +11,9 @@ const Register: React.FC = () => {
         register,
         handleSubmit,
         reset,
-        formState: { errors, isSubmitting },
+        formState: { errors, isValid, isSubmitting },
     } = useForm<SignUpSchema>({
-        resolver: zodResolver(signUpSchema),
-        // defaultValues: {
-        //     name: "Javier",
-        //     email: "javier@hidalgo.com",
-        //     password: "Asdf2024!",
-        //     confirmPassword: "Asdf2024!",
-        //     role: "provider",
-        //     terms: false
-        // }
+        resolver: zodResolver(signUpSchema)
     })
 
     // Para gestionar las notificaciones del BFF
@@ -31,8 +23,9 @@ const Register: React.FC = () => {
     console.log(errors)
 
     const onSubmit = async (data: SignUpSchema) => {
+        console.log(data)
         const newUser = JSON.stringify(data)
-        console.log(newUser)
+        // console.log(newUser)
 
         // const userExample = JSON.stringify({
         //     email: "eve.hol@reqres.in",
@@ -74,7 +67,7 @@ const Register: React.FC = () => {
     }
 
     return (
-        <div className="w-full h-dvh flex flex-col p-8 rounded-md">
+        <div className="w-full mx-auto h-dvh flex flex-col items-center p-6">
             <div className="brand">
                 <div className="flex flex-col items-center mb-6">
                     <img src={imagelogo} alt="Logo de Wander" className="w-[140px] md:w-[180px] mb-4" />
@@ -84,7 +77,7 @@ const Register: React.FC = () => {
             </div>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-sm [&_label]:text-slate-800 [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_input]:ring-1 [&_input]:ring-slate-200 [&_input]:rounded-full focus:[&_input]:bg-slate-100 focus:[&_input]:outline-none focus:[&_input]:ring-2 focus:[&_input]:ring-slate-300 [&_input]:cursor-default"
+                className="w-full flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-sm [&_label]:text-slate-800 [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_input]:ring-1 [&_input]:ring-slate-200 [&_input]:rounded-full focus:[&_input]:bg-slate-100 focus:[&_input]:outline-none focus:[&_input]:ring-2 focus:[&_input]:ring-slate-300 [&_input]:cursor-default"
             >
                 <div>
                     <label htmlFor="name">Nombre</label>
@@ -133,7 +126,7 @@ const Register: React.FC = () => {
                     </div> */}
                 <div className="relative">
                     <label htmlFor="role">Quiero registrarme cómo...</label>
-                    <select className="px-4 py-2 rounded-full appearance-none" id="role" {...register("role")}>
+                    <select className="px-4 py-3 rounded-full appearance-none" id="role" {...register("role")}>
                         <option value="tourist">Turista</option>
                         <option value="provider">Proveedor</option>
                     </select>
@@ -154,9 +147,9 @@ const Register: React.FC = () => {
                 <div className="!flex-row [&_input]:ring-0">
                     <input {...register("terms")} type="checkbox" name="terms" id="terms" />
                     <label htmlFor="terms" className="!text-xs">Acepto los términos y las condiciones</label>
-                    {errors.role && <span className="form__error-notification">{errors.role.message}</span>}
                 </div>
-                <button disabled={isSubmitting} type="submit" className="mt-4 p-2 font-semibold bg-primary hover:bg-tertiary text-white rounded-full shadow-lg disabled:bg-slate-400 text-center">
+                {errors.terms && <span className="form__error-notification">{errors.terms.message}</span>}
+                <button disabled={isSubmitting || !isValid} type="submit" className="mt-4 px-4 py-3 font-semibold bg-primary hover:bg-tertiary text-white rounded-full shadow-lg disabled:bg-slate-400 text-center disabled:cursor-not-allowed">
                     {isSubmitting ? "Registrando..." : "Regístrate"}
                 </button>
                 <p className="text-xs text-center">
