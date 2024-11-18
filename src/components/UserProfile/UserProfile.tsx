@@ -6,7 +6,7 @@ import { User } from "../../types/user"
 import ProfileCard from "./ProfileCard"
 import BioCard from "./BioCard"
 import DetailsCard from "./DetailsCard"
-import DetailsRow from "./DetailsRow"
+import Logout from "../Logout"
 
 import logoutIcon from "../../assets/icons/icon-logout.svg"
 
@@ -53,7 +53,7 @@ const UserProfile: React.FC = () => {
                 />
             </div>
             <div className=' w-full px-8 mb-2 justify-end'>
-                <DetailsRow field='logout' icon={logoutIcon} title='Cerrar sesión' onClick={logout} />
+                <Logout />
             </div>
         </div>
     )
