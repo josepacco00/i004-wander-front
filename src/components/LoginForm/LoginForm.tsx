@@ -1,56 +1,46 @@
 // Importación de librerías necesarias
-import React from "react";  // Importamos React para utilizar JSX
-import { useForm, SubmitHandler, FieldValues, UseFormRegister, FieldErrors } from "react-hook-form";  // Importamos hooks de React Hook Form para el manejo de formularios
-import { zodResolver } from "@hookform/resolvers/zod";  // Importamos el resolver para conectar Zod con React Hook Form
-import { LoginSchema, loginSchema } from "../../schemas/login.schema";  // Importamos el esquema de validación para login (Zod)
-import imagelogo from "../../assets/img/imagelogo.png";  // Importamos la imagen del logo
-import imageletter from "../../assets/img/imageletter.png";  // Importamos la imagen con el texto del logo
-import './LoginForm.css';  // Importamos los estilos CSS específicos del formulario
+import React from "react";
+import { useForm, SubmitHandler, UseFormRegister } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema, loginSchema } from "../../schemas/login.schema"; 
+import imagelogo from "../../assets/img/imagelogo.png";
+import imageletter from "../../assets/img/imageletter.png"; 
+import './LoginForm.css';
 
-// Definición de la interfaz para los props del componente InputField
+// Interfaz para las propiedades del componente InputField
 interface InputProps {
-    id: keyof LoginSchema; // Asegura que solo se usen las claves definidas en el esquema LoginSchema
-    label: string;  // Texto que se muestra en la etiqueta del input
-    type: string;  // Tipo de input (e.g., "email", "password")
-    placeholder: string;  // Texto que aparece en el input antes de que el usuario lo rellene
-    register: UseFormRegister<LoginSchema>; // Función de registro del formulario, con el tipo específico del esquema de validación
-    error?: string;  // Mensaje de error opcional para mostrar en caso de que haya un error de validación
+    id: keyof LoginSchema;
+    label: string;
+    type: string;
+    placeholder: string;
+    register: UseFormRegister<LoginSchema>;
+    error?: string;
 }
 
-// Componente InputField: se encarga de renderizar los campos del formulario
+// Componente que representa un campo de input con validación
 const InputField: React.FC<InputProps> = ({ id, label, type, placeholder, register, error }) => (
     <div className="space-y-1">
-        {/* Etiqueta del input */}
         <label htmlFor={id} className="text-dark">{label}</label>
-        
-        {/* Campo de input */}
         <input
-            type={type}  // Tipo de campo (email, password, etc.)
-            id={id}  // ID para el campo, usado para la etiqueta 'htmlFor'
-            placeholder={placeholder}  // Placeholder del campo
-            {...register(id)}  // Registramos el campo con el hook de React Hook Form para validación y manejo
-            className="w-full p-3 border border-brandGrey rounded-full focus:outline-none focus:ring-2 focus:ring-brandYellow text-sm placeholder-gray-600"  // Estilos del input
+            type={type}
+            id={id}
+            placeholder={placeholder}
+            {...register(id)}
+            className="w-full p-3 border border-brandGrey rounded-full focus:outline-none focus:ring-2 focus:ring-brandYellow text-sm placeholder-gray-600"
         />
-        
-        {/* Si hay un error, mostramos el mensaje */}
         {error && <span className="text-tertiary text-sm">{error}</span>}
     </div>
 );
 
-// Componente principal del formulario de login
+// Componente principal para el formulario de login
 const Login: React.FC = () => {
-    // Configuración del formulario usando React Hook Form
-    const {
-        register,  // Función que nos permite conectar nuestros inputs con React Hook Form
-        handleSubmit,  // Función que maneja la sumisión del formulario
-        formState: { errors, isSubmitting },  // Estado del formulario (errores y si está enviando)
-    } = useForm<LoginSchema>({  // Usamos el esquema LoginSchema para la validación
-        resolver: zodResolver(loginSchema),  // Usamos Zod como el resolver para validación de esquemas
+    // Configuración del formulario con React Hook Form y Zod para validación
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginSchema>({
+        resolver: zodResolver(loginSchema),
     });
 
-    // Función que maneja la sumisión del formulario
+    // Maneja el envío del formulario
     const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
-        // Simulamos la acción de iniciar sesión con los datos recibidos
         console.log("Iniciando sesión con:", data);
     };
 
@@ -59,62 +49,54 @@ const Login: React.FC = () => {
             <div className="w-full max-w-md">
                 {/* Logo e introducción */}
                 <div className="flex flex-col items-center mb-6">
-                    <img className="logo" src={imagelogo} alt="Logo de Wander" />  {/* Logo de la aplicación */}
-                    <img className="text-logo" src={imageletter} alt="Texto Wander" />  {/* Texto con nombre de la app */}
-                    <p className="text-dark text-base font-bold text-center mb-2">
-                        Explora nuevas aventuras  {/* Slogan de la aplicación */}
-                    </p>
+                    <img className="logo" src={imagelogo} alt="Logo de Wander" />
+                    <img className="text-logo" src={imageletter} alt="Texto Wander" />
+                    <p className="text-dark text-base font-bold text-center mb-2">Explora nuevas aventuras</p>
                 </div>
 
-                {/* Formulario de inicio de sesión */}
+                {/* Formulario de login */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Campo de correo electrónico */}
+                    {/* Campos de correo electrónico y contraseña */}
                     <InputField
-                        id="email"  // Identificador del campo
-                        label="Correo electrónico"  // Etiqueta del campo
-                        type="email"  // Tipo de campo
-                        placeholder="Introduce tu correo electrónico"  // Placeholder del campo
-                        register={register}  // Conexión con React Hook Form
-                        error={errors.email?.message}  // Error relacionado con el campo 'email'
+                        id="email"
+                        label="Correo electrónico"
+                        type="email"
+                        placeholder="Introduce tu correo electrónico"
+                        register={register}
+                        error={errors.email?.message}
                     />
-                    
-                    {/* Campo de contraseña */}
                     <InputField
-                        id="password"  // Identificador del campo
-                        label="Contraseña"  // Etiqueta del campo
-                        type="password"  // Tipo de campo (contraseña oculta)
-                        placeholder="Introduce tu contraseña"  // Placeholder del campo
-                        register={register}  // Conexión con React Hook Form
-                        error={errors.password?.message}  // Error relacionado con el campo 'password'
+                        id="password"
+                        label="Contraseña"
+                        type="password"
+                        placeholder="Introduce tu contraseña"
+                        register={register}
+                        error={errors.password?.message}
                     />
-                    
+
                     {/* Enlace para recuperar la contraseña */}
                     <div className="text-right">
-                        <a href="/reset-password" className="text-sm text-gray-500 hover:text-gray-700">
-                            ¿Olvidaste tu contraseña?  {/* Texto para redirigir al usuario a la página de recuperación */}
-                        </a>
+                        <a href="/reset-password" className="text-sm text-gray-500 hover:text-gray-700">¿Olvidaste tu contraseña?</a>
                     </div>
-                    
-                    {/* Botón de envío del formulario */}
+
+                    {/* Botón de envío */}
                     <button
                         type="submit"
-                        className="w-52 py-4 text-white bg-brandYellow rounded-3xl hover:opacity-90 disabled:opacity-50 mx-auto block"  // Estilos del botón
-                        disabled={isSubmitting}  // Deshabilitamos el botón mientras se está enviando el formulario
+                        className="w-52 py-4 text-white bg-brandYellow rounded-3xl hover:opacity-90 disabled:opacity-50 mx-auto block"
+                        disabled={isSubmitting}
                     >
-                        {isSubmitting ? "Iniciando sesión..." : "Inicia sesión"}  {/* Texto del botón dependiendo del estado de envío */}
+                        {isSubmitting ? "Iniciando sesión..." : "Inicia sesión"}
                     </button>
                 </form>
 
-                {/* Enlace para registrar una nueva cuenta */}
+                {/* Enlace para registro */}
                 <p className="mt-6 text-center text-sm text-gray-500">
                     ¿Aún no tienes cuenta?{" "}
-                    <a href="/register" className="text-brandYellow hover:text-secondary">
-                        Regístrate  {/* Enlace para redirigir al usuario a la página de registro */}
-                    </a>
+                    <a href="/register" className="text-brandYellow hover:text-secondary">Regístrate</a>
                 </p>
             </div>
         </div>
     );
 };
 
-export default Login;  // Exportamos el componente Login para poder usarlo en otras partes de la aplicación
+export default Login;
