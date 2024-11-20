@@ -5,6 +5,7 @@ import "./Register.css"
 import imagelogo from "../../assets/img/imagelogo.png";
 import imageletter from "../../assets/img/imageletter.png";
 import { useState } from "react"
+import { Link } from "react-router-dom";
 
 const Register: React.FC = () => {
     const {
@@ -152,9 +153,11 @@ const Register: React.FC = () => {
                 <button disabled={isSubmitting || !isValid} type="submit" className="mt-4 px-4 py-3 font-semibold bg-primary hover:bg-tertiary text-white rounded-full shadow-lg disabled:bg-slate-400 text-center disabled:cursor-not-allowed">
                     {isSubmitting ? "Registrando..." : "Regístrate"}
                 </button>
-                <p className="text-xs text-center">
+                <p className="text-xs text-center mb-5">
                     ¿Ya tienes una cuenta?
-                    <a href="" className="text-primary hover:text-tertiary font-bold"> Inicia sesión</a>
+                    <Link to="/login">
+                        <a href="" className="text-primary hover:text-tertiary font-bold"> Inicia sesión</a>
+                    </Link>
                 </p>
             </form>
             {reqError && <p className="form__error-notification">{reqError}</p>}
