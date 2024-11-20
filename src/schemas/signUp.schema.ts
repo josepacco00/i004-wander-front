@@ -21,6 +21,14 @@ export const signUpSchema = z.object({
         .max(12, "La contraseña debe tener menos de 12 caracteres")
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#!])[A-Za-z\d@#!]+$/, "La contraseña debe contener al menos una minúscula, una mayúscula, un número y uno de los siguientes caracteres (@, #, or !)"),
     confirmPassword: z.string(),
+    phone: z.object({
+        prefix: z
+            .string({ message: "El prefijo es obligatorio" })
+            .regex(/^\+[1-9]\d{0,2}$/, "Introduzca un prefijo correcto"),
+        number: z
+            .string({ message: "El número de teléfono es obligatorio" })
+            .regex(/^\d{6,10}$/, "El número de teléfono debe tener en 6 y 10 dígitos"),
+    }),
     role: z.enum(["tourist", "provider"], {
         errorMap: () => ({ message: "Por favor, selecciona un perfil" })
     }),

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Link } from "react-router-dom";
 import axios, { AxiosError } from "axios";
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SignUpSchema, signUpSchema } from "../../schemas/signUp.schema"
 import AuthLayout from "../../layout/AuthLayout";
@@ -9,13 +9,105 @@ import "./Register.css"
 
 const API_URL = import.meta.env.VITE_BACK_URL;
 
+const countriesPhoneList = [
+    {
+        "nombre": "Estados Unidos",
+        "prefijo": "+1",
+        "bandera": "🇺🇸"
+    },
+    {
+        "nombre": "España",
+        "prefijo": "+34",
+        "bandera": "🇪🇸"
+    },
+    {
+        "nombre": "México",
+        "prefijo": "+52",
+        "bandera": "🇲🇽"
+    },
+    {
+        "nombre": "Argentina",
+        "prefijo": "+54",
+        "bandera": "🇦🇷"
+    },
+    {
+        "nombre": "Japón",
+        "prefijo": "+81",
+        "bandera": "🇯🇵"
+    },
+    {
+        "nombre": "Reino Unido",
+        "prefijo": "+44",
+        "bandera": "🇬🇧"
+    },
+    {
+        "nombre": "Alemania",
+        "prefijo": "+49",
+        "bandera": "🇩🇪"
+    },
+    {
+        "nombre": "Francia",
+        "prefijo": "+33",
+        "bandera": "🇫🇷"
+    },
+    {
+        "nombre": "India",
+        "prefijo": "+91",
+        "bandera": "🇮🇳"
+    },
+    {
+        "nombre": "Brasil",
+        "prefijo": "+55",
+        "bandera": "🇧🇷"
+    },
+    {
+        "nombre": "China",
+        "prefijo": "+86",
+        "bandera": "🇨🇳"
+    },
+    {
+        "nombre": "Canadá",
+        "prefijo": "+1",
+        "bandera": "🇨🇦"
+    },
+    {
+        "nombre": "Italia",
+        "prefijo": "+39",
+        "bandera": "🇮🇹"
+    },
+    {
+        "nombre": "Sudáfrica",
+        "prefijo": "+27",
+        "bandera": "🇿🇦"
+    },
+    {
+        "nombre": "Australia",
+        "prefijo": "+61",
+        "bandera": "🇦🇺"
+    }
+]
+
 const Register: React.FC = () => {
     const {
         register,
         handleSubmit,
         reset,
+        control,
         formState: { errors, isValid, isSubmitting },
     } = useForm<SignUpSchema>({
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            phone: {
+                prefix: "",
+                number: ""
+            },
+            role: "tourist",
+            age: false,
+        },
+        mode: "onChange",
         resolver: zodResolver(signUpSchema)
     })
 
@@ -24,7 +116,13 @@ const Register: React.FC = () => {
     const [successNotification, setSuccessNotification] = useState<string | null>(null)
 
     const onSubmit = async (data: SignUpSchema) => {
-        const newUser = JSON.stringify(data)
+        // Es necesario hacer la transformación del teléfono aquí, si no da error de tipos en la validación de react-hook-form con zod
+        const newUser = JSON.stringify({
+            ...data,
+            phone: `${data.phone.prefix}${data.phone.number}`
+        })
+
+        // console.log(newUser)
 
         try {
             const response = await axios.post(
@@ -108,22 +206,56 @@ const Register: React.FC = () => {
                         {errors.confirmPassword &&
                             <span className="form__error-validation">{errors.confirmPassword.message}</span>}
                     </div>
+                    <div>
+                        <label htmlFor="phone">Teléfono</label>
+                        <div className="flex gap-2">
+                            <Controller
+                                name="phone.prefix"
+                                control={control}
+                                render={({ field }) => (
+                                    <select
+                                        {...field}
+                                        id="phone-prefix">
+                                        {
+                                            countriesPhoneList.map(ph =>
+                                                <option key={crypto.randomUUID()} value={ph.prefijo}>{`${ph.bandera} ${ph.prefijo}`}</option>)
+                                        }
+                                    </select>
+                                )}
+                            />
+                            <Controller
+                                name="phone.number"
+                                control={control}
+                                render={({ field }) => (
+                                    <input
+                                        {...field}
+                                        id="number"
+                                        className="grow" />
+                                )}
+                            />
+                        </div>
+                        {errors.phone && errors.phone.prefix &&
+                            <span className="form__error-validation">{errors.phone.prefix.message}</span>}
+                        {errors.phone && errors.phone.number &&
+                            <span className="form__error-validation">{errors.phone.number.message}</span>}
+                    </div>
                     <div className="relative">
                         <label htmlFor="role">Quiero registrarme cómo...</label>
                         <select
+                            {...register("role")}
                             id="role"
-                            {...register("role")}>
-                            <option value="tourist">Turista</option>
-                            <option value="provider">Proveedor</option>
+                            className="hover:bg-neutral-300">
+                            <option value="tourist" className="bg-white">Turista</option>
+                            <option value="provider" className="bg-white">Proveedor</option>
                         </select>
-                        <div className="absolute right-4 top-[calc(50%+4px)] p-1.5 pt-[5px] pb-[7px] rounded-full hover:bg-neutral-400">
+                        <div className="absolute right-4 top-[calc(50%+4px)] p-1.5 pt-[5px] pb-[7px] rounded-full pointer-events-none">
                             <i className="w-2 h-2 block border-neutral-800 border-l-2 border-b-2 -rotate-45"></i>
                         </div>
                         {errors.role &&
                             <span className="form__error-validation">{errors.role.message}</span>}
                     </div>
                     <div className="mt-2">
-                        <label className="!text-xs">Para registrate en la plataforma debes ser mayor de edad. Al marcar la siguiente casilla confirmas tener al menos 18 años.</label>
+                        <label className="!text-xs">Para registrarte en la plataforma debes ser mayor de edad. Al marcar la siguiente casilla confirmas tener al menos 18 años.</label>
                         <div className="flex items-center gap-2">
                             <input
                                 {...register("age")}
