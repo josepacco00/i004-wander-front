@@ -1,7 +1,5 @@
 import { z } from "zod"
 
-// TODO: El trim() para el nombre no funciona como se espera
-
 export const signUpSchema = z.object({
     name: z
         .string()
@@ -26,7 +24,7 @@ export const signUpSchema = z.object({
     role: z.enum(["tourist", "provider"], {
         errorMap: () => ({ message: "Por favor, selecciona un perfil" })
     }),
-    terms: z.boolean().refine(val => val === true, "Debes aceptar los términos y condiciones")
+    age: z.boolean().refine(val => val === true, "Para registrarte tienes que ser mayor de edad")
 }).refine(data => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"]
