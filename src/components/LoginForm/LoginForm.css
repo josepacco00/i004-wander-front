@@ -1,29 +1,7 @@
-/* Estilos para el logo principal */
-.logo {
-    width: 200px;
-    height: auto;
-    margin-bottom: 1rem;
+.form__error-notification {
+	@apply text-[10px] text-red-500
 }
 
-/* Estilos para pantallas grandes */
-@media (min-width: 768px) {
-    .logo {
-        width: 250px;
-        height: auto;
-    }
-}
-
-/* Estilos para el logo de texto */
-.text-logo {
-    width: 200px;
-    height: auto;
-    margin-bottom: 0.5rem;
-}
-
-/* Ajustes para pantallas grandes */
-@media (min-width: 768px) {
-    .text-logo {
-        width: 200px;
-        height: auto;
-    }
+.form__success-notification {
+	@apply text-[10px] text-green-500
 }
