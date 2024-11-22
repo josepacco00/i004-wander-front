@@ -1,4 +1,4 @@
-import { User } from "./user"
+import { Role, User } from "./user"
 import { Dispatch, SetStateAction } from "react"
 
 export type AuthenticateUserType = (callback: () => void) => void
@@ -16,4 +16,13 @@ export interface AuthContextInterface {
 
 export interface ValidationSchema {
     [key: string]: string
+}
+
+export interface NewUserData {
+    name: string,
+    email: string,
+    password: string,
+    phone: string
+    // REVISAR LA POSIBILIDAD DE USAR EL type CREADO
+    role: "tourist" | "provider",
 }

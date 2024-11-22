@@ -1,13 +1,12 @@
 import { useState } from "react"
 import { Link } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import /* axios, */ { AxiosError } from "axios";
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SignUpSchema, signUpSchema } from "../../schemas/signUp.schema"
 import AuthLayout from "../../layout/AuthLayout";
 import "./Register.css"
-
-const API_URL = import.meta.env.VITE_BACK_URL;
+import authServices from "../../services/auth.services";
 
 const countriesPhoneList = [
     {
@@ -101,7 +100,7 @@ const Register: React.FC = () => {
             password: "",
             confirmPassword: "",
             phone: {
-                prefix: "",
+                prefix: "+34",
                 number: ""
             },
             role: "tourist",
@@ -117,18 +116,16 @@ const Register: React.FC = () => {
 
     const onSubmit = async (data: SignUpSchema) => {
         // Es necesario hacer la transformación del teléfono aquí, si no da error de tipos en la validación de react-hook-form con zod
-        const newUser = JSON.stringify({
-            ...data,
+        const { confirmPassword, age, ...rest } = data
+        const newUser = {
+            ...rest,
             phone: `${data.phone.prefix}${data.phone.number}`
-        })
+        }
 
-        // console.log(newUser)
+        console.log(newUser)
 
         try {
-            const response = await axios.post(
-                `${API_URL}/auth/register`,
-                newUser,
-                { headers: { "Content-Type": "application/json" } })
+            const response = await authServices.register(newUser)
 
             setSuccessNotification("Usuario registrado")
 
