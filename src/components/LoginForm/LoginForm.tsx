@@ -1,12 +1,15 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, loginSchema } from "../../schemas/login.schema";
+import { useState } from "react";
+import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom"; // Para redirección
 import "./LoginForm.css";
 import imagelogo from "../../assets/img/imagelogo.png";
 import imageletter from "../../assets/img/imageletter.png";
-import { useState } from "react";
-import authServices from "../../services/auth.services"; // Importar authServices
-import { useNavigate } from "react-router-dom"; // Para la redirección
+
+// Constantes de URL de la API
+const API_URL = import.meta.env.VITE_BACK_URL;
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -24,38 +27,39 @@ const Login: React.FC = () => {
   const [reqError, setReqError] = useState<string | null>(null);
   const [successNotification, setSuccessNotification] = useState<string | null>(null);
 
-  // Simulación de token (esto puede venir de otro lugar, como un cookie o localStorage)
-  const token = "TOKEN_AQUI"; // Este token puede ser el que obtienes tras el login previo
-
   const onSubmit = async (data: LoginSchema) => {
-    // Este es solo un ejemplo; normalmente tendrías el token de algún lugar, como localStorage o un state global
-    const token = "TOKEN_AQUI"; // Deberías obtener el token real de alguna forma.
-
     try {
-      // Log para ver lo que se va a enviar a la API
-      console.log("Intentando iniciar sesión con token: ", token);
+      // Aquí se realiza la petición de login
+      const response = await axios.post(
+        `${API_URL}/auth/login`, // Ruta para login
+        {
+          email: data.email,
+          password: data.password,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      // Llamar al servicio de autenticación para hacer login con el token
-      const response = await authServices.login(token);
-
-      // Log para ver la respuesta de la API
-      console.log("Respuesta de la API: ", response);
-
+      // Si la respuesta es exitosa, se resetea el formulario y muestra notificación
       if (response.status === 200) {
-        // Si la respuesta es exitosa, resetea el formulario y muestra notificación
-        reset();
+        reset(); // Limpiar el formulario
         setSuccessNotification("Inicio de sesión exitoso");
-        setTimeout(() => setSuccessNotification(null), 5000);
 
-        // Redirigir al usuario (ejemplo de redirección después de login)
-        navigate("/home"); // Cambia la ruta según corresponda a tu app
-      } else {
-        throw new Error("Error en el inicio de sesión");
+        // Guardar el token en localStorage o en un estado global (ejemplo)
+        localStorage.setItem("authToken", response.data.token);
+
+        // Redirigir al usuario después del login
+        setTimeout(() => navigate("/home"), 2000); // Redirige a la página principal
       }
     } catch (error) {
       // Manejo de errores
-      if (error instanceof Error) {
-        setReqError(error.message);
+      if (error instanceof AxiosError && error.response?.data) {
+        if (error.response.data.errors) {
+          setReqError(error.response.data.errors.join(", "));
+        } else {
+          setReqError(error.response.data.message);
+        }
+      } else {
+        setReqError("Error desconocido. Por favor intente de nuevo.");
       }
       setTimeout(() => setReqError(null), 5000);
     }
