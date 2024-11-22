@@ -5,8 +5,11 @@ import "./LoginForm.css";
 import imagelogo from "../../assets/img/imagelogo.png";
 import imageletter from "../../assets/img/imageletter.png";
 import { useState } from "react";
+import authServices from "../../services/auth.services"; // Importar authServices
+import { useNavigate } from "react-router-dom"; // Para la redirección
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -14,41 +17,47 @@ const Login: React.FC = () => {
     formState: { errors, isValid, isSubmitting },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
+    mode: "onChange", // Para la validación en tiempo real
   });
 
   // Manejo de notificaciones
-  const [reqError, setReqError] = useState<string | null>();
+  const [reqError, setReqError] = useState<string | null>(null);
   const [successNotification, setSuccessNotification] = useState<string | null>(null);
 
+  // Simulación de token (esto puede venir de otro lugar, como un cookie o localStorage)
+  const token = "TOKEN_AQUI"; // Este token puede ser el que obtienes tras el login previo
+
   const onSubmit = async (data: LoginSchema) => {
-    console.log(data);
-    const userLogin = JSON.stringify(data);
+    // Este es solo un ejemplo; normalmente tendrías el token de algún lugar, como localStorage o un state global
+    const token = "TOKEN_AQUI"; // Deberías obtener el token real de alguna forma.
 
     try {
-      // Simulación de petición
-      // const response = await fetch(`${API_URL}/auth/login`, {
-      //     method: "POST",
-      //     headers: {
-      //         "Content-Type": "application/json",
-      //     },
-      //     body: userLogin,
-      // });
+      // Log para ver lo que se va a enviar a la API
+      console.log("Intentando iniciar sesión con token: ", token);
 
-      // const result = await response.json();
+      // Llamar al servicio de autenticación para hacer login con el token
+      const response = await authServices.login(token);
 
-      // if (response.status === 400) {
-      //     throw Error(result.error);
-      // } else if (response.status === 200) {
-      //     reset();
-      //     setSuccessNotification("Inicio de sesión exitoso");
-      //     setTimeout(() => setSuccessNotification(null), 5000);
-      // }
+      // Log para ver la respuesta de la API
+      console.log("Respuesta de la API: ", response);
+
+      if (response.status === 200) {
+        // Si la respuesta es exitosa, resetea el formulario y muestra notificación
+        reset();
+        setSuccessNotification("Inicio de sesión exitoso");
+        setTimeout(() => setSuccessNotification(null), 5000);
+
+        // Redirigir al usuario (ejemplo de redirección después de login)
+        navigate("/home"); // Cambia la ruta según corresponda a tu app
+      } else {
+        throw new Error("Error en el inicio de sesión");
+      }
     } catch (error) {
       // Manejo de errores
-      // if (error instanceof Error) {
-      //     setReqError(error.message);
-      // }
-      // setTimeout(() => setReqError(null), 5000);
+      if (error instanceof Error) {
+        setReqError(error.message);
+      }
+      setTimeout(() => setReqError(null), 5000);
     }
   };
 
@@ -56,8 +65,16 @@ const Login: React.FC = () => {
     <div className="w-full mx-auto h-dvh flex flex-col items-center p-6">
       <div className="brand">
         <div className="flex flex-col items-center mb-6">
-          <img src={imagelogo} alt="Logo de Wander" className="w-[140px] md:w-[180px] mb-4" />
-          <img src={imageletter} alt="Texto Wander" className="w-[100px] md:w-[160px] mb-2" />
+          <img
+            src={imagelogo}
+            alt="Logo de Wander"
+            className="w-[140px] md:w-[180px] mb-4"
+          />
+          <img
+            src={imageletter}
+            alt="Texto Wander"
+            className="w-[100px] md:w-[160px] mb-2"
+          />
           <p className="text-black text-base max-sm:text-sm font-bold text-center">
             Explora nuevas aventuras
           </p>
@@ -92,7 +109,10 @@ const Login: React.FC = () => {
           )}
         </div>
         <div className="text-right">
-          <a href="/reset-password" className="text-sm text-gray-500 hover:text-gray-700">
+          <a
+            href="/reset-password"
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
             ¿Olvidaste tu contraseña?
           </a>
         </div>
