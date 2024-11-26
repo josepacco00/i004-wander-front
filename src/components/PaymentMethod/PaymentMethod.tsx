@@ -61,8 +61,8 @@ const PaymentMethod: React.FC = () => {
                     </div>
                     <div>
                         <h2 className="font-bold">Cocktail en la playa</h2>
-                        <p className="text-sm text-gray-500">Order number #837mx38</p>
-                    </div>
+                        <p className="text-sm text-gray-500">Fecha de reserva: 26 de noviembre de 2024</p>
+                        </div>
                 </div>
 
                 <div className="border-b border-gray-200 mb-6"></div>
