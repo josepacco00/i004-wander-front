@@ -1,4 +1,5 @@
-import createApiClient from './apiClient';
+import { NewUserData } from '../types/auth'
+import createApiClient from './apiClient'
 
 class AuthServices {
     private api = createApiClient(`${import.meta.env.VITE_API_URL}/auth`);
@@ -24,12 +25,20 @@ class AuthServices {
         return this.api.get('/verify', { headers: { Authorization: `Bearer ${token}` } });
     }
 
+    // Método registro
+    register(newUserData: NewUserData) {
+        return this.api.post(
+            "/register",
+            JSON.stringify(newUserData),
+            { headers: { "Content-Type": "application/json" } })
+    }
+
     // Método para logout
     logout(token: string) {
         return this.api.post('/logout', null, { headers: { Authorization: `Bearer ${token}` } });
     }
 }
 
-const authServices = new AuthServices();
+const authServices = new AuthServices()
 
-export default authServices;
+export default authServices

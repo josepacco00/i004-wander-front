@@ -1,6 +1,7 @@
 import { z } from "zod"
 
-export const signUpSchema = z.object({
+export const signUpSchema = z
+.object({
     name: z
         .string()
         .min(2, "El nombre debe tener al menos 2 caracteres")
@@ -29,11 +30,15 @@ export const signUpSchema = z.object({
             .string({ message: "El número de teléfono es obligatorio" })
             .regex(/^\d{6,10}$/, "El número de teléfono debe tener en 6 y 10 dígitos"),
     }),
-    role: z.enum(["tourist", "provider"], {
-        errorMap: () => ({ message: "Por favor, selecciona un perfil" })
-    }),
-    age: z.boolean().refine(val => val === true, "Para registrarte tienes que ser mayor de edad")
-}).refine(data => data.password === data.confirmPassword, {
+    role: z
+        .enum(["tourist", "provider"], {
+            errorMap: () => ({ message: "Por favor, selecciona un perfil" })
+        }),
+    age: z
+        .boolean()
+        .refine(val => val === true, "Para registrarte tienes que ser mayor de edad")
+})
+.refine(data => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"]
 })
