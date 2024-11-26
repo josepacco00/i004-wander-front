@@ -9,7 +9,7 @@ import imagelogo from "../../assets/img/imagelogo.png";
 import imageletter from "../../assets/img/imageletter.png";
 
 // Constantes de URL de la API
-const API_URL = import.meta.env.VITE_BACK_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
