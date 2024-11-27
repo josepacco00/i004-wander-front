@@ -6,6 +6,9 @@ import Login from '../components/LoginForm/LoginForm'
 import ConfirmRegister from '../components/ConfirmRegister/ConfirmRegister'
 import PaymentMethod from '../components/PaymentMethod/PaymentMethod'
 import PaymentDetails from '../components/PaymentDetails/PaymentDetails'
+import ForgotPasswordVerifyCode from '../components/ForgotPasswordVerifyCode/ForgotPasswordVerifyCode'
+import ForgotPassword from '../components/ForgotPassword/ForgotPassword'
+import ChangePassword from '../components/ChangePassword/ChangePassword'
 const AppRoutes = () => {
 
     return (
@@ -17,7 +20,10 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/confirm-register" element={<ConfirmRegister />} />
             <Route path="/payment-method" element={<PaymentMethod />} />
-            <Route path="/payment-details" element={<PaymentDetails />} />            
+            <Route path="/payment-details" element={<PaymentDetails />} /> 
+            <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
 
             {/* <Route element={<PrivateRoute />}>
                 <Route path="/UserProfile" element={<UserProfile />} />
