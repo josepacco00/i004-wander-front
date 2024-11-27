@@ -6,7 +6,7 @@ import Login from '../components/LoginForm/LoginForm'
 import ConfirmRegister from '../components/ConfirmRegister/ConfirmRegister'
 import PaymentMethod from '../components/PaymentMethod/PaymentMethod'
 import PaymentDetails from '../components/PaymentDetails/PaymentDetails'
-// import Book from '../components/Book/Book'
+import Book from '../components/Book/Book'
 import { ReservationProviderWrapper } from '../contexts/reservation.context'
 import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 
@@ -23,7 +23,7 @@ const AppRoutes = () => {
 
             <Route element={<ReservationProviderWrapper />}>
                 <Route path="/experience-details" element={<ExperienceDetail />} />
-                {/* <Route path="/booking" element={<Book />} /> */}
+                <Route path="/booking" element={<Book />} />
                 <Route path="/payment-method" element={<PaymentMethod />} />
                 <Route path="/payment-details" element={<PaymentDetails />} />
             </Route>
