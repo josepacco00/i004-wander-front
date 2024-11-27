@@ -9,26 +9,28 @@ type Props = {
 
 const AuthLayout = ({ children }: Props) => {
     return (
-        <div className="flex min-h-screen items-center justify-center font-sans p-4">
-            <div className="w-full max-w-md">
-                <div className="flex flex-col items-center mb-6">
-                    <img className="logo" src={imagelogo} alt="Logo de Wander" />
-                    <img className="text-logo" src={imageletter} alt="Texto Wander" />
-                    <p className="text-dark text-base font-bold text-center mb-2">
-                        Explora nuevas aventuras
-                    </p>
-                </div>
-
-                <>
-                    {children}
-                </>
-
-                <Link
-                    to={"/"}
-                    className="inline-block w-full mt-3 text-center text-primary hover:text-tertiary font-semibold">
-                    {"<"} Volver a Inicio
-                </Link>
+        <div className="flex flex-col min-h-screen items-center justify-center font-sans p-6">
+            <div className="flex flex-col items-center mb-6">
+                <img 
+                    className="logo w-[140px] md:w-[180px] mb-4"
+                    src={imagelogo} alt="Logo de Wander" />
+                <img
+                    className="text-logo w-[100px] md:w-[160px] mb-2"
+                    src={imageletter} alt="Texto Wander" />
+                <p className="text-black text-base max-sm:text-sm font-bold text-center">
+                    Explora nuevas aventuras
+                </p>
             </div>
+
+            <>
+                {children}
+            </>
+
+            <Link
+                to={"/"}
+                className="inline-block w-full mt-3 text-center text-primary hover:text-tertiary font-semibold">
+                {"<"} Volver a Inicio
+            </Link>
         </div>
     );
 };
