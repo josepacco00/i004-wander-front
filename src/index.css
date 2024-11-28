@@ -33,3 +33,15 @@ select {
 button {
     @apply font-semibold bg-primary hover:bg-tertiary text-white text-center rounded-full disabled:bg-neutral-400 disabled:cursor-not-allowed
 }
+
+.swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: #F2EBF7 !important;
+    border-radius: 50%;
+    opacity: 1;
+  }
+  .swiper-pagination-bullet-active {
+    background-color: #FF9D14 !important;
+    transform: scale(1.2);
+  }
