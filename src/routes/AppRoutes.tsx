@@ -6,16 +6,13 @@ import Login from '../components/LoginForm/LoginForm'
 import ConfirmRegister from '../components/ConfirmRegister/ConfirmRegister'
 import PaymentMethod from '../components/PaymentMethod/PaymentMethod'
 import PaymentDetails from '../components/PaymentDetails/PaymentDetails'
-<<<<<<< HEAD
 import ForgotPasswordVerifyCode from '../components/ForgotPasswordVerifyCode/ForgotPasswordVerifyCode'
 import ForgotPassword from '../components/ForgotPassword/ForgotPassword'
 import ChangePassword from '../components/ChangePassword/ChangePassword'
-=======
 import Book from '../components/Book/Book'
 import { ReservationProviderWrapper } from '../contexts/reservation.context'
 import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 
->>>>>>> develop
 const AppRoutes = () => {
 
     return (
@@ -26,13 +23,9 @@ const AppRoutes = () => {
             <Route path="/user-profile" element={<UserProfile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/confirm-register" element={<ConfirmRegister />} />
-<<<<<<< HEAD
-            <Route path="/payment-method" element={<PaymentMethod />} />
-            <Route path="/payment-details" element={<PaymentDetails />} /> 
             <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
-=======
 
             <Route element={<ReservationProviderWrapper />}>
                 <Route path="/experience-details" element={<ExperienceDetail />} />
@@ -40,7 +33,6 @@ const AppRoutes = () => {
                 <Route path="/payment-method" element={<PaymentMethod />} />
                 <Route path="/payment-details" element={<PaymentDetails />} />
             </Route>
->>>>>>> develop
 
             {/* <Route element={<PrivateRoute />}>
                 <Route path="/UserProfile" element={<UserProfile />} />
