@@ -4,9 +4,8 @@ import { LoginSchema, loginSchema } from "../../schemas/login.schema";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom"; // Para redirección
+import AuthLayout from "../../layout/AuthLayout.tsx"; // Asegúrate de importar el AuthLayout
 import "./LoginForm.css";
-import imagelogo from "../../assets/img/imagelogo.png";
-import imageletter from "../../assets/img/imageletter.png";
 
 // Constantes de URL de la API
 const API_URL = import.meta.env.VITE_API_URL;
@@ -66,24 +65,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="w-full mx-auto h-dvh flex flex-col items-center p-6">
-      <div className="brand">
-        <div className="flex flex-col items-center mb-6">
-          <img
-            src={imagelogo}
-            alt="Logo de Wander"
-            className="w-[140px] md:w-[180px] mb-4"
-          />
-          <img
-            src={imageletter}
-            alt="Texto Wander"
-            className="w-[100px] md:w-[160px] mb-2"
-          />
-          <p className="text-black text-base max-sm:text-sm font-bold text-center">
-            Explora nuevas aventuras
-          </p>
-        </div>
-      </div>
+    <AuthLayout>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-sm [&_label]:text-slate-800 [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_input]:ring-1 [&_input]:ring-slate-200 [&_input]:rounded-full focus:[&_input]:bg-slate-100 focus:[&_input]:outline-none focus:[&_input]:ring-2 focus:[&_input]:ring-slate-300 [&_input]:cursor-default"
@@ -139,7 +121,7 @@ const Login: React.FC = () => {
       {successNotification && (
         <p className="form__success-notification">{successNotification}</p>
       )}
-    </div>
+    </AuthLayout>
   );
 };
 
