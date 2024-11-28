@@ -1,118 +1,226 @@
-import { useForm } from "react-hook-form"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SignUpSchema, signUpSchema } from "../../schemas/signUp.schema"
+import AuthLayout from "../../layout/AuthLayout";
+import "./Register.css"
+import authServices from "../../services/auth.services";
+import { countriesPhoneList } from "../../mocks/countriesPhoneList.mock";
 
 const Register: React.FC = () => {
     const {
         register,
         handleSubmit,
         reset,
-        formState: { errors, isSubmitting },
+        control,
+        formState: { errors, isValid, isSubmitting },
     } = useForm<SignUpSchema>({
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            phone: {
+                prefix: "+34",
+                number: ""
+            },
+            role: "tourist",
+            age: false,
+        },
+        mode: "onChange",
         resolver: zodResolver(signUpSchema)
     })
 
-    console.log(errors)
+    // Para gestionar las notificaciones del BFF
+    const [reqError, setReqError] = useState<string[] | null>()
+    const [successNotification, setSuccessNotification] = useState<string | null>(null)
+
+    const navigate = useNavigate()
 
     const onSubmit = async (data: SignUpSchema) => {
-        const newUser = JSON.stringify(data)
-        console.log(newUser)
-        try {
-            // const response = await fetch(`${API_URL}/auth/register`, {
-            const response = await fetch(`https://reqres.in/api/users`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: newUser
-            })
+        // Eliminamos el confirmPassword y el booleano de la data final
+        const { confirmPassword, age, ...rest } = data
 
-            const result = await response.json()
-
-            console.log(result)
-        } catch (error) {
-            console.log(error)
+        // Es necesario hacer la transformación del teléfono aquí, si no da error de tipos en la validación de react-hook-form con zod
+        const newUser = {
+            ...rest,
+            phone: `${data.phone.prefix}${data.phone.number}`
         }
 
-        // BDD request
-        // await new Promise((resolve) => setTimeout(resolve, 1000))
+        // console.log(newUser)
 
-        reset()
+        try {
+            await authServices.register(newUser)
+
+            setSuccessNotification("Usuario registrado")
+
+            setTimeout(() => setSuccessNotification(null), 5000)
+            reset()
+
+            navigate("/login")
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                if (error.response?.data) {
+                    // console.log(error.response)
+
+                    if (error.response.data.errors) {
+                        setReqError(error.response.data.errors)
+                    } else {
+                        setReqError([error.response.data.message])
+                    }
+                } else {
+                    // console.log(error.message)
+                    setReqError([error.message])
+                }
+            } else {
+                console.log(error)
+            }
+
+            setTimeout(() => setReqError(null), 5000)
+        }
     }
 
     return (
-        <div className="min-w-[290px] w-fit flex flex-col gap-4 px-12 py-8 bg-slate-100 border border-slate-200/50 rounded-md">
-            <p className="text-xl font-bold">Create your free account</p>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-1 [&_label]:text-sm [&_input]:px-2 [&_input]:py-1 [&_select]:px-2 [&_select]:py-1 [&_input]:ring-1 [&_input]:ring-slate-200 [&_input]:rounded-md [&_select]:rounded-md focus:[&_input]:bg-slate-100 focus:[&_input]:outline-none focus:[&_input]:ring-2 focus:[&_input]:ring-slate-300"
-            >
-                <div>
-                    <label htmlFor="name">Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        {...register("name")}
-                    />
-                    {errors.name && <span className="form__error-notification"> {errors.name.message} </span>}
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id="email" {...register("email")} />
-                    {errors.email && <span className="form__error-notification">{errors.email.message}</span>}
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" id="password" {...register("password")} />
-                    {errors.password && <span className="form__error-notification">{errors.password.message}</span>}
-
-                </div>
-                <div>
-                    <label htmlFor="confirmPassword">Confirm password</label>
-                    <input type="password" id="confirmPassword" {...register("confirmPassword")} />
-                    {errors.confirmPassword && <span className="form__error-notification">{errors.confirmPassword.message}</span>}
-                </div>
-                {/* <div>
-                    <label htmlFor="location">Location</label>
-                    <select {...register("location", {
-                            required: true
-                        })} id="location">
-                        <option value="spain">Spain</option>
-                        <option value="venezuela">Venezuela</option>
-                        <option value="argentina">Argentina</option>
-                        <option value="bolivia">Bolivia</option>
-                        <option value="colombia">Colombia</option>
-                        <option value="peru">Peru</option>
-                    </select>
-                    { errors.location && <span className="form__error-notification">Location is required</span> }
-                    </div> */}
-                <div>
-                    <label htmlFor="role">Role</label>
-                    <select {...register("role")} id="role">
-                        <option value="tourist">Tourist</option>
-                        <option value="provider">Provider</option>
-                    </select>
-                    {errors.role && <span className="form__error-notification">{errors.role.message}</span>}
-                </div>
-                {/* <div>
-                    <label>Preferences</label>
-                    { preferencesOptions.map((option, index) => {
-                        return <div key={crypto.randomUUID()} className="flex gap-2 items-center">
-                        <input type="checkbox" {...register(`pref-${option}`) id={`pref-${option}`} value={option} />
-                        <label htmlFor={`pref-${option}`}>{ option }</label>
+        <AuthLayout>
+            <>
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="w-full flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-sm [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm"
+                >
+                    <div>
+                        <label htmlFor="name">Nombre</label>
+                        <input
+                            {...register("name")}
+                            type="text"
+                            id="name"
+                            placeholder="John Doe"
+                        />
+                        {errors.name &&
+                            <span className="form__error-validation"> {errors.name.message} </span>}
+                    </div>
+                    <div>
+                        <label htmlFor="email">Correo electrónico</label>
+                        <input
+                            {...register("email")}
+                            type="email"
+                            id="email"
+                            placeholder="john@doe.com"
+                        />
+                        {errors.email &&
+                            <span className="form__error-validation">{errors.email.message}</span>}
+                    </div>
+                    <div>
+                        <label htmlFor="password">Contraseña</label>
+                        <input
+                            {...register("password")}
+                            type="password"
+                            id="password"
+                        />
+                        {errors.password &&
+                            <span className="form__error-validation">{errors.password.message}</span>}
+                    </div>
+                    <div>
+                        <label htmlFor="confirmPassword">Repite tu contraseña</label>
+                        <input
+                            {...register("confirmPassword")}
+                            type="password"
+                            id="confirmPassword"
+                        />
+                        {errors.confirmPassword &&
+                            <span className="form__error-validation">{errors.confirmPassword.message}</span>}
+                    </div>
+                    <div>
+                        <label htmlFor="phone">Teléfono</label>
+                        <div className="flex gap-2">
+                            <Controller
+                                name="phone.prefix"
+                                control={control}
+                                render={({ field }) => (
+                                    <select
+                                        {...field}
+                                        id="phone-prefix">
+                                        {
+                                            countriesPhoneList.map((ph, i) =>
+                                                <option key={`${Date.now()}-${i}`} value={ph.prefijo}>{`${ph.bandera} ${ph.prefijo}`}</option>)
+                                        }
+                                    </select>
+                                )}
+                            />
+                            <Controller
+                                name="phone.number"
+                                control={control}
+                                render={({ field }) => (
+                                    <input
+                                        {...field}
+                                        id="number"
+                                        className="grow" />
+                                )}
+                            />
                         </div>
-                        }) }
-                        </div> */}
-                <div className="!flex-row [&_input]:ring-0">
-                    <input {...register("terms")} type="checkbox" name="terms" id="terms" />
-                    <label htmlFor="terms" className="!text-xs">Accept terms and conditions</label>
-                    {errors.role && <span className="form__error-notification">{errors.role.message}</span>}
-                </div>
-                <button disabled={isSubmitting} type="submit" className="p-2 font-semibold bg-amber-400 hover:bg-amber-500 rounded-md disabled:bg-slate-400 text-center">
-                    {isSubmitting ? "Registering..." : "Register"}
-                </button>
-            </form>
-        </div>
+                        {errors.phone && errors.phone.prefix &&
+                            <span className="form__error-validation">{errors.phone.prefix.message}</span>}
+                        {errors.phone && errors.phone.number &&
+                            <span className="form__error-validation">{errors.phone.number.message}</span>}
+                    </div>
+                    <div className="relative">
+                        <label htmlFor="role">Quiero registrarme cómo...</label>
+                        <select
+                            {...register("role")}
+                            id="role"
+                            className="hover:bg-neutral-300">
+                            <option value="tourist" className="bg-white">Turista</option>
+                            <option value="provider" className="bg-white">Proveedor</option>
+                        </select>
+                        <div className="absolute right-4 top-[calc(50%+4px)] p-1.5 pt-[5px] pb-[7px] rounded-full pointer-events-none">
+                            <i className="w-2 h-2 block border-neutral-800 border-l-2 border-b-2 -rotate-45"></i>
+                        </div>
+                        {errors.role &&
+                            <span className="form__error-validation">{errors.role.message}</span>}
+                    </div>
+                    <div className="mt-2">
+                        <label className="!text-xs">Para registrarte en la plataforma debes ser mayor de edad. Al marcar la siguiente casilla confirmas tener al menos 18 años.</label>
+                        <div className="flex items-center gap-2">
+                            <input
+                                {...register("age")}
+                                type="checkbox"
+                                name="age"
+                                id="age"
+                            />
+                            <label htmlFor="age" className="!text-xs">Soy mayor de edad (18+ años)</label>
+                        </div>
+                    </div>
+                    {errors.age &&
+                        <span className="form__error-validation">{errors.age.message}</span>}
+
+                    <button
+                        type="submit"
+                        disabled={isSubmitting || !isValid}
+                        className="mt-4 px-4 py-3 shadow-lg disabled:bg-neutral-400 disabled:cursor-not-allowed">
+                        {isSubmitting ? "Registrando..." : "Regístrate"}
+                    </button>
+                    <p className="text-xs text-center">
+                        ¿Ya tienes una cuenta?{" "}
+                        <Link
+                            to={"/login"}
+                            className="text-primary hover:text-tertiary font-bold">
+                            Inicia sesión
+                        </Link>
+                    </p>
+                </form>
+
+                {reqError &&
+                    <div className="form__notification form__notification--error">
+                        {
+                            reqError.map((e, i) => <p key={`${Date.now()}-${i}`}>{e}</p>)
+                        }
+                    </div>
+                }
+                {successNotification &&
+                    <p className="form__notification form__notification--success">{successNotification}</p>}
+            </>
+        </AuthLayout >
     )
 }
 
