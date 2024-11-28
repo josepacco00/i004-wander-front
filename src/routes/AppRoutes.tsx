@@ -13,13 +13,15 @@ import ChangePassword from '../components/ChangePassword/ChangePassword'
 import Book from '../components/Book/Book'
 import { ReservationProviderWrapper } from '../contexts/reservation.context'
 import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
+import AddExperience from "../components/AddExperience/AddExperience";
+import Home from "../components/Home/homePage";
 
 const AppRoutes = () => {
 
     return (
 
         <Routes>
-            <Route path="/" element={<h1>Home Page</h1>} />
+            <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/user-profile" element={<UserProfile />} />
             <Route path="/filters" element={<Filters />} />
@@ -28,6 +30,7 @@ const AppRoutes = () => {
             <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
+            <Route path="/add-experience" element={<AddExperience />} />
 
             <Route element={<ReservationProviderWrapper />}>
                 <Route path="/experience-details" element={<ExperienceDetail />} />

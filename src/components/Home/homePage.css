@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Contenedor principal */
+.home {
+  @apply bg-white font-sans text-gray-800;
+}
+
+/* Header */
+.header {
+  @apply relative bg-cover bg-center text-black flex flex-col items-center rounded-md p-8 pt-9;
+  background-image: url('https://picsum.photos/seed/picsum/1500/1500'); /* Añadido padding-top para mover el contenido hacia abajo */
+}
+
+.header-title {
+  @apply text-2xl font-bold text-center mb-2;
+}
+.search-bar {
+  @apply relative w-full max-w-md mt-8; /* Añadido margen superior para separar del header */
+}
+
+.search-input {
+  @apply w-full p-2 pr-8 border border-gray-300 rounded-3xl  ; /* Espacio a la derecha para el botón */
+}
+
+.search-button {
+  @apply absolute top-1/2 right-0 w-10 h-10 flex items-center justify-center bg-orange-500 text-white rounded-full transform -translate-y-1/2 hover:bg-orange-600 transition-all; /* Posición absoluta a la derecha con diseño circular */
+}
+
+/* Sección Popular */
+.section-title {
+  @apply text-xl font-semibold mb-3;
+}
+.grid-container {
+  @apply grid grid-cols-2 gap-4;
+}
+.experience-card {
+  @apply bg-gray-50 rounded-md overflow-hidden;
+}
+.experience-image {
+  @apply w-11/12 h-40 bg-cover bg-center rounded-lg mx-auto; /* Reduce ancho, centra con `mx-auto` */
+}
+
+.experience-info {
+  @apply flex items-center justify-between p-4; /* Alineación horizontal */
+}
+.experience-info-content {
+  @apply mb-4;
+}
+.experience-title {
+  @apply text-lg font-semibold mb-2;
+}
+.experience-date {
+  @apply text-sm text-gray-600;
+}
+.reserve-button {
+  @apply px-4 py-2 bg-primary text-white rounded-md hover:bg-orange-600 transition-all;
+}
+
+/* Sección Última llamada */
+.ultima-llamada {
+  @apply mt-6;
+}
+.section-title2 {
+  @apply text-xl font-semibold mb-2;
+}
+.grid-container2 {
+  @apply grid grid-cols-4 gap-4;
+}
+.experience-card2 {
+  @apply mt-2 bg-gray-50 shadow-md rounded-md overflow-hidden;
+  background-size: cover;
+  background-position: center;
+}
+.experience-info2 {
+  @apply p-6 bg-black bg-opacity-40 text-white;
+}
+.experience-title2 {
+  @apply text-lg font-semibold mb-2;
+}
+.experience-date2 {
+  @apply text-sm;
+}
+
+/* Sección Categorías */
+.category-tags {
+  @apply flex flex-wrap gap-2 mt-6;
+}
+.category {
+  @apply text-sm bg-primary text-gray-800 px-4 py-2 rounded-full cursor-pointer hover:bg-orange-200 transition-all;
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+  .grid-container {
+    @apply grid-cols-1;
+  }
+  .grid-container2 {
+    @apply grid-cols-2;
+  }
+  .search-bar {
+    @apply flex-col;
+  }
+}
