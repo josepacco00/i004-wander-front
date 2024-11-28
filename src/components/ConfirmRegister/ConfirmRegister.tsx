@@ -1,131 +1,176 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import imagelogo from "../../assets/img/imagelogo.png";
-import imageletter from "../../assets/img/imageletter.png";
-import "./ConfirmRegister.css";
+import AuthLayout from "../../layout/AuthLayout";
+import { useNavigate } from "react-router-dom"; // Para redirección
+import './ConfirmRegister.css';
 
-const ConfirmResetPassword: React.FC = () => {
-    const [timer, setTimer] = useState(60); // Temporizador para reenvío de código
-    const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para mostrar el modal de éxito
+const ConfirmRegister = () => {
+  const navigate = useNavigate();
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [resendEnabled, setResendEnabled] = useState(false);
+  const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal de éxito
+  const [code, setCode] = useState(""); // Guardar el código ingresado
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Para manejar el error de validación
 
-    // Inicia el temporizador y lo decrementa cada segundo
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearInterval(timer); // Limpiar intervalo
+    } else {
+      setResendEnabled(true); // Habilitar el botón de reenviar cuando los 60 segundos se hayan agotado
+    }
+  }, [timeLeft]);
 
-        return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
-    }, []);
-
+  const handleResend = () => {
+    setTimeLeft(60); // Resetear cuenta regresiva
+    setResendEnabled(false); // Deshabilitar el botón hasta pasar otros 60 segundos
     // Lógica para reenviar el código
-    const handleResend = () => {
-        if (timer === 0) {
-            console.log("Código reenviado");
-            setTimer(60); // Reinicia el temporizador
-        }
-    };
+    console.log("Código reenviado.");
+  };
 
-    // Enviar formulario y mostrar modal de éxito
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setShowSuccessModal(true);
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    return (
-        <div className="w-full mx-auto h-dvh flex flex-col items-center p-6">
-            {/* Marca */}
-            <div className="brand">
-                <div className="flex flex-col items-center mb-6">
-                    <img src={imagelogo} alt="Logo de Wander" className="w-[140px] md:w-[180px] mb-4" />
-                    <img src={imageletter} alt="Texto Wander" className="w-[100px] md:w-[160px] mb-2" />
-                    <p className="text-black text-base max-sm:text-sm font-bold text-center">Explora nuevas aventuras</p>
-                </div>
-            </div>
+    // Verificar que el código no esté vacío
+    if (code.trim() === "") {
+      setErrorMessage("Por favor, ingresa el código de verificación.");
+      return;
+    }
 
-            {/* Formulario */}
-            <form
-                onSubmit={handleSubmit}
-                className="w-full flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-sm [&_label]:text-slate-800 [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_input]:ring-1 [&_input]:ring-slate-200 [&_input]:rounded-full focus:[&_input]:bg-slate-100 focus:[&_input]:outline-none focus:[&_input]:ring-2 focus:[&_input]:ring-slate-300 [&_input]:cursor-default"
+    // Aquí puedes manejar la verificación del código
+    console.log("Código enviado para verificación:", code);
+    
+    // Si el código es válido, mostramos el modal de éxito
+    setShowModal(true);
+    setErrorMessage(null); // Limpiar error si es correcto
+  };
+
+  // Función para manejar la entrada del código
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+
+    // Permitir solo números y limitar a 6 caracteres
+    if (/^[0-9]{0,6}$/.test(input)) {
+      setCode(input);
+
+      // Limpiar el mensaje de error mientras escribe
+      if (input.trim() !== "") {
+        setErrorMessage(null);
+      }
+    }
+  };
+
+  // Función para redirigir a la página de login
+  const handleLoginRedirect = () => {
+    navigate("/login"); // Redirigir al login
+  };
+
+  return (
+    <AuthLayout showText={false}>
+      <div className="text-center">
+        <h2 className="text-3xl font-bold mb-2 text-dark mb-4">Confirma tu cuenta</h2>
+        <p className="text-sm text-gray-700 mb-6">
+          Ingresa el código de verificación enviado<br />
+          al correo <span className="font-semibold text-dark">correo@gmail.com</span>
+        </p>
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center space-y-6"
+        >
+          <div className="w-full">
+            <label
+              htmlFor="code"
+              className="block text-sm font-medium text-dark text-left"
             >
-                <div>
-                    <label htmlFor="code">Ingresa el código</label>
-                    <input
-                        type="text"
-                        id="code"
-                        placeholder="123456"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength={6}
-                        className="px-4 py-3 text-sm ring-1 ring-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-300"
-                    />
-                </div>
-
-                {/* Reenvío del código */}
-                <div className="text-center text-sm">
-                    ¿No recibiste el código?{" "}
-                    <button
-                        type="button"
-                        onClick={handleResend}
-                        disabled={timer > 0}
-                        className={`font-bold ${timer === 0 ? "text-brandYellow hover:text-secondary" : "text-gray-400"}`}
-                    >
-                        Reenviar
-                    </button>{" "}
-                    <span className="text-gray-500">
-                        {timer > 0 ? `0:${timer.toString().padStart(2, "0")}` : ""}
-                    </span>
-                </div>
-
-                <button
-                    type="submit"
-                    className="mt-4 px-4 py-3 font-semibold bg-primary hover:bg-tertiary text-white rounded-full shadow-lg disabled:bg-slate-400 text-center disabled:cursor-not-allowed"
-                >
-                    Verificar Código
-                </button>
-            </form>
-
-            {/* Modal de éxito */}
-            {showSuccessModal && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white rounded-[2rem] p-8 w-80 shadow-lg">
-                        <div className="flex flex-col items-center space-y-8">
-                            {/* Icono de éxito */}
-                            <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
-                                <svg
-                                    className="w-14 h-14 text-white"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="3"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M5 13l4 4L19 7"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h2 className="text-2xl font-bold text-center">
-                                ¡Código verificado!
-                            </h2>
-
-                            <Link to="/login">
-                                <button
-                                    onClick={() => {
-                                        console.log("Navegando al inicio de sesión");
-                                    }}
-                                    className="w-[200px] py-6 text-white bg-brandYellow rounded-3xl hover:opacity-90 transition-colors mt-8"
-                                >
-                                    Iniciar Sesión
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+              Código
+            </label>
+            <input
+              id="code"
+              type="text"
+              placeholder="123456"
+              value={code}
+              onChange={handleCodeChange} // Llamar a la función de cambio
+              className={`mt-2 w-full px-6 py-3 border-2 rounded-full text-dark text-left ${
+                errorMessage ? "border-red-500" : ""
+              }`} // Mostrar borde rojo si hay error
+              maxLength={6} // Limitar a 6 caracteres
+              pattern="[0-9]*" // Asegurar que solo se ingresen números
+            />
+            {/* Notificación de error */}
+            {errorMessage && (
+              <div className="form__notification form__notification--error">
+                {errorMessage}
+              </div>
             )}
+          </div>
+
+          {/* Contenedor de "¿No recibiste el código?" con cuenta regresiva */}
+          <div className="resend-container">
+            <span className="resend-text">¿No recibiste el código?</span>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={!resendEnabled}
+              className={`resend-button`}
+            >
+              Reenviar ({timeLeft === 60 ? "1:00" : `(${String(Math.floor(timeLeft / 60)).padStart(2, "0")}:${String(timeLeft % 60).padStart(2, "0")})`})
+            </button>
+          </div>
+
+          {/* Barra de progreso naranja (debajo de la pregunta y botón) */}
+          <div
+            className={`progress-bar ${timeLeft !== 60 ? "progress-bar-filled" : ""}`}
+            style={{
+              width: `${(60 - timeLeft) * 100 / 60}%`, // La barra se llena conforme pasa el tiempo
+            }}
+          ></div>
+
+          {/* Botón de Verificar Código */}
+          <button
+            type="submit"
+            className="w-[250px] bg-primary hover:bg-tertiary text-white font-semibold py-5 rounded-xll shadow-[0px_4px_10px_rgba(0,0,0,0.4)] transition disabled:bg-brandGrey disabled:cursor-not-allowed"
+          >
+            Verificar Código
+          </button>
+        </form>
+
+        {/* Notificación de éxito */}
+        {showModal && (
+          <div className="form__notification form__notification--success">
+            ¡Cuenta confirmada con éxito! 
+          </div>
+        )}
+      </div>
+
+      {/* Modal de éxito al restablecer la cuenta */}
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-[2rem] p-8 w-80 shadow-lg">
+            <div className="flex flex-col items-center space-y-8">
+              <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
+                <svg
+                  className="w-14 h-14 text-white"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-center">¡Cuenta confirmada con éxito!</h2>
+              <button
+                onClick={handleLoginRedirect} // Redirigir al login
+                className="w-[200px] py-6 text-white bg-brandYellow rounded-3xl"
+              >
+                Iniciar sesión
+              </button>
+            </div>
+          </div>
         </div>
-    );
+      )}
+    </AuthLayout>
+  );
 };
 
-export default ConfirmResetPassword;
+export default ConfirmRegister;
