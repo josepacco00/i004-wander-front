@@ -1,0 +1,27 @@
+/* Estilos para el logo principal */
+.logo {
+    width: 200px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .logo {
+        width: 250px;
+        height: auto;
+    }
+}
+
+/* Estilos para el logo de texto */
+.text-logo {
+    width: 200px;
+    height: auto;
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .text-logo {
+        width: 200px;
+        height: auto;
+    }
+}

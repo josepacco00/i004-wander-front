@@ -1,90 +1,13 @@
 import { useState } from "react"
-import { Link } from "react-router-dom";
-import /* axios, */ { AxiosError } from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SignUpSchema, signUpSchema } from "../../schemas/signUp.schema"
 import AuthLayout from "../../layout/AuthLayout";
 import "./Register.css"
 import authServices from "../../services/auth.services";
-
-const countriesPhoneList = [
-    {
-        "nombre": "Estados Unidos",
-        "prefijo": "+1",
-        "bandera": "🇺🇸"
-    },
-    {
-        "nombre": "España",
-        "prefijo": "+34",
-        "bandera": "🇪🇸"
-    },
-    {
-        "nombre": "México",
-        "prefijo": "+52",
-        "bandera": "🇲🇽"
-    },
-    {
-        "nombre": "Argentina",
-        "prefijo": "+54",
-        "bandera": "🇦🇷"
-    },
-    {
-        "nombre": "Japón",
-        "prefijo": "+81",
-        "bandera": "🇯🇵"
-    },
-    {
-        "nombre": "Reino Unido",
-        "prefijo": "+44",
-        "bandera": "🇬🇧"
-    },
-    {
-        "nombre": "Alemania",
-        "prefijo": "+49",
-        "bandera": "🇩🇪"
-    },
-    {
-        "nombre": "Francia",
-        "prefijo": "+33",
-        "bandera": "🇫🇷"
-    },
-    {
-        "nombre": "India",
-        "prefijo": "+91",
-        "bandera": "🇮🇳"
-    },
-    {
-        "nombre": "Brasil",
-        "prefijo": "+55",
-        "bandera": "🇧🇷"
-    },
-    {
-        "nombre": "China",
-        "prefijo": "+86",
-        "bandera": "🇨🇳"
-    },
-    {
-        "nombre": "Canadá",
-        "prefijo": "+1",
-        "bandera": "🇨🇦"
-    },
-    {
-        "nombre": "Italia",
-        "prefijo": "+39",
-        "bandera": "🇮🇹"
-    },
-    {
-        "nombre": "Sudáfrica",
-        "prefijo": "+27",
-        "bandera": "🇿🇦"
-    },
-    {
-        "nombre": "Australia",
-        "prefijo": "+61",
-        "bandera": "🇦🇺"
-    }
-]
+import { countriesPhoneList } from "../../mocks/countriesPhoneList.mock";
 
 const Register: React.FC = () => {
     const {
@@ -114,24 +37,29 @@ const Register: React.FC = () => {
     const [reqError, setReqError] = useState<string[] | null>()
     const [successNotification, setSuccessNotification] = useState<string | null>(null)
 
+    const navigate = useNavigate()
+
     const onSubmit = async (data: SignUpSchema) => {
-        // Es necesario hacer la transformación del teléfono aquí, si no da error de tipos en la validación de react-hook-form con zod
+        // Eliminamos el confirmPassword y el booleano de la data final
         const { confirmPassword, age, ...rest } = data
+
+        // Es necesario hacer la transformación del teléfono aquí, si no da error de tipos en la validación de react-hook-form con zod
         const newUser = {
             ...rest,
             phone: `${data.phone.prefix}${data.phone.number}`
         }
 
-        console.log(newUser)
+        // console.log(newUser)
 
         try {
-            const response = await authServices.register(newUser)
+            await authServices.register(newUser)
 
             setSuccessNotification("Usuario registrado")
 
             setTimeout(() => setSuccessNotification(null), 5000)
-            console.log(response)
             reset()
+
+            navigate("/login")
         } catch (error) {
             if (error instanceof AxiosError) {
                 if (error.response?.data) {
@@ -214,8 +142,8 @@ const Register: React.FC = () => {
                                         {...field}
                                         id="phone-prefix">
                                         {
-                                            countriesPhoneList.map(ph =>
-                                                <option key={crypto.randomUUID()} value={ph.prefijo}>{`${ph.bandera} ${ph.prefijo}`}</option>)
+                                            countriesPhoneList.map((ph, i) =>
+                                                <option key={`${Date.now()}-${i}`} value={ph.prefijo}>{`${ph.bandera} ${ph.prefijo}`}</option>)
                                         }
                                     </select>
                                 )}
@@ -285,7 +213,7 @@ const Register: React.FC = () => {
                 {reqError &&
                     <div className="form__notification form__notification--error">
                         {
-                            reqError.map(e => <p key={crypto.randomUUID()}>{e}</p>)
+                            reqError.map((e, i) => <p key={`${Date.now()}-${i}`}>{e}</p>)
                         }
                     </div>
                 }
