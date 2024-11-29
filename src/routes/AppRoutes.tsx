@@ -14,6 +14,7 @@ import { ReservationProviderWrapper } from '../contexts/reservation.context'
 import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 import AddExperience from "../components/AddExperience/AddExperience";
 import Home from "../components/Home/homePage";
+import Filters from '../components/Filters/Filters'
 
 const AppRoutes = () => {
 
@@ -29,6 +30,7 @@ const AppRoutes = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
             <Route path="/add-experience" element={<AddExperience />} />
+            <Route path="/filters" element={<Filters />} />
 
             <Route element={<ReservationProviderWrapper />}>
                 <Route path="/experience/:id" element={<ExperienceDetail />} />
