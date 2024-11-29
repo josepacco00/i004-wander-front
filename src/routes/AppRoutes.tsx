@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom'
 // import PrivateRoute from './PrivateRoutes'
 import Register from '../components/Register/Register'
 import UserProfile from '../components/UserProfile/UserProfile'
-import Filters from '../components/Filters/Filters'
 import Login from '../components/LoginForm/LoginForm'
 import ConfirmRegister from '../components/ConfirmRegister/ConfirmRegister'
 import PaymentMethod from '../components/PaymentMethod/PaymentMethod'
@@ -24,7 +23,6 @@ const AppRoutes = () => {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/filters" element={<Filters />} />
             <Route path="/login" element={<Login />} />
             <Route path="/confirm-register" element={<ConfirmRegister />} />
             <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
@@ -33,7 +31,7 @@ const AppRoutes = () => {
             <Route path="/add-experience" element={<AddExperience />} />
 
             <Route element={<ReservationProviderWrapper />}>
-                <Route path="/experience-details" element={<ExperienceDetail />} />
+                <Route path="/experience/:id" element={<ExperienceDetail />} />
                 <Route path="/booking" element={<Book />} />
                 <Route path="/payment-method" element={<PaymentMethod />} />
                 <Route path="/payment-details" element={<PaymentDetails />} />
