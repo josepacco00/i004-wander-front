@@ -15,34 +15,35 @@ import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 import AddExperience from "../components/AddExperience/AddExperience";
 import Home from "../components/Home/homePage";
 import Filters from '../components/Filters/Filters'
+import { ProtectedPublicRoute } from './ProtectedPublicRoutes'
 
 const AppRoutes = () => {
 
     return (
-
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/confirm-register" element={<ConfirmRegister />} />
-            <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
-            <Route path="/add-experience" element={<AddExperience />} />
             <Route path="/filters" element={<Filters />} />
+            <Route path="/experience/:id" element={<ExperienceDetail />} />
 
-            <Route element={<ReservationProviderWrapper />}>
-                <Route path="/experience/:id" element={<ExperienceDetail />} />
-                <Route path="/booking" element={<Book />} />
-                <Route path="/payment-method" element={<PaymentMethod />} />
-                <Route path="/payment-details" element={<PaymentDetails />} />
+            <Route element={<ProtectedPublicRoute />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/confirm-register" element={<ConfirmRegister />} />
+                <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
             </Route>
 
-            {/* <Route element={<PrivateRoute />}>
-                <Route path="/UserProfile" element={<UserProfile />} />
+            {/* <Route element={<PrivateRoute />}> */}
+                <Route path="/user-profile" element={<UserProfile />} />
+                <Route path="/add-experience" element={<AddExperience />} />
 
-            </Route> */}
+                <Route element={<ReservationProviderWrapper />}>
+                    <Route path="/booking" element={<Book />} />
+                    <Route path="/payment-method" element={<PaymentMethod />} />
+                    <Route path="/payment-details" element={<PaymentDetails />} />
+                </Route>
+            {/* </Route> */}
 
             <Route path="*" element={<h1>404</h1>} />
 

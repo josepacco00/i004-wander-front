@@ -15,8 +15,8 @@ const AuthLayout = ({ children, showText = true }: Props) => {
     <div className="flex min-h-screen items-center justify-center font-sans p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-6">
-          <img className="logo" src={imagelogo} alt="Logo de Wander" />
-          <img className="text-logo" src={imageletter} alt="Texto Wander" />
+          <img className="logo w-[140px] md:w-[180px] h-auto mb-4" src={imagelogo} alt="Logo de Wander" />
+          <img className="text-logo w-[100px] md:w-[160px] mb-2" src={imageletter} alt="Texto Wander" />
           {showText && (
             <p className="text-dark text-base font-bold text-center mb-2">
               Explora nuevas aventuras

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import AuthLayout from "../../layout/AuthLayout";
 import { useNavigate } from "react-router-dom"; // Para redirección
 import './ConfirmRegister.css';
+import authServices from "../../services/auth.services";
+import { AxiosError } from "axios";
 
 const ConfirmRegister = () => {
   const navigate = useNavigate();
@@ -10,8 +12,12 @@ const ConfirmRegister = () => {
   const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal de éxito
   const [code, setCode] = useState(""); // Guardar el código ingresado
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // Para manejar el error de validación
+  const [tempEmail, setTempEmail] = useState<string>("")
 
   useEffect(() => {
+    const email = localStorage.getItem("tempEmail")
+    email ? setTempEmail(email) : navigate("/")
+
     if (timeLeft > 0) {
       const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearInterval(timer); // Limpiar intervalo
@@ -27,7 +33,7 @@ const ConfirmRegister = () => {
     console.log("Código reenviado.");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Verificar que el código no esté vacío
@@ -36,12 +42,30 @@ const ConfirmRegister = () => {
       return;
     }
 
+    try {
+      const res = await authServices.confirmAccount({ email: tempEmail, verificationCode: code })
+      console.log(res)
+      localStorage.removeItem("tempEmail")
+      setShowModal(true); // Si el código es válido, mostramos el modal de éxito
+    } catch (error) {
+      if(error instanceof AxiosError) {
+        console.log(error)
+        if(error.response?.data.details) {
+          setErrorMessage(error.response?.data.details.message)
+        } else {
+          setErrorMessage(error.response?.data.message)
+        }
+      } else {
+        console.log(error)
+      }
+
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+
     // Aquí puedes manejar la verificación del código
-    console.log("Código enviado para verificación:", code);
-    
-    // Si el código es válido, mostramos el modal de éxito
-    setShowModal(true);
-    setErrorMessage(null); // Limpiar error si es correcto
+    // console.log("Código enviado para verificación:", code);
+
+    // setErrorMessage(null); // Limpiar error si es correcto
   };
 
   // Función para manejar la entrada del código
@@ -67,10 +91,10 @@ const ConfirmRegister = () => {
   return (
     <AuthLayout showText={false}>
       <div className="text-center">
-        <h2 className="text-3xl font-bold mb-2 text-dark mb-4">Confirma tu cuenta</h2>
+        <h2 className="text-3xl font-bold text-dark mb-4">Confirma tu cuenta</h2>
         <p className="text-sm text-gray-700 mb-6">
           Ingresa el código de verificación enviado<br />
-          al correo <span className="font-semibold text-dark">correo@gmail.com</span>
+          al correo <span className="font-semibold text-dark">{tempEmail}</span>
         </p>
 
         <form
@@ -92,7 +116,7 @@ const ConfirmRegister = () => {
               onChange={handleCodeChange} // Llamar a la función de cambio
               className={`mt-2 w-full px-6 py-3 border-2 rounded-full text-dark text-left ${
                 errorMessage ? "border-red-500" : ""
-              }`} // Mostrar borde rojo si hay error
+                }`} // Mostrar borde rojo si hay error
               maxLength={6} // Limitar a 6 caracteres
               pattern="[0-9]*" // Asegurar que solo se ingresen números
             />
@@ -137,7 +161,7 @@ const ConfirmRegister = () => {
         {/* Notificación de éxito */}
         {showModal && (
           <div className="form__notification form__notification--success">
-            ¡Cuenta confirmada con éxito! 
+            ¡Cuenta confirmada con éxito!
           </div>
         )}
       </div>

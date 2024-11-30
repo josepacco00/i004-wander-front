@@ -4,20 +4,13 @@ import createApiClient from './apiClient'
 class AuthServices {
     private api = createApiClient(`${import.meta.env.VITE_API_URL}/auth`);
 
-    // Método para login con un token
-    login = async (token: string) => {
-        try {
-            // Realiza la solicitud POST con el token
-            const response = await this.api.post('/login', { token }, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            return response; // Devuelve la respuesta
-        } catch (error) {
-            // Maneja cualquier error en la solicitud
-            throw new Error("Error al intentar iniciar sesión: " + error);
-        }
+    // Método de login
+    login = async (credentials: {email: string, password: string}) => {
+        const response = await this.api.post(
+            '/login',
+            { ...credentials });
+
+        return response; // Devuelve la respuesta
     };
 
     // Método de verificación
@@ -30,7 +23,13 @@ class AuthServices {
         return this.api.post(
             "/register",
             JSON.stringify(newUserData),
-            { headers: { "Content-Type": "application/json" } })
+        )
+    }
+
+    async confirmAccount(data: {email: string, verificationCode: string}) {
+        const res =  await this.api.post("/verify-user", data)
+
+        return res
     }
 
     // Método para logout
