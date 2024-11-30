@@ -1,19 +1,44 @@
 import React from 'react';
 
-const LocationInput: React.FC = () => {
-    return (
-        <div className="mb-4">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-                Lugar
-            </label>
-            <input
-                type="text"
-                id="location"
-                placeholder="Ingresa el país o ciudad"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-        </div>
-    );
+interface LocationInputProps {
+  updateQueryParams: (params: Record<string, string | undefined>) => void;
+}
+
+const LocationInput: React.FC<LocationInputProps> = ({ updateQueryParams }) => {
+  return (
+    <>
+      {/* Country Filter */}
+      <div>
+        <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+          País
+        </label>
+        <select
+          id="country"
+          className="w-full p-2 border rounded-lg"
+          onChange={(e) => updateQueryParams({ country: e.target.value || undefined })}
+        >
+          <option value="">Selecciona un país</option>
+          <option value="Spain">España</option>
+          <option value="France">Francia</option>
+          <option value="Italy">Italia</option>
+        </select>
+      </div>
+
+      {/* City Filter */}
+      <div>
+        <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+          Ciudad
+        </label>
+        <input
+          id="city"
+          type="text"
+          placeholder="Ciudad"
+          className="w-full p-2 border rounded-lg"
+          onChange={(e) => updateQueryParams({ city: e.target.value || undefined })}
+        />
+      </div>
+    </>
+  );
 };
 
 export default LocationInput;
