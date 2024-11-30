@@ -1,7 +1,7 @@
 import iconLocation from "../../assets/icons/icon-location.svg";
 import iconCategory from "../../assets/icons/icon-category.svg";
 import iconDate from "../../assets/icons/icon-date.svg";
-import iconPrice from "../../assets/icons/icon-price.svg";
+import iconCapacity from "../../assets/icons/icon-capacity.svg";
 
 import { useState } from "react";
 function InfoExperience({description, capacity} : {description: string, capacity: number}) {
@@ -24,7 +24,7 @@ function InfoExperience({description, capacity} : {description: string, capacity
           </div>
           <div className="flex justify-between gap-3 my-3">
             <InfoCard icon={iconDate} first="Fecha" second="18/11/2024" />
-            <InfoCard icon={iconPrice} first="Cupos" second={capacity.toString()} />
+            <InfoCard icon={iconCapacity} first="Cupos" second={capacity} />
           </div>
         </div>
 
@@ -37,7 +37,7 @@ function InfoExperience({description, capacity} : {description: string, capacity
 
 export default InfoExperience;
 
-const InfoCard = ({ icon, first, second } : { icon: string, first: string, second: string }) => {
+const InfoCard = ({ icon, first, second } : { icon: string, first: string, second: string | number }) => {
   return (
     <div className="flex items-center w-1/2 gap-4 px-3 py-2 border-[1.5px] border-gray-300 rounded-2xl ">
       <img src={icon} alt="iconEmail" className="w-6 h-6" />
@@ -62,12 +62,12 @@ const ExpandableText = ({ text, limit }: { text: string; limit: number }) => {
         {expanded ? text : `${text.substring(0, limit)}...`}
         
       </p>
-      <button
+      <p
           onClick={toggleExpand}
-          className="pt-1 ml-2 underline"
+          className="pt-1 ml-2 text-center underline"
         >
           {expanded ? "Leer menos" : "Leer más"}
-        </button>
+        </p>
     </div>
   );
 };
