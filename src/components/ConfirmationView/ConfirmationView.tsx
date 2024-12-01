@@ -1,26 +1,16 @@
-import { useEffect } from "react";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa"; // Para los iconos
 import AuthLayout from "../../layout/AuthLayout"; // Importamos AuthLayout
 import vacationImage from "../../assets/img/vacationImage.png"; // Asegúrate de tener la imagen en esta ruta
 import { Link } from "react-router-dom";
+import './ConfirmationView.css';
 
 const ConfirmationView = () => {
-  useEffect(() => {
-    // Bloquear el scroll al montar el componente
-    document.body.style.overflow = "hidden";
-
-    // Restaurar el scroll cuando el componente se desmonte
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
 
   return (
-    <AuthLayout showText={false}> {/* showText en false para no mostrar el texto ni el imageletter */}
-      <div className="min-h-screen bg-white flex items-center justify-center font-sans p-4">
-        <div className="w-full max-w-md">
+    <AuthLayout showText={false} logoClassName="logoClassName" showBackButton={false}> {/* Solo aquí se pasa la clase personalizada */}
+       <div className="w-full max-w-md"> {/* Ajustamos la altura para que no haya un exceso de margen blanco */}
           {/* Contenido principal */}
-          <div className="text-center">
+          <div className="text-center mt-[100px] mb-0"> {/* Ajuste en el margin-top para centrar más el contenido, y eliminamos el margen inferior */}
             <h2 className="text-lg font-bold text-gray-800 mb-6 text-left">¡Experiencia confirmada!</h2>
 
             {/* Información de la reserva */}
@@ -56,13 +46,12 @@ const ConfirmationView = () => {
 
             {/* Botón de volver con hover rojo */}
             <Link to="/">
-              <button className="w-full py-3 bg-brandYellow text-white font-bold rounded-full hover:bg-tertiary hover:text-white transition">
+              <button className="w-full py-3 bg-brandYellow text-white font-bold rounded-full hover:bg-tertiary hover:text-white transition mb-0"> {/* Eliminamos margen inferior del botón */}
                 Volver al inicio
               </button>
             </Link>
           </div>
         </div>
-      </div>
     </AuthLayout>
   );
 };

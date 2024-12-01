@@ -1,0 +1,10 @@
+.logoClassName {
+    transform: scale(2.2); /* Escala la imagen al 220% */
+    transition: transform 0.3s ease; /* Suaviza la animación de escala */
+    object-fit: contain; /* Asegura que la imagen no se recorte ni pierda proporción */
+    width: 100%; /* Ajusta el tamaño al 100% del contenedor */
+    max-width: 180px; /* Limita el tamaño máximo de la imagen */
+    height: auto; /* Mantiene la proporción */
+    margin-top: 90px;
+  }
+  
