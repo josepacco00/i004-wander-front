@@ -3,6 +3,7 @@ import "./AddExperience.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from "date-fns"; // Necesario para manejar el rango máximo de meses
+import axios from "axios";
 
 const AddExperience = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -10,7 +11,6 @@ const AddExperience = () => {
     [date: string]: string[];
   }>({}); // Fechas con horarios seleccionados
 
-  // Estados para el rango de fechas
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedHour, setSelectedHour] = useState<string>("");
 
@@ -33,7 +33,7 @@ const AddExperience = () => {
 
   // Manejar la fecha seleccionada
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date); // Actualizamos la fecha seleccionada
+    setSelectedDate(date);
   };
 
   // Agregar disponibilidad para la fecha seleccionada y hora
@@ -51,7 +51,7 @@ const AddExperience = () => {
         }
         return newAvailability;
       });
-      setSelectedHour(""); // Limpiar la hora seleccionada después de agregarla
+      setSelectedHour("");
     }
   };
 
@@ -66,8 +66,70 @@ const AddExperience = () => {
     });
   };
 
+  // Función para construir el formato correcto de disponibilidad
+  const formatAvailabilityDates = () => {
+    const formattedDates: string[] = [];
+    Object.entries(availability).forEach(([date, hours]) => {
+      hours.forEach((hour) => {
+        const [hourPart, minutePart] = hour.split(":");
+        const fullDate = new Date(date);
+        fullDate.setUTCHours(Number(hourPart), Number(minutePart), 0, 0);
+        formattedDates.push(fullDate.toISOString());
+      });
+    });
+    return formattedDates;
+  };
+
+  // Manejar el envío del formulario
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      images, // Imágenes seleccionadas
+      availabilityDates: formatAvailabilityDates(), // Disponibilidad formateada
+    };
+
+    console.log("Payload enviado al backend:", payload);
+
+    // Manejar el envío del formulario
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const payload = {
+        images, // Imágenes seleccionadas (pueden necesitar manejo especial si el backend requiere archivos separados)
+        availabilityDates: formatAvailabilityDates(), // Disponibilidad formateada
+        // Agregar aquí otros campos del formulario, como título, descripción, capacidad, ubicación, etc.
+        title: "Título de ejemplo", // Reemplaza con el valor dinámico
+        description: "Descripción de ejemplo", // Reemplaza con el valor dinámico
+        capacity: 20, // Reemplaza con el valor dinámico
+        location: "Ubicación de ejemplo", // Reemplaza con el valor dinámico
+        pricePerPerson: 50, // Reemplaza con el valor dinámico
+      };
+
+      console.log("Payload enviado al backend:", payload);
+
+      try {
+        const response = await axios.post(
+          "", // Reemplaza con tu endpoint real
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json", // Asegúrate de usar el tipo correcto
+            },
+          }
+        );
+
+        console.log("Respuesta del backend:", response.data);
+        alert("¡Experiencia añadida con éxito!");
+      } catch (error) {
+        console.error("Error al enviar los datos al backend:", error);
+        alert("Hubo un error al añadir la experiencia. Inténtalo nuevamente.");
+      }
+    };
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       {/* Sección de imágenes */}
       <div className="image-section">
         <label className="label-1">Añadir experiencia</label>
