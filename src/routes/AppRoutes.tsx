@@ -15,6 +15,7 @@ import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 import AddExperience from "../components/AddExperience/AddExperience";
 import Home from "../components/Home/homePage";
 import Filters from '../components/Filters/Filters'
+import Reviews from '../components/Reviews/Reviews'
 
 const AppRoutes = () => {
 
@@ -31,6 +32,7 @@ const AppRoutes = () => {
             <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
             <Route path="/add-experience" element={<AddExperience />} />
             <Route path="/filters" element={<Filters />} />
+            <Route path="/reviews" element={<Reviews/>} />
 
             <Route element={<ReservationProviderWrapper />}>
                 <Route path="/experience/:id" element={<ExperienceDetail />} />
