@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
-  showText?: boolean;
+  showText?: boolean; // Esto controla si mostrar el texto o no
 };
 
 const AuthLayout = ({ children, showText = true }: Props) => {
@@ -15,8 +15,13 @@ const AuthLayout = ({ children, showText = true }: Props) => {
     <div className="flex min-h-screen items-center justify-center font-sans p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-6">
-          <img className="logo" src={imagelogo} alt="Logo de Wander" />
-          <img className="text-logo" src={imageletter} alt="Texto Wander" />
+          <img className="logo" src={imagelogo} alt="Logo de Wander" /> {/* Siempre mostramos el imagelogo */}
+
+          {/* Solo mostramos el imageletter si showText es true */}
+          {showText && (
+            <img className="text-logo" src={imageletter} alt="Texto Wander" />
+          )}
+
           {showText && (
             <p className="text-dark text-base font-bold text-center mb-2">
               Explora nuevas aventuras

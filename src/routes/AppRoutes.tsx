@@ -14,7 +14,7 @@ import { ReservationProviderWrapper } from '../contexts/reservation.context'
 import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 import AddExperience from "../components/AddExperience/AddExperience";
 import Home from "../components/Home/homePage";
-
+import ConfirmationView from '../components/ConfirmationView/ConfirmationView'
 const AppRoutes = () => {
 
     return (
@@ -29,6 +29,7 @@ const AppRoutes = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
             <Route path="/add-experience" element={<AddExperience />} />
+            <Route path="/confirmation-view" element={<ConfirmationView />} />
 
             <Route element={<ReservationProviderWrapper />}>
                 <Route path="/experience/:id" element={<ExperienceDetail />} />

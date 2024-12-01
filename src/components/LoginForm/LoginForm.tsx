@@ -29,6 +29,7 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginSchema) => {
     try {
       // Aquí se realiza la petición de login
+      console.log(API_URL);
       const response = await axios.post(
         `${API_URL}/auth/login`, // Ruta para login
         {

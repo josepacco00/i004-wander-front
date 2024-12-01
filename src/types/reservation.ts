@@ -24,15 +24,17 @@ export interface IReservation {
 }
 
 export interface INewReservation {
-	experienceId: string | null,
-	userId: string | null,
-	email: string | null,
-	phone: string | null,
-	participants: string,
-	totalPrice: number,
-	bookingDate: Date
+	experienceId: string | null;
+	userId: string | null;
+	email: string | null;
+	phone: string | null;
+	participants: string;
+	totalPrice: number;
+	bookingDate: Date;
+	paymentMethod?: "mastercard" | "visa";  // Agregada la propiedad 'paymentMethod' como opcional
+	image?: string; // Esto permite que la propiedad image sea opcional
 	// bookingDate: {
 	// 	date: Date[],
 	// 	hour: string
-	// } | null
+	// } | null  
 }
