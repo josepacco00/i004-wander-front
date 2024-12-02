@@ -32,7 +32,6 @@ export interface INewReservation {
 	totalPrice: number;
 	bookingDate: Date;
 	paymentMethod?: "mastercard" | "visa";  // Agregada la propiedad 'paymentMethod' como opcional
-	image?: string; // Esto permite que la propiedad image sea opcional
 	// bookingDate: {
 	// 	date: Date[],
 	// 	hour: string
