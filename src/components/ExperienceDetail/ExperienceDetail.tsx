@@ -21,7 +21,11 @@ function ExperienceDetail() {
     {} as IExperience
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
+
+    setIsLoading(true);
 
     // Obtener el ID de los params
     const experienceId = window.location.pathname.split("/")[2];
@@ -34,7 +38,12 @@ function ExperienceDetail() {
       })
       .catch((error) => {
         console.error("Error: ", error);
-      });
+      }).finally(
+        () => {
+          setIsLoading(false);
+        }
+      )
+      ;
   }, []);
 
   // Redirige a booking y manda informacion al contexto
@@ -42,6 +51,14 @@ function ExperienceDetail() {
     setExperience(experience);
     navigate("/booking");
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen gap-2">
+        <div className="w-6 h-6 border-b-2 border-current rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-28">
@@ -53,12 +70,13 @@ function ExperienceDetail() {
 
       {/* Informacion detallada de la experiencia */}
       <InfoExperience
+        location={experience?.location}
         description={experience?.description}
         capacity={experience?.capacity}
       />
 
       {/* Mapa de la experiencia */}
-      <MapSection />
+      <MapSection coords={experience?.location} />
 
       {/* Seccion de reseñas de la experiencia */}
       <ReviewSection />

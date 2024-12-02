@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AuthLayout from "../../layout/AuthLayout";
-import { Link, useNavigate } from "react-router-dom"; // Importamos useNavigate para redirigir
+import { useNavigate } from "react-router-dom"; // Importamos useNavigate para redirigir
 
 const ForgotPasswordVerifyCode: React.FC = () => {
     const [timer, setTimer] = useState(60); // Temporizador para reenvío de código
@@ -64,17 +64,19 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         }
     };
 
+    console.log(verificationSuccess);
+
     return (
         <AuthLayout showText={false}>
             <div className="text-center">
-                <p className="text-sm text-gray-700 mb-4">
+                <p className="mb-4 text-sm text-gray-700">
                     Ingresa el código de verificación enviado<br />
                     al correo <span className="font-semibold text-dark">correo@gmail.com</span>
                 </p>
 
                 <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-6">
                     <div className="w-full">
-                        <label htmlFor="code" className="block text-sm font-medium text-dark text-left">
+                        <label htmlFor="code" className="block text-sm font-medium text-left text-dark">
                             Código
                         </label>
                         <input
@@ -85,13 +87,13 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             onChange={handleCodeChange} // Controla la entrada para asegurarse de que solo se ingresen números y con longitud máxima de 6
                             maxLength={6} // Limita el input a 6 caracteres
                             inputMode="numeric" // Sugerir teclado numérico en dispositivos móviles
-                            className="mt-2 w-full px-6 py-3 border-2 rounded-full text-dark text-left"
+                            className="w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark"
                         />
                     </div>
 
                     {/* Mostrar el mensaje de error debajo del input */}
                     {errorMessage && (
-                        <p className="text-red-500 text-sm mt-2 text-left ml-2">
+                        <p className="mt-2 ml-2 text-sm text-left text-red-500">
                             {errorMessage}
                         </p>
                     )}

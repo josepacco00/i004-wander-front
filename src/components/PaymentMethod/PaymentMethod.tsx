@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import mastercardLogo from '../../assets/img/mastercard.png';
 import visaLogo from '../../assets/img/visa.png';
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/auth.context'; // Importamos el contexto de autenticación
+import image from "../../assets/img/vacationImage.png"; // Imagen de la experiencia (reemplaza esta con la correcta)
 
-// Especificar el tipo como React.FC (FunctionComponent)
 const PaymentMethod: React.FC = () => {
     const [selectedMethod, setSelectedMethod] = useState<'mastercard' | 'visa' | null>(null);
     const [error, setError] = useState<string>(''); // Estado para el error
     const navigate = useNavigate(); // Hook de React Router para navegación
+
+    // Acceder al contexto para obtener los datos del usuario
+    const { user } = useContext(AuthContext); // Extraemos el usuario del contexto
 
     // Bloquear el scroll al montar el componente
     useEffect(() => {
@@ -50,19 +54,34 @@ const PaymentMethod: React.FC = () => {
                     <h1 className="text-xl font-bold ml-4">Confirmar y pagar</h1>
                 </div>
 
+                {/* Información del usuario */}
+                {user && (
+                    <div className="flex items-center gap-4 mb-6">
+                        <img 
+                            src={user.avatar} 
+                            alt="Avatar" 
+                            className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div>
+                            <p className="font-semibold text-black">{user.name}</p>
+                            <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Información de la orden */}
                 <div className="flex items-start gap-4 mb-6">
                     <div className="relative">
                         <img
-                            src="https://via.placeholder.com/150" // Cambiar por una imagen real de las vacaciones
+                            src={image} // Cambiar por una imagen real de las vacaciones
                             alt="Vacaciones"
-                            className="w-20 h-20 rounded-lg object-cover"
-                        />
+                            className="w-16 h-16 rounded-lg object-cover" // Tamaño reducido
+                            />
                     </div>
                     <div>
                         <h2 className="font-bold">Cocktail en la playa</h2>
                         <p className="text-sm text-gray-500">Fecha de reserva: 26 de noviembre de 2024</p>
-                        </div>
+                    </div>
                 </div>
 
                 <div className="border-b border-gray-200 mb-6"></div>

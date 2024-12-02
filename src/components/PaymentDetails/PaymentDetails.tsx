@@ -102,8 +102,10 @@ const PaymentDetails: React.FC = () => {
     const handlePaymentClick = () => {
         if (!cardError && !expiryError && !cvvError) {
             console.log("Pago realizado con éxito");
+            navigate("/confirmation-view"); // Redirige a la página de confirmación
         }
     };
+    
 
     const isFormValid =
         !cardError &&

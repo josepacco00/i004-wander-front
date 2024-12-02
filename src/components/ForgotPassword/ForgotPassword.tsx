@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AuthLayout from "../../layout/AuthLayout";
-import { Link, useNavigate } from "react-router-dom"; // Importamos useNavigate para redirigir
+import { useNavigate } from "react-router-dom"; // Importamos useNavigate para redirigir
 
 const ForgotPassword: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -41,11 +41,11 @@ const ForgotPassword: React.FC = () => {
     return (
         <AuthLayout showText={false}>
             <div className="text-center">
-                <h2 className="text-3xl font-bold text-dark mb-4">
+                <h2 className="mb-4 text-3xl font-bold text-dark">
                     <span>Recupera</span> <br />
                     <span>tu Contraseña</span>
                 </h2>
-                <p className="text-sm text-gray-700 mb-4">
+                <p className="mb-4 text-sm text-gray-700">
                     Ingresa tu correo electrónico para recibir el código de recuperación de la contraseña.
                 </p>
 
@@ -57,7 +57,7 @@ const ForgotPassword: React.FC = () => {
                     <div className="w-full">
                         <label
                             htmlFor="email"
-                            className="block text-sm font-medium text-dark text-left"
+                            className="block text-sm font-medium text-left text-dark"
                         >
                             Correo electrónico
                         </label>
@@ -67,13 +67,13 @@ const ForgotPassword: React.FC = () => {
                             value={email}
                             onChange={handleEmailChange}
                             placeholder="correo@ejemplo.com"
-                            className="mt-2 w-full px-6 py-3 border-2 rounded-full text-dark text-left"
+                            className="w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark"
                         />
                     </div>
 
                     {/* Mostrar el mensaje de error debajo del input */}
                     {errorMessage && (
-                        <p className="text-red-500 text-sm mt-2 text-left ml-2">
+                        <p className="mt-2 ml-2 text-sm text-left text-red-500">
                             {errorMessage}
                         </p>
                     )}

@@ -9,7 +9,7 @@ import "./LoginForm.css";
 import authServices from "../../services/auth.services.ts";
 
 // Constantes de URL de la API
-// const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Login: React.FC = () => {
   const {
@@ -29,28 +29,20 @@ const Login: React.FC = () => {
 
   const onSubmit = async (credentials: LoginSchema) => {
     try {
-      // Aquí se realiza la petición de login
-      // const response = await axios.post(
-      //   `${API_URL}/auth/login`, // Ruta para login
-      //   {
-      //     email: data.email,
-      //     password: data.password,
-      //   },
-      //   { headers: { "Content-Type": "application/json" } }
-      // );
+      console.log(API_URL);
+      // Usar el servicio para la petición de login
+      const response = await authServices.login(credentials);
 
-      const response = await authServices.login(credentials)
-
-      // Si la respuesta es exitosa, se resetea el formulario y muestra notificación
+      // Si la respuesta es exitosa
       if (response.status === 200) {
         reset(); // Limpiar el formulario
         setSuccessNotification("Inicio de sesión exitoso");
 
-        // Guardar el token en localStorage o en un estado global (ejemplo)
+        // Guardar el token en localStorage
         localStorage.setItem("authToken", response.data.token);
 
-        // Redirigir al usuario después del login
-        setTimeout(() => navigate("/"), 2000); // Redirige a la página principal
+        // Redirigir después de un tiempo
+        setTimeout(() => navigate("/"), 2000);
       }
     } catch (error) {
       // Manejo de errores
@@ -99,7 +91,7 @@ const Login: React.FC = () => {
         </div>
         <div className="text-right">
           <a
-            href="/reset-password"
+            href="/forgot-password"
             className="text-sm text-gray-500 hover:text-gray-700"
           >
             ¿Olvidaste tu contraseña?
@@ -108,13 +100,13 @@ const Login: React.FC = () => {
         <button
           disabled={isSubmitting || !isValid}
           type="submit"
-          className="mt-4 px-4 py-3 font-semibold bg-primary hover:bg-tertiary text-white rounded-full shadow-lg disabled:bg-slate-400 text-center disabled:cursor-not-allowed"
+          className="px-4 py-3 mt-4 font-semibold text-center text-white rounded-full shadow-lg bg-primary hover:bg-tertiary disabled:bg-slate-400 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Iniciando sesión..." : "Inicia sesión"}
         </button>
         <p className="text-xs text-center">
           ¿Aún no tienes cuenta?
-          <a href="/register" className="text-primary hover:text-tertiary font-bold">
+          <a href="/register" className="font-bold text-primary hover:text-tertiary">
             {" "}
             Regístrate
           </a>

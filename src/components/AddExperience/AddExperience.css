@@ -110,14 +110,19 @@
   @apply text-black text-sm mb-2 font-bold;
 }
 /* Description */
+/* Estilo para el campo de texto */
 .titulo-input {
-  @apply w-full p-1 border border-gray-200 rounded-lg resize-none;
-  font-size: 12px;
-  font-weight: normal; /* Texto delgado */
+  @apply block w-full p-3 border border-gray-300 rounded-lg;
+  font-size: 14px;
+  box-sizing: border-box; /* Asegura que el padding y el borde no se sumen al tamaño del textarea */
+  resize: none; /* Deshabilita el redimensionamiento manual */
+  min-height: 15px; /* Altura mínima para que sea legible */
+  overflow-y: hidden; /* Elimina las barras de desplazamiento vertical */
 }
-.content {
-  @apply bg-white  rounded-lg p-0; /* Cuadro con fondo blanco, borde y padding */
 
+/* Estilo para el contenedor de contenido */
+.content {
+  @apply bg-white rounded-lg p-2; /* Cuadro con fondo blanco, borde y padding */
   position: relative; /* Para que el cuadro se quede fijo */
   overflow: hidden; /* Para que no se desborde el contenido si es demasiado largo */
 }
@@ -128,6 +133,54 @@
   min-height: 50px; /* Altura inicial mínima */
   transition: height 0.2s ease; /* Suaviza el cambio de altura */
 }
+
+/*Tags */
+/* Contenedor de las etiquetas */
+.tags-select{
+  @apply w-1/2  bg-orange-100 border rounded-md px-4 py-2 text-xs ;
+}
+
+.tags-list {
+  @apply flex flex-wrap  gap-0; /* Espacio entre las etiquetas */
+  margin-top: 20px; /* Ajuste del margen superior */
+}
+
+/* Estilo de las etiquetas */
+.tag{
+  @apply bg-primary text-white px-4 py-2 rounded-full text-sm mr-3 mb-3; /* Color de fondo naranja y píldora */
+}
+
+/* Estilo de la "X" */
+.remove-tag{
+  @apply ml-3 text-white cursor-pointer hover:text-gray-300;
+  font-size: 14px;
+  padding: 2;
+  margin-left: 0.25rem; /* Espacio entre la etiqueta y la "X" */
+}
+
+/* Responsive para las tags */
+@media (max-width: 640px) {
+  .tag-item {
+    font-size: 12px; /* Tamaño más pequeño en pantallas pequeñas */
+    padding: 0.5rem;
+  }
+}
+
+/* Estilos de la "X" en las etiquetas */
+.remove-tag-button svg {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* Estilo de la "X" */
+.remove-tag-button:hover {
+  color: #eaeaea;
+}
+
+
+
 
 /* ================================================================= */
 /*  Responsive Design */
