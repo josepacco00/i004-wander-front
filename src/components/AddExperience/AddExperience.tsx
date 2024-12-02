@@ -3,7 +3,7 @@ import "./AddExperience.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from "date-fns";
-import axios from "axios";
+import { experienceServices } from "../../services/addExperience.services";
 import SelectCords from "./Map/SelectionCoords";
 
 type Coords = [number | undefined, number | undefined];
@@ -133,9 +133,9 @@ const AddExperience = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const location = [infoCoords.country, infoCoords.city, coords[0]?.toFixed(4), coords[1]?.toFixed(4) ];
-      
+  
+    const location = [infoCoords.country, infoCoords.city, coords[0]?.toFixed(4), coords[1]?.toFixed(4)];
+  
     const payload = {
       title,
       description,
@@ -145,20 +145,11 @@ const AddExperience = () => {
       tags,
       capacity,
     };
-
+  
     console.log("Payload enviado al backend:", payload);
-
+  
     try {
-      const response = await axios.post(
-        "/api/experience/create", // Reemplaza con tu endpoint real
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const response = await experienceServices.addExperience(payload);
       console.log("Respuesta del backend:", response.data);
       alert("¡Experiencia añadida con éxito!");
     } catch (error) {
