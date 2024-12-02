@@ -163,7 +163,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.phone.number.message}</span>}
                 </div>
                 <div className="relative">
-                    <label htmlFor="role">Quiero registrarme cómo...</label>
+                    <label htmlFor="role">Quiero registrarme como...</label>
                     <select
                         {...register("role")}
                         id="role"

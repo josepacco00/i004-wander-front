@@ -28,7 +28,7 @@ export const signUpSchema = z
             .regex(/^\+[1-9]\d{0,2}$/, "Introduzca un prefijo correcto"),
         number: z
             .string({ message: "El número de teléfono es obligatorio" })
-            .regex(/^\d{6,10}$/, "El número de teléfono debe tener en 6 y 10 dígitos"),
+            .regex(/^\d{6,10}$/, "El número de teléfono debe tener entre 6 y 10 dígitos"),
     }),
     role: z
         .enum(["tourist", "provider"], {
