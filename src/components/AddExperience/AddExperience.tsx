@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import "./AddExperience.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from "date-fns";
-import axios from "axios";
+import { experienceServices } from "../../services/addExperience.services";
+import SelectCords from "./Map/SelectionCoords";
+
+type Coords = [number | undefined, number | undefined];
+type infoCoords = any;
 
 const AddExperience = () => {
+  
   const [images, setImages] = useState<File[]>([]);
   const [availability, setAvailability] = useState<{
     [date: string]: string[];
   }>({});
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [location, setLocation] = useState<string[]>([]); // Array vacío
-  const [price, setPrice] = useState<number>(65);
-  const [capacity, setCapacity] = useState<number>(1);
+  const [price, setPrice] = useState<number>();
+  const [capacity, setCapacity] = useState<number>();
   const [tags, setTags] = useState<string[]>([]); // Array vacío para los tags
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedHour, setSelectedHour] = useState<string>("");
@@ -28,7 +32,6 @@ const AddExperience = () => {
     "Nautico",
     "Ciudad",
     "Eventos",
-    "Última Llamada",
   ];
 
   // Manejar la carga de imágenes
@@ -56,7 +59,7 @@ const AddExperience = () => {
   };
 
   // Manejar la fecha seleccionada
-  const handleDateChange = (date: Date) => {
+  const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
 
@@ -104,25 +107,25 @@ const AddExperience = () => {
   };
 
   // Agregar un valor al array de `location`
-  const addLocation = (value: string) => {
-    setLocation((prev) => [...prev, value]);
-  };
+  // const addLocation = (value: string) => {
+  //   setLocation((prev) => [...prev, value]);
+  // };
 
-  // Eliminar un valor del array de `location`
-  const removeLocation = (index: number) => {
-    setLocation((prev) => prev.filter((_, i) => i !== index));
-  };
+  // // Eliminar un valor del array de `location`
+  // const removeLocation = (index: number) => {
+  //   setLocation((prev) => prev.filter((_, i) => i !== index));
+  // };
 
-  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const input = e.currentTarget.value.trim();
-      if (input && !tags.includes(input)) {
-        setTags([...tags, input]);
-        e.currentTarget.value = ""; // Limpia el campo después de agregar el tag
-      }
-    }
-  };
+  // const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     const input = e.currentTarget.value.trim();
+  //     if (input && !tags.includes(input)) {
+  //       setTags([...tags, input]);
+  //       e.currentTarget.value = ""; // Limpia el campo después de agregar el tag
+  //     }
+  //   }
+  // };
 
   const handleRemoveTag = (index: number) => {
     setTags(tags.filter((_, i) => i !== index));
@@ -130,7 +133,9 @@ const AddExperience = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    const location = [infoCoords.country, infoCoords.city, coords[0]?.toFixed(4), coords[1]?.toFixed(4)];
+  
     const payload = {
       title,
       description,
@@ -140,20 +145,11 @@ const AddExperience = () => {
       tags,
       capacity,
     };
-
+  
     console.log("Payload enviado al backend:", payload);
-
+  
     try {
-      const response = await axios.post(
-        "/api/experience/create", // Reemplaza con tu endpoint real
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const response = await experienceServices.addExperience(payload);
       console.log("Respuesta del backend:", response.data);
       alert("¡Experiencia añadida con éxito!");
     } catch (error) {
@@ -162,8 +158,41 @@ const AddExperience = () => {
     }
   };
 
+  const [coords, setCoords] = useState<Coords>([undefined, undefined]);
+  const [infoCoords, setInfoCoords] = useState<infoCoords>({});
+
+  // Función para realizar la geocodificación inversa
+  const reverseGeocode = async (lat: number, lon: number) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&accept-language=es`
+      );
+      if (!response.ok) throw new Error("Error fetching location data");
+
+      const { address } = await response.json();
+      return address; // Contiene información como la ciudad, país, etc.
+    } catch (error) {
+      console.error("Error in reverse geocoding:", error);
+      return null;
+    }
+  };
+
+  // Llamar a reverseGeocode cuando las coordenadas cambien
+  useEffect(() => {
+    const fetchLocationData = async () => {
+      if (coords[0] !== undefined && coords[1] !== undefined) {
+        const data = await reverseGeocode(coords[0], coords[1]);
+        
+        setInfoCoords(data);
+        
+      }
+    };
+
+    fetchLocationData();
+  }, [coords]); // Ejecutar cuando coords cambie
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="mb-5">
       {/* Sección de imágenes */}
       <div className="image-section">
         <label className="label-1">Añadir experiencia</label>
@@ -246,6 +275,32 @@ const AddExperience = () => {
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
+      <div className="px-3 form-grou">
+        <label className="label">Categorias</label>
+        <select value="" onChange={handleTagSelect} className="tags-select">
+          <option value="">Selecciona una Categoria</option>
+          {availableTags.map((tag, index) => (
+            <option key={index} value={tag}>
+              {tag}
+            </option>
+          ))}
+        </select>
+        <div className="tags-list">
+          {tags.map((tag, index) => (
+            <span key={index} className="tag">
+              {tag}
+              <button
+                type="button"
+                onClick={() => handleRemoveTag(index)}
+                className="remove-tag"
+              >
+                X
+              </button>
+            </span>
+          ))}
+        </div>
+      </div>
+
 
       {/* Disponibilidad */}
       <div className="form-group">
@@ -283,10 +338,10 @@ const AddExperience = () => {
       </div>
 
       {/* Mostrar disponibilidad seleccionada */}
-      <div className="availability-summary">
-        <ul>
+      <div className="px-3 pb-4 availability-summary">
+        <ul className="">
           {Object.entries(availability).map(([date, hours]) => (
-            <li key={date}>
+            <li key={date} className="flex gap-4">
               <strong>{date}:</strong>
               <ul>
                 {hours.map((hour, index) => (
@@ -320,20 +375,17 @@ const AddExperience = () => {
       </div>
 
       {/* Otros campos */}
-      <div className="form-group">
+      <div className="px-3 form-group">
         <label className="label">Capacidad</label>
-        <input type="number" className="input" placeholder="Ejemplo: 2" />
+        <input onChange={(e) => setCapacity(Number(e.target.value))} type="number" className="input" placeholder="Ejemplo: 2" />
       </div>
-      <div className="form-group">
-        <label className="label">Ubicación</label>
-        <input
-          type="text"
-          className="input"
-          placeholder="Ejemplo: 20 personas"
-        />
+      
+      <div className="mb-4">
+        <h1 className="label">Ubicación</h1>
+      <SelectCords coords={coords} setCoords={setCoords} infoCoords={infoCoords} />
       </div>
 
-      <div className="form-group">
+      <div className="px-3 form-group">
         <label className="label">Precio por persona</label>
         <div className="price-input">
           <span className="currency">$</span>
@@ -341,36 +393,12 @@ const AddExperience = () => {
             type="number"
             className="input price-field"
             placeholder="Ejemplo: 20"
+            onChange={(e) => setPrice(Number(e.target.value))}
           />
         </div>
       </div>
       {/* Etiquetas (Lista desplegable) */}
-      <div className="form-group">
-        <label className="label">Categorias</label>
-        <select value="" onChange={handleTagSelect} className="tags-select">
-          <option value="">Selecciona una Categoria</option>
-          {availableTags.map((tag, index) => (
-            <option key={index} value={tag}>
-              {tag}
-            </option>
-          ))}
-        </select>
-        <div className="tags-list">
-          {tags.map((tag, index) => (
-            <span key={index} className="tag">
-              {tag}
-              <button
-                type="button"
-                onClick={() => handleRemoveTag(index)}
-                className="remove-tag"
-              >
-                X
-              </button>
-            </span>
-          ))}
-        </div>
-      </div>
-
+     
       <div className="button-container">
         <button type="submit" className="submit-button">
           Añadir experiencia

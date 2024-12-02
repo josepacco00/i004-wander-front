@@ -91,7 +91,7 @@ const Login: React.FC = () => {
         </div>
         <div className="text-right">
           <a
-            href="/reset-password"
+            href="/forgot-password"
             className="text-sm text-gray-500 hover:text-gray-700"
           >
             ¿Olvidaste tu contraseña?
@@ -100,13 +100,13 @@ const Login: React.FC = () => {
         <button
           disabled={isSubmitting || !isValid}
           type="submit"
-          className="mt-4 px-4 py-3 font-semibold bg-primary hover:bg-tertiary text-white rounded-full shadow-lg disabled:bg-slate-400 text-center disabled:cursor-not-allowed"
+          className="px-4 py-3 mt-4 font-semibold text-center text-white rounded-full shadow-lg bg-primary hover:bg-tertiary disabled:bg-slate-400 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Iniciando sesión..." : "Inicia sesión"}
         </button>
         <p className="text-xs text-center">
           ¿Aún no tienes cuenta?
-          <a href="/register" className="text-primary hover:text-tertiary font-bold">
+          <a href="/register" className="font-bold text-primary hover:text-tertiary">
             {" "}
             Regístrate
           </a>
