@@ -4,7 +4,16 @@ import iconDate from "../../assets/icons/icon-date.svg";
 import iconCapacity from "../../assets/icons/icon-capacity.svg";
 
 import { useState } from "react";
-function InfoExperience({description, capacity} : {description: string, capacity: number}) {
+function InfoExperience({description, capacity, location} : {description: string, capacity: number, location: string}) {
+
+  if (typeof location !== "string") {
+    return ;
+  }
+
+  const getLocation = location.split(",");
+  const country = getLocation[0];
+  const city = getLocation[1];
+
   return (
     <section className="p-5">
       <div className="">
@@ -20,7 +29,7 @@ function InfoExperience({description, capacity} : {description: string, capacity
         <div>
           <div className="flex justify-between gap-3">
             <InfoCard icon={iconCategory} first="Categoria" second="Naturaleza" />          
-            <InfoCard icon={iconLocation} first="Espana" second="Madrid" />
+            <InfoCard icon={iconLocation} first={country} second={city} />
           </div>
           <div className="flex justify-between gap-3 my-3">
             <InfoCard icon={iconDate} first="Fecha" second="18/11/2024" />
