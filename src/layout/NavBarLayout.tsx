@@ -59,7 +59,7 @@ function NavBarLayout() {
             <Link to="/" className="text-xl font-bold" onClick={handleModal}>
               Inicio
             </Link>
-            <Link to="#" className="text-xl font-bold" onClick={handleModal}>
+            <Link to="/filters" className="text-xl font-bold" onClick={handleModal}>
               Buscar Experiencias
             </Link>
             <Link
@@ -88,14 +88,14 @@ function NavBarLayout() {
                 </Link>
               </>
             ) : (
-              <button
+              <p
                 className="text-xl font-bold text-left"
                 onClick={() => {
                   handleModal();
                 }}
               >
                 Cerrar sesión
-              </button>
+              </p>
             )}
           </nav>
         </div>
