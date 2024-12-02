@@ -1,19 +1,10 @@
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-function MapSection({ coords }: { coords: string }) {
+function MapSection({coords} : {coords : string[]}) {
 
-  if (typeof coords !== "string") {
-    console.error("El valor de 'coords' no es un string:", coords);
-    return <p>Error: Coordenadas inválidas.</p>;
-  }
-
-  
-  const getCoords = coords.split(",");
-  console.log(getCoords);
-  const lat = Number(getCoords[2]);
-  const lon = Number(getCoords[3]);
-  
+  const latitude = coords?.[2] ?? "0.0";
+  const longitude = coords?.[3] ?? "0.0";
 
   return (
     <>
@@ -21,7 +12,7 @@ function MapSection({ coords }: { coords: string }) {
         <h1 className="text-xl font-bold ">Localizacion</h1>
         <p className="py-1 mb-4 text-sm text-gray-400">Ver en el mapa</p>
         <MapContainer
-          center={[lat, lon]}
+          center={[Number(latitude), Number(longitude)]}
           zoom={14}
           minZoom={13}
           maxZoom={17}
@@ -33,7 +24,7 @@ function MapSection({ coords }: { coords: string }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={[lat, lon]}>
+          <Marker position={[Number(latitude), Number(longitude)]}>
           </Marker>
         </MapContainer>
         <div className="w-full h-[1px] bg-gray-300 my-5"></div>
