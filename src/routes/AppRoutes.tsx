@@ -15,7 +15,8 @@ import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
 import AddExperience from "../components/AddExperience/AddExperience";
 import Home from "../components/Home/homePage";
 import Filters from '../components/Filters/Filters'
-import { ProtectedPublicRoute } from './ProtectedPublicRoutes'
+import ConfirmationView from '../components/ConfirmationView/ConfirmationView'
+// import { ProtectedPublicRoute } from './ProtectedPublicRoutes'
 
 const AppRoutes = () => {
 
@@ -25,14 +26,14 @@ const AppRoutes = () => {
             <Route path="/filters" element={<Filters />} />
             <Route path="/experience/:id" element={<ExperienceDetail />} />
 
-            <Route element={<ProtectedPublicRoute />}>
+            {/* <Route element={<ProtectedPublicRoute />}> */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/confirm-register" element={<ConfirmRegister />} />
                 <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
-            </Route>
+            {/* </Route> */}
 
             {/* <Route element={<PrivateRoute />}> */}
                 <Route path="/user-profile" element={<UserProfile />} />
@@ -42,6 +43,7 @@ const AppRoutes = () => {
                     <Route path="/booking" element={<Book />} />
                     <Route path="/payment-method" element={<PaymentMethod />} />
                     <Route path="/payment-details" element={<PaymentDetails />} />
+                    <Route path="/confirmation-view" element={<ConfirmationView />} />
                 </Route>
             {/* </Route> */}
 
