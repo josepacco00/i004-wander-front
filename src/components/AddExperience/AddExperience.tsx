@@ -2,17 +2,34 @@ import React, { useState } from "react";
 import "./AddExperience.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addMonths } from "date-fns"; // Necesario para manejar el rango máximo de meses
+import { addMonths } from "date-fns";
+import axios from "axios";
 
 const AddExperience = () => {
   const [images, setImages] = useState<File[]>([]);
   const [availability, setAvailability] = useState<{
     [date: string]: string[];
-  }>({}); // Fechas con horarios seleccionados
-
-  // Estados para el rango de fechas
+  }>({});
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [location, setLocation] = useState<string[]>([]); // Array vacío
+  const [price, setPrice] = useState<number>(65);
+  const [capacity, setCapacity] = useState<number>(1);
+  const [tags, setTags] = useState<string[]>([]); // Array vacío para los tags
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedHour, setSelectedHour] = useState<string>("");
+
+  // Lista de tags disponibles para seleccionar
+  const availableTags = [
+    "Rural",
+    "Naturaleza",
+    "Comida",
+    "Tours",
+    "Nautico",
+    "Ciudad",
+    "Eventos",
+    "Última Llamada",
+  ];
 
   // Manejar la carga de imágenes
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,27 +48,33 @@ const AddExperience = () => {
     setSelectedHour(e.target.value);
   };
 
+  const handleTagSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTag = event.target.value;
+    if (selectedTag && !tags.includes(selectedTag)) {
+      setTags((prevTags) => [...prevTags, selectedTag]);
+    }
+  };
+
   // Manejar la fecha seleccionada
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date); // Actualizamos la fecha seleccionada
+    setSelectedDate(date);
   };
 
   // Agregar disponibilidad para la fecha seleccionada y hora
   const addAvailabilityForDate = () => {
     if (selectedDate && selectedHour) {
-      const dateKey = selectedDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+      const dateKey = selectedDate.toISOString().split("T")[0];
       setAvailability((prev) => {
         const newAvailability = { ...prev };
         if (!newAvailability[dateKey]) {
           newAvailability[dateKey] = [];
         }
-        // Verificar si la hora ya está ocupada
         if (!newAvailability[dateKey].includes(selectedHour)) {
           newAvailability[dateKey].push(selectedHour);
         }
         return newAvailability;
       });
-      setSelectedHour(""); // Limpiar la hora seleccionada después de agregarla
+      setSelectedHour("");
     }
   };
 
@@ -66,8 +89,81 @@ const AddExperience = () => {
     });
   };
 
+  // Formatear disponibilidad
+  const formatAvailabilityDates = () => {
+    const formattedDates: string[] = [];
+    Object.entries(availability).forEach(([date, hours]) => {
+      hours.forEach((hour) => {
+        const [hourPart, minutePart] = hour.split(":");
+        const fullDate = new Date(date);
+        fullDate.setUTCHours(Number(hourPart), Number(minutePart), 0, 0);
+        formattedDates.push(fullDate.toISOString());
+      });
+    });
+    return formattedDates;
+  };
+
+  // Agregar un valor al array de `location`
+  const addLocation = (value: string) => {
+    setLocation((prev) => [...prev, value]);
+  };
+
+  // Eliminar un valor del array de `location`
+  const removeLocation = (index: number) => {
+    setLocation((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const input = e.currentTarget.value.trim();
+      if (input && !tags.includes(input)) {
+        setTags([...tags, input]);
+        e.currentTarget.value = ""; // Limpia el campo después de agregar el tag
+      }
+    }
+  };
+
+  const handleRemoveTag = (index: number) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      title,
+      description,
+      location,
+      price,
+      availabilityDates: formatAvailabilityDates(),
+      tags,
+      capacity,
+    };
+
+    console.log("Payload enviado al backend:", payload);
+
+    try {
+      const response = await axios.post(
+        "/api/experience/create", // Reemplaza con tu endpoint real
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Respuesta del backend:", response.data);
+      alert("¡Experiencia añadida con éxito!");
+    } catch (error) {
+      console.error("Error al enviar los datos al backend:", error);
+      alert("Hubo un error al añadir la experiencia. Inténtalo nuevamente.");
+    }
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       {/* Sección de imágenes */}
       <div className="image-section">
         <label className="label-1">Añadir experiencia</label>
@@ -116,7 +212,7 @@ const AddExperience = () => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-6"
+                  className="size-3"
                 >
                   <path
                     strokeLinecap="round"
@@ -135,10 +231,8 @@ const AddExperience = () => {
         <textarea
           className="titulo-input"
           placeholder="Escribe el Titulo de la Experiencia"
-          onInput={(e) => {
-            e.target.style.height = "auto"; // Restablece la altura
-            e.target.style.height = `${e.target.scrollHeight}px`; // Ajusta según el contenido
-          }}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
@@ -148,6 +242,8 @@ const AddExperience = () => {
         <textarea
           className="description-input"
           placeholder="Escribe una descripcion de la experiencia"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </div>
 
@@ -236,6 +332,7 @@ const AddExperience = () => {
           placeholder="Ejemplo: 20 personas"
         />
       </div>
+
       <div className="form-group">
         <label className="label">Precio por persona</label>
         <div className="price-input">
@@ -245,6 +342,32 @@ const AddExperience = () => {
             className="input price-field"
             placeholder="Ejemplo: 20"
           />
+        </div>
+      </div>
+      {/* Etiquetas (Lista desplegable) */}
+      <div className="form-group">
+        <label className="label">Categorias</label>
+        <select value="" onChange={handleTagSelect} className="tags-select">
+          <option value="">Selecciona una Categoria</option>
+          {availableTags.map((tag, index) => (
+            <option key={index} value={tag}>
+              {tag}
+            </option>
+          ))}
+        </select>
+        <div className="tags-list">
+          {tags.map((tag, index) => (
+            <span key={index} className="tag">
+              {tag}
+              <button
+                type="button"
+                onClick={() => handleRemoveTag(index)}
+                className="remove-tag"
+              >
+                X
+              </button>
+            </span>
+          ))}
         </div>
       </div>
 

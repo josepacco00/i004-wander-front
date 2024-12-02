@@ -1,29 +1,35 @@
-
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ImageCardExperience from "./ImageCardExperience";
 import InfoExperience from "./InfoExperience";
 import MapSection from "./MapSection";
 import ReviewSection from "./ReviewSection";
 
-
-
-import { DetailExperience } from "../../types/detailexperience";
 import { getExperienceById } from "../../services/experience.services";
 
-function ExperienceDetail() {
+import { useContext } from "react";
+import { ReservationContext } from "../../contexts/reservation.context";
+import { IExperience } from "../../types/experience";
 
-  const [experience, setExperience] = useState<DetailExperience>({} as DetailExperience);
+function ExperienceDetail() {
+  const navigate = useNavigate();
+
+  const { setExperience } = useContext(ReservationContext);
+
+  const [experience, setDataExperience] = useState<IExperience>(
+    {} as IExperience
+  );
 
   useEffect(() => {
-    
+
     // Obtener el ID de los params
     const experienceId = window.location.pathname.split("/")[2];
-    
+
     // Obtener la informacion de la experiencia por ID
     getExperienceById(experienceId)
       .then((data) => {
-        setExperience(data); 
+        setDataExperience(data);
         console.log("Experience: ", data);
       })
       .catch((error) => {
@@ -31,26 +37,40 @@ function ExperienceDetail() {
       });
   }, []);
 
+  // Redirige a booking y manda informacion al contexto
+  const handleBooking = () => {
+    setExperience(experience);
+    navigate("/booking");
+  };
+
   return (
     <div className="mb-28">
-
       {/* Seccion de imagenes (Posible slider u otra forma de mostrar las imagenes) */}
-      <ImageCardExperience title={experience?.title} rating={experience?.rating} />
-      
+      <ImageCardExperience
+        title={experience?.title}
+        rating={experience?.rating}
+      />
+
       {/* Informacion detallada de la experiencia */}
-      <InfoExperience description={experience?.description} capacity={experience?.capacity}/>
+      <InfoExperience
+        description={experience?.description}
+        capacity={experience?.capacity}
+      />
 
       {/* Mapa de la experiencia */}
-      <MapSection/>
+      <MapSection />
 
       {/* Seccion de reseñas de la experiencia */}
-      <ReviewSection/>
-      
-      <div className="fixed bottom-0 flex items-center justify-between w-full gap-12 p-5 px-5 bg-white container-shadow">
+      <ReviewSection />
+
+      <div className="fixed z-[100] bottom-0 flex items-center justify-between w-full gap-12 p-5 px-5 bg-white container-shadow">
         <h1 className="text-primary">
           <span className="font-bold">€{experience?.price}</span>/Persona
         </h1>
-        <button className="w-full py-2 text-white rounded-full bg-primary">
+        <button
+          onClick={handleBooking}
+          className="w-full py-2 text-white rounded-full bg-primary"
+        >
           Reservar
         </button>
       </div>
