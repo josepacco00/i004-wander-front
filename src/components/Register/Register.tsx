@@ -68,7 +68,7 @@ const Register: React.FC = () => {
                     if (error.response.data.errors) {
                         setReqError(error.response.data.errors)
                     } else {
-                        setReqError([error.response.data.message])
+                        setReqError([error.response.data.details.message])
                     }
                 } else {
                     setReqError([error.message])
@@ -130,6 +130,16 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.confirmPassword.message}</span>}
                 </div>
                 <div>
+                    <label htmlFor="location">País</label>
+                    <input
+                        {...register("location")}
+                        type="text"
+                        id="location"
+                    />
+                    {errors.location &&
+                        <span className="form__error-validation">{errors.location.message}</span>}
+                </div>
+                <div>
                     <label htmlFor="phone">Teléfono</label>
                     <div className="flex gap-2">
                         <Controller
@@ -163,7 +173,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.phone.number.message}</span>}
                 </div>
                 <div className="relative">
-                    <label htmlFor="role">Quiero registrarme cómo...</label>
+                    <label htmlFor="role">Quiero registrarme como...</label>
                     <select
                         {...register("role")}
                         id="role"
