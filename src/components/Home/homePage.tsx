@@ -18,6 +18,11 @@ const Home: React.FC = () => {
   >([]);
   const navigate = useNavigate();
 
+  const handleCategoryClick = (category: string) => {
+    // Redirigir al filtro correspondiente con la categoría en minúsculas
+    navigate(`/filters?category=${encodeURIComponent(category.toLowerCase())}`);
+  };
+
   useEffect(() => {
     // Llamar a la API
     const fetchExperiences = async () => {
@@ -149,14 +154,54 @@ const Home: React.FC = () => {
         <section className="section">
           <h2 className="section-title">Categorías</h2>
           <div className="category-tags">
-            <span className="category">Rural y agro</span>
-            <span className="category">Naturaleza</span>
-            <span className="category">Comida</span>
-            <span className="category">Tours</span>
-            <span className="category">Náutico</span>
-            <span className="category">Ciudad</span>
-            <span className="category">Eventos</span>
-            <span className="category">Última llamada</span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Rural y agro")}
+            >
+              Rural y agro
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Naturaleza")}
+            >
+              Naturaleza
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Comida")}
+            >
+              Comida
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Tours")}
+            >
+              Tours
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Náutico")}
+            >
+              Náutico
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Ciudad")}
+            >
+              Ciudad
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Eventos")}
+            >
+              Eventos
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Última llamada")}
+            >
+              Última llamada
+            </span>
           </div>
         </section>
       </main>
