@@ -40,17 +40,19 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch all experiences from the API
-    axios
-      .get("https://newapi.rutasvip.click/api/experiences/get-all")
-      .then((response) => {
-        setExperiences(response.data); // Store all experiences
-        // Get the first 2 experiences for "Popular" section
-        setPopularExperiences(response.data.slice(0, 2));
-        // Get the next 4 experiences for "Última llamada" section
-        setUltimaLlamadaExperiences(response.data.slice(2, 6));
-      })
-      .catch((error) => console.error("Error fetching experiences:", error));
+    // Llamar a la API
+    const fetchExperiences = async () => {
+      try {
+        const response = await fetch(
+          "https://newapi.rutasvip.click/api/experiences/latest"
+        );
+        const data = await response.json();
+        setUltimaLlamadaExperiences(data.slice(0, 4)); // Guardar solo las dos primeras experiencias
+      } catch (error) {
+        console.error("Error fetching experiences:", error);
+      }
+    };
+    fetchExperiences();
   }, []);
 
   return (
