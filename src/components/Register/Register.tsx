@@ -68,7 +68,7 @@ const Register: React.FC = () => {
                     if (error.response.data.errors) {
                         setReqError(error.response.data.errors)
                     } else {
-                        setReqError([error.response.data.message])
+                        setReqError([error.response.data.details.message])
                     }
                 } else {
                     setReqError([error.message])
@@ -128,6 +128,16 @@ const Register: React.FC = () => {
                     />
                     {errors.confirmPassword &&
                         <span className="form__error-validation">{errors.confirmPassword.message}</span>}
+                </div>
+                <div>
+                    <label htmlFor="location">País</label>
+                    <input
+                        {...register("location")}
+                        type="text"
+                        id="location"
+                    />
+                    {errors.location &&
+                        <span className="form__error-validation">{errors.location.message}</span>}
                 </div>
                 <div>
                     <label htmlFor="phone">Teléfono</label>
