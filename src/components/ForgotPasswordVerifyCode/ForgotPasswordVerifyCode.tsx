@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import AuthLayout from "../../layout/AuthLayout";
-import { useNavigate } from "react-router-dom"; // Importamos useNavigate para redirigir
+import { useNavigate } from "react-router-dom"; // Para redirección
 
 const ForgotPasswordVerifyCode: React.FC = () => {
+    const navigate = useNavigate();
     const [timer, setTimer] = useState(60); // Temporizador para reenvío de código
     const [resendEnabled, setResendEnabled] = useState(false); // Estado para habilitar el botón de reenvío
-    const [verificationSuccess, setVerificationSuccess] = useState(false); // Estado para manejar el éxito de la verificación
     const [code, setCode] = useState(""); // Para almacenar el código ingresado
-    const [errorMessage, setErrorMessage] = useState(""); // Para manejar el mensaje de error
-    const navigate = useNavigate(); // Usamos el hook useNavigate para redirigir
+    const [password, setPassword] = useState(""); // Nueva contraseña
+    const [confirmPassword, setConfirmPassword] = useState(""); // Confirmar contraseña
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Para manejar el error de validación
+    const [passwordError, setPasswordError] = useState(""); // Para manejar errores en las contraseñas
+    const [isSubmitting, setIsSubmitting] = useState(false); // Para manejar el estado de envío
+    const [isPasswordValid, setIsPasswordValid] = useState(false); // Para manejar si la contraseña es válida
+    const [isPasswordsMatch, setIsPasswordsMatch] = useState(false); // Para verificar que las contraseñas coincidan
+    const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal de éxito
+    const [passwordTouched, setPasswordTouched] = useState(false); // Para saber si el usuario ya tocó el campo de la contraseña
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -30,29 +37,49 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    // Validación de la contraseña (mínimo 8 caracteres, una mayúscula, un número y un carácter especial)
+    const validatePassword = (password: string) => {
+        const lengthValid = password.length >= 8;
+        const lowerCaseValid = /[a-z]/.test(password);
+        const upperCaseValid = /[A-Z]/.test(password);
+        const numberValid = /\d/.test(password);
+        const specialCharValid = /[@#!]/.test(password);
 
-        if (!code) {
-            setErrorMessage("Por favor, ingresa el código de verificación."); // Si el campo está vacío
+        setIsPasswordValid(lengthValid && lowerCaseValid && upperCaseValid && numberValid && specialCharValid);
+    };
+
+    // Verificamos que las contraseñas coincidan
+    useEffect(() => {
+        setIsPasswordsMatch(password === confirmPassword);
+    }, [password, confirmPassword]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!isPasswordValid || !isPasswordsMatch) {
+            setPasswordError("Las contraseñas no son válidas o no coinciden.");
             return;
         }
 
-        if (code.length !== 6) {
-            setErrorMessage("El código debe ser de exactamente 6 dígitos.");
-            return;
+        try {
+            setIsSubmitting(true);
+
+            // Simulamos la lógica de cambio de contraseña
+            console.log("Contraseña cambiada con éxito:", password);
+
+            // Si todo va bien, mostramos el modal de éxito
+            setShowModal(true);
+            setErrorMessage(null); // Limpiar cualquier mensaje de error
+        } catch (error) {
+            setPasswordError("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
+        } finally {
+            setIsSubmitting(false);
         }
+    };
 
-        console.log("Código enviado para verificación");
-
-        // Aquí puedes agregar la lógica para verificar el código
-        // Si la verificación es exitosa, redirigir al cambio de contraseña
-        setVerificationSuccess(true); // Simula que la verificación fue exitosa
-
-        // Redirigir al formulario de cambio de contraseña
-        setTimeout(() => {
-            navigate("/change-password");
-        }, 1000); // Redirige después de 1 segundo
+    // Función para redirigir al login
+    const handleLoginRedirect = () => {
+        navigate("/login");
     };
 
     const handleCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,10 +91,14 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         }
     };
 
-    console.log(verificationSuccess);
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        validatePassword(e.target.value); // Validamos la contraseña mientras se escribe
+        setPasswordTouched(true); // Marcamos que el usuario ya tocó el campo
+    };
 
     return (
-        <AuthLayout showText={false}>
+        <AuthLayout showText={false} showBackButton={false}>
             <div className="text-center">
                 <p className="mb-4 text-sm text-gray-700">
                     Ingresa el código de verificación enviado<br />
@@ -75,6 +106,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                 </p>
 
                 <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-6">
+                    {/* Código */}
                     <div className="w-full">
                         <label htmlFor="code" className="block text-sm font-medium text-left text-dark">
                             Código
@@ -84,50 +116,124 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             type="text"
                             placeholder="123456"
                             value={code}
-                            onChange={handleCodeChange} // Controla la entrada para asegurarse de que solo se ingresen números y con longitud máxima de 6
-                            maxLength={6} // Limita el input a 6 caracteres
-                            inputMode="numeric" // Sugerir teclado numérico en dispositivos móviles
+                            onChange={handleCodeChange}
+                            maxLength={6}
+                            inputMode="numeric"
                             className="w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark"
                         />
                     </div>
-
-                    {/* Mostrar el mensaje de error debajo del input */}
                     {errorMessage && (
-                        <p className="mt-2 ml-2 text-sm text-left text-red-500">
-                            {errorMessage}
-                        </p>
+                        <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
                     )}
 
-                    {/* Contenedor de "¿No recibiste el código?" con cuenta regresiva */}
-                    <div className="resend-container">
-                        <span className="resend-text">¿No recibiste el código?</span>
-                        <button
-                            type="button"
-                            onClick={handleResend}
-                            disabled={!resendEnabled}
-                            className="resend-button"
-                        >
-                            Reenviar ({timer === 60 ? "1:00" : `(${String(Math.floor(timer / 60)).padStart(2, "0")}:${String(timer % 60).padStart(2, "0")})`})
-                        </button>
+                    {/* Nueva contraseña */}
+                    <div className="w-full">
+                        <label htmlFor="password" className="block text-sm font-medium text-left text-dark">
+                            Nueva contraseña
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Escribe tu nueva contraseña"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${passwordTouched && password.length < 8 ? "border-red-500" : ""}`}
+                        />
+                        {passwordTouched && password.length < 8 && (
+                            <p className="text-xs text-red-500 mt-1">La contraseña debe tener al menos 8 caracteres</p>
+                        )}
+                        {passwordTouched && !isPasswordValid && password.length >= 8 && (
+                            <p className="text-xs text-red-500 mt-1">
+                                La contraseña debe contener al menos una minúscula, una mayúscula, un número y uno de los siguientes caracteres (@, #, or !)
+                            </p>
+                        )}
                     </div>
 
-                    {/* Barra de progreso naranja (debajo de la pregunta y botón) */}
-                    <div
-                        className={`progress-bar ${timer !== 60 ? "progress-bar-filled" : ""}`}
-                        style={{
-                            width: `${(60 - timer) * 100 / 60}%`, // La barra se llena conforme pasa el tiempo
-                        }}
-                    ></div>
+                    {/* Confirmar contraseña */}
+                    <div className="w-full">
+                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-left text-dark">
+                            Confirmar contraseña
+                        </label>
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            placeholder="Repite tu nueva contraseña"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${passwordError ? "border-red-500" : ""}`}
+                        />
+                        {passwordError && <div className="form__notification form__notification--error">{passwordError}</div>}
+                    </div>
 
-                    {/* Botón de Verificar Código */}
+                    {/* Temporizador y mensaje de reenvío */}
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-dark font-semibold">
+                            ¿No recibiste el código?{" "}
+                            <button
+                                onClick={handleResend}
+                                disabled={!resendEnabled}
+                                className={`text-orange-500 font-semibold ml-2 transition-colors ${resendEnabled ? "hover:text-orange-600" : "opacity-50 cursor-not-allowed"}`}
+                                style={{
+                                    backgroundColor: resendEnabled ? 'transparent' : 'transparent',
+                                    border: 'none',
+                                    cursor: resendEnabled ? 'pointer' : 'not-allowed',
+                                }}
+                            >
+                                Reenviar
+                            </button>
+                        </p>
+                        <div className="w-48 h-2 mt-3 bg-gray-300 rounded-full mx-auto">
+                            <div
+                                className="h-2 rounded-full"
+                                style={{
+                                    width: `${(timer / 60) * 100}%`,
+                                    backgroundColor: timer > 0 ? "#FFA500" : "#4CAF50", // Naranja
+                                }}
+                            />
+                        </div>
+                        <p className="mt-1 text-sm text-dark">{timer} segundos restantes</p>
+                    </div>
+
                     <button
                         type="submit"
-                        className="w-[250px] bg-primary hover:bg-tertiary text-white font-semibold py-5 rounded-xll shadow-[0px_4px_10px_rgba(0,0,0,0.4)] transition disabled:bg-brandGrey disabled:cursor-not-allowed"
+                        disabled={!isPasswordValid || !isPasswordsMatch}
+                        className="w-full py-3 text-white FFA500 rounded-3xl mt-6"
                     >
-                        Verificar Código
+                        {isSubmitting ? "Cambiando..." : "Cambiar Contraseña"}
                     </button>
                 </form>
             </div>
+
+            {/* Modal de éxito */}
+            {showModal && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white rounded-[2rem] p-8 w-80 shadow-lg">
+                        <div className="flex flex-col items-center space-y-8">
+                            <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
+                                <svg
+                                    className="w-14 h-14 text-white"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-bold text-center text-dark flex flex-wrap justify-center">
+                                ¡Contraseña <span className="block">cambiada correctamente!</span>
+                            </h2>
+                            <button
+                                onClick={handleLoginRedirect} // Redirigir al login
+                                className="w-[200px] py-6 text-white bg-brandYellow rounded-3xl"
+                            >
+                                Iniciar sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </AuthLayout>
     );
 };

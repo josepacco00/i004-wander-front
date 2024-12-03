@@ -39,7 +39,7 @@ const ForgotPassword: React.FC = () => {
     };
 
     return (
-        <AuthLayout showText={false}>
+        <AuthLayout showText = {false}>
             <div className="text-center">
                 <h2 className="mb-4 text-3xl font-bold text-dark">
                     <span>Recupera</span> <br />
