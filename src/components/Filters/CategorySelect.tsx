@@ -22,12 +22,20 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ updateQueryParams }) =>
         className="w-full p-2 border rounded-lg"
       >
         <option value="">Todas las categorías</option>
-        <option value="nature">Naturaleza</option>
-        <option value="cultural">Cultural</option>
-        <option value="relaxation">Relajación</option>
+        <option value="naturaleza">Naturaleza</option>
+        <option value="comida">Comida</option>
+        <option value="tours">Tours</option>
+        <option value="náutico">Náutico</option>
+        <option value="ciudad">Ciudad</option>
+        <option value="ruralyagro">Rural y agro</option>
+        <option value="eventos">Eventos</option>
+
+        
       </select>
     </div>
   );
 };
 
 export default CategorySelect;
+
+

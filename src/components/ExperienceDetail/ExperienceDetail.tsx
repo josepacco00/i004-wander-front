@@ -70,12 +70,13 @@ function ExperienceDetail() {
 
       {/* Informacion detallada de la experiencia */}
       <InfoExperience
-        location={experience?.location}
+        location={experience?.location || []}
         description={experience?.description}
         capacity={experience?.capacity}
       />
 
       {/* Mapa de la experiencia */}
+
       <MapSection coords={experience?.location} />
 
       {/* Seccion de reseñas de la experiencia */}

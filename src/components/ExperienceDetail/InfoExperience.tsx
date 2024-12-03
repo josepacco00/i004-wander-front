@@ -4,15 +4,22 @@ import iconDate from "../../assets/icons/icon-date.svg";
 import iconCapacity from "../../assets/icons/icon-capacity.svg";
 
 import { useState } from "react";
-function InfoExperience({description, capacity, location} : {description: string, capacity: number, location: string}) {
+function InfoExperience({description, capacity, location } : {description: string, capacity: number, location: string[]}) {
 
-  if (typeof location !== "string") {
-    return ;
-  }
+  const country = location?.[0] ?? "Unknown country";
+  const city = location?.[1] ?? "Unknown city";
 
-  const getLocation = location.split(",");
-  const country = getLocation[0];
-  const city = getLocation[1];
+  // const dateHour = "2024-11-28T15:23:52.174+00:00";
+  // const date = new Date(dateHour);
+
+  // const day = String(date.getDate()).padStart(2, '0');
+  // const month = String(date.getMonth() + 1).padStart(2, '0');
+  // const year = date.getFullYear();
+
+
+  // const formatDate = `${day}/${month}/${year}`;
+
+  
 
   return (
     <section className="p-5">
@@ -32,11 +39,10 @@ function InfoExperience({description, capacity, location} : {description: string
             <InfoCard icon={iconLocation} first={country} second={city} />
           </div>
           <div className="flex justify-between gap-3 my-3">
-            <InfoCard icon={iconDate} first="Fecha" second="18/11/2024" />
+            <InfoCard icon={iconDate} first="Fecha" second="28/11/2024" />
             <InfoCard icon={iconCapacity} first="Cupos" second={capacity} />
           </div>
         </div>
-
         <div className="w-full h-[1px] bg-gray-300 mt-10"></div>
 
       </div>

@@ -18,9 +18,9 @@ const LocationInput: React.FC<LocationInputProps> = ({ updateQueryParams }) => {
           onChange={(e) => updateQueryParams({ country: e.target.value || undefined })}
         >
           <option value="">Selecciona un país</option>
-          <option value="Spain">España</option>
-          <option value="France">Francia</option>
-          <option value="Italy">Italia</option>
+          <option value="España">España</option>
+          <option value="Francia">Francia</option>
+          <option value="Italia">Italia</option>
         </select>
       </div>
 
