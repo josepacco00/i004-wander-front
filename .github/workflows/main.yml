@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - develop
-  # workflow_dispatch:
+  workflow_dispatch:
   #   inputs:
   #     tag:
   #       description: "Tag for the Docker image" # Descripción del input
@@ -30,7 +30,7 @@ jobs:
 
       - run: npm install
 
-      - run: VITE_API_URL={{ secrets.VITE_API_URL }} npm run build
+      - run: VITE_API_URL=${{ secrets.VITE_API_URL }} npm run build
 
       # - name: Configure AWS Credentials
       #   uses: aws-actions/configure-aws-credentials@v4
