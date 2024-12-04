@@ -1,33 +1,44 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import userServices from "../services/user.services";
+import { AuthContext } from "../contexts/auth.context";
 
 import logoWander from "../assets/img/logowander.png";
 import menuIcon from "../assets/icons/icon-menu.svg";
 import closeIcon from "../assets/icons/icon-close.svg";
-import { useContext } from "react";
-import { AuthContext } from "../contexts/auth.context";
-
+import { useNavigate } from "react-router-dom";
 
 function NavBarLayout() {
-
-  const { user } = useContext(AuthContext);
-
+  const { user, setUser } = useContext(AuthContext); 
   const location = useLocation();
   const [modalOpen, setModalOpen] = useState(false);
-  
-  // Funcion para abrir y cerrar el modal de navegacion
+  const navigate = useNavigate();
+
+  // Función para abrir y cerrar el modal de navegación
   const handleModal = () => {
     setModalOpen(!modalOpen);
   };
 
-  // No se mostrara la navegacion en la pagina de login y registro
+  // Función para manejar el cierre de sesión
+  const handleLogout = async () => {
+    try {
+      await userServices.logOutUser(); 
+      setUser(null);
+      handleModal();
+      navigate('/login');
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
+
+  // No se mostrará la navegación en la página de login y registro
   if (location.pathname === "/login" || location.pathname === "/register") {
     return null;
   }
 
   return (
     <>
-      {/* Header superior contenedor del logo y el icono de menu */}
+      {/* Header superior contenedor del logo y el icono de menú */}
       <header className="w-full p-3 shadow-md">
         <div className="flex items-center justify-between">
           <img src={logoWander} alt="logowander" className="w-10 h-8" />
@@ -40,7 +51,7 @@ function NavBarLayout() {
         </div>
       </header>
 
-      {/* Modal de Navegacion (No funcional hasta que se tengan la mayoria de paginas) */}
+      {/* Modal de Navegación */}
       {modalOpen && (
         <div
           className="fixed top-0 left-0 z-50 flex justify-end w-screen h-screen bg-black/50"
@@ -77,7 +88,7 @@ function NavBarLayout() {
                   className="text-xl font-bold"
                   onClick={handleModal}
                 >
-                  Iniciar Sesion
+                  Iniciar Sesión
                 </Link>
                 <Link
                   to="/register"
@@ -89,10 +100,8 @@ function NavBarLayout() {
               </>
             ) : (
               <p
-                className="text-xl font-bold text-left"
-                onClick={() => {
-                  handleModal();
-                }}
+                className="text-xl font-bold text-left cursor-pointer"
+                onClick={handleLogout}
               >
                 Cerrar sesión
               </p>

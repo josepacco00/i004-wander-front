@@ -16,8 +16,17 @@ import Home from "../components/Home/homePage";
 import Filters from '../components/Filters/Filters'
 import ConfirmationView from '../components/ConfirmationView/ConfirmationView'
 import { ProtectedPublicRoute } from './ProtectedPublicRoutes'
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react'
 
 const AppRoutes = () => {
+
+    const { pathname } = useLocation();
+
+    // Resetea la posicion del scroll al inicio de cada ruta
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, [pathname]);
 
     return (
         <Routes>

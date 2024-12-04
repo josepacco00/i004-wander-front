@@ -8,8 +8,11 @@ import DetailsCard from "./DetailsCard"
 import Logout from "../Logout"
 import AddExperienceButton from "./AddExperienceButton"
 import userImage from "../../assets/person2.jpg"
+import { useLocation } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
+
+    const path = useLocation();
 
     const [userInfo, setUserInfo] = useState<User>(userInitialValues)
 
@@ -27,7 +30,9 @@ const UserProfile: React.FC = () => {
     }
 
     useEffect(() => {
-        loadUserInfo()
+        if(path.pathname === "/user-profile"){
+            loadUserInfo()
+        }
     }, [])
 
     const {  email, location, name, phone, role } = userInfo
@@ -40,7 +45,7 @@ const UserProfile: React.FC = () => {
                     avatar={userImage}
                 />
             </div>
-            {role === 'PROVIDER' && (
+            {role.toUpperCase() === 'PROVIDER' && (
                 <div className='justify-center w-full mb-12'>
                     <AddExperienceButton />
                 </div>
