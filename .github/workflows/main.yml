@@ -22,11 +22,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: latest
+
+      - run: |
+          node --version
+          npm --version
 
       - run: npm install
 
-      - run: npm run build
+      - run: VITE_API_URL={{ secrets.VITE_API_URL }} npm run build
 
       # - name: Configure AWS Credentials
       #   uses: aws-actions/configure-aws-credentials@v4
