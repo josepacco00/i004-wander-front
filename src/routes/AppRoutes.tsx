@@ -30,7 +30,7 @@ const AppRoutes = () => {
                 <Route path="/confirm-register" element={<ConfirmRegister />} />
                 <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* </Route> */}
+            </Route>
 
             {/* Rutas privadas sin contexto de reserva */}
             <Route element={<PrivateRoute />}>
