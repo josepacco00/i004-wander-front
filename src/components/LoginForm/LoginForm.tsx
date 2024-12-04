@@ -7,10 +7,6 @@ import { useNavigate } from "react-router-dom"; // Para redirección
 import AuthLayout from "../../layout/AuthLayout.tsx"; // Asegúrate de importar el AuthLayout
 import "./LoginForm.css";
 import authServices from "../../services/auth.services.ts";
-
-// Constantes de URL de la API
-const API_URL = import.meta.env.VITE_API_URL;
-
 const Login: React.FC = () => {
   const {
     register,
@@ -29,7 +25,6 @@ const Login: React.FC = () => {
 
   const onSubmit = async (credentials: LoginSchema) => {
     try {
-      console.log(API_URL);
       // Usar el servicio para la petición de login
       const response = await authServices.login(credentials);
 
