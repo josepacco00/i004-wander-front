@@ -5,11 +5,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from "date-fns";
 import { experienceServices } from "../../services/addExperience.services";
 import SelectCords from "./Map/SelectionCoords";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/auth.context";
+import { useNavigate } from "react-router-dom";
 
 type Coords = [number | undefined, number | undefined];
 type infoCoords = any;
 
 const AddExperience = () => {
+
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   
   const [images, setImages] = useState<File[]>([]);
   const [availability, setAvailability] = useState<{
@@ -140,6 +146,7 @@ const AddExperience = () => {
       title,
       description,
       location,
+      hostId: user?._id,
       price,
       availabilityDates: formatAvailabilityDates(),
       tags,
@@ -152,6 +159,8 @@ const AddExperience = () => {
       const response = await experienceServices.addExperience(payload);
       console.log("Respuesta del backend:", response.data);
       alert("¡Experiencia añadida con éxito!");
+      navigate('/user-profile')
+
     } catch (error) {
       console.error("Error al enviar los datos al backend:", error);
       alert("Hubo un error al añadir la experiencia. Inténtalo nuevamente.");

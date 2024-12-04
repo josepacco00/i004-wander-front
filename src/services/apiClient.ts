@@ -25,11 +25,12 @@ const createApiClient = (baseURL: string): AxiosInstance => {
             if (error.response?.status === 401) {
 
                 localStorage.removeItem('authToken')
-                window.location.href = '/login?message=session_expired'
+                // window.location.href = '/login?message=session_expired'
 
-            } else {
-                console.error("Unexpected error occurred", error.response?.status)
-            }
+            } 
+            // else {
+            //     console.error("Unexpected error occurred", error.response?.status)
+            // }
             return Promise.reject(error)
         }
     )

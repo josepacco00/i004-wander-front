@@ -1,13 +1,15 @@
 import { IExperience } from "./experience"
 
 export type ReservationStatus = "pending" | "confirmed" | "canceled"
-export type ReservationPaymentStatus = "pending" | "confirmed"
+export type ReservationPaymentStatus = "paid" | "pending"
+export type ReservationPaymentMethod = "mastercard" | "visa"
 
 export interface IReservationContext {
 	experience: IExperience | null,
 	setExperience: (experience: IExperience) => void,
 	reservation: Partial<INewReservation> | null,
-	updateReservationData: (updatedData: Partial<INewReservation>) => void
+	updateReservationData: (updatedData: Partial<INewReservation> | null) => void
+	removeReservationData: () => void
 }
 
 export interface IReservation {
@@ -24,16 +26,18 @@ export interface IReservation {
 }
 
 export interface INewReservation {
-	experienceId: string | null;
-	userId: string | null;
-	email: string | null;
-	phone: string | null;
-	participants: string;
-	totalPrice: number;
-	bookingDate: Date;
-	paymentMethod?: "mastercard" | "visa";  // Agregada la propiedad 'paymentMethod' como opcional
-	// bookingDate: {
-	// 	date: Date[],
-	// 	hour: string
-	// } | null  
+	userId: string | null,
+	experienceId: string | null,
+	paymentStatus: ReservationPaymentStatus,
+	status: ReservationStatus,
+	bookingDate: Date,
+	participants: number,
+	totalPrice: number,
+	email?: string | null,
+	phone?: string | null,
+	paymentMethod?: ReservationPaymentMethod  // Agregada la propiedad 'paymentMethod' como opcional
 }
+
+// Total price se calcula en el back de java
+// Falta añadir el Date en el endpoint de Nodejs
+export type INewReservationToNode = Omit<INewReservation, "email" | "phone" | "paymentMethod">

@@ -1,0 +1,45 @@
+name: cicd-wander
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+  #   inputs:
+  #     tag:
+  #       description: "Tag for the Docker image" # Descripción del input
+  #       required: true # Hace que este campo sea obligatorio
+  #       default: "latest"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    environment:
+      name: devops
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - run: |
+          node --version
+          npm --version
+
+      - run: npm install
+
+      # - run: VITE_API_URL=${{ secrets.VITE_API_URL }} npm run build
+      - run: set VITE_API_URL=${{ secrets.VITE_API_URL }} && npm run build
+
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
+
+      # - name: Deploy in aws
+      #   if: success()
+      #   run: aws s3 sync ./dist s3://${{ vars.WEBSITE }}

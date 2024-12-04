@@ -2,24 +2,20 @@ import createApiClient from "./apiClient"
 
 class UserServices {
 
-    private api = createApiClient(`${import.meta.env.VITE_API_URL}/users`)
+    private api = createApiClient(`${import.meta.env.VITE_API_URL}/auth`)
 
-    getAllUsers() {
-        return this.api.get(`/all-users`)
-
+    getUser() {
+        return this.api.get(`/profile`)
     }
-    getOneUser(id: string) {
-        return this.api.get(`/${id}`)
+
+    logOutUser() {
+        return this.api.post(`/logout`)
     }
 
     editUser(id: string, editData: any) {
         return this.api.put(`/${id}/edit`, editData)
     }
 
-
-    deleteUser(id: string) {
-        return this.api.delete(`/${id}/delete`)
-    }
 }
 
 const userServices = new UserServices()

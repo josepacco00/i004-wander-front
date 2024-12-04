@@ -67,17 +67,17 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="bg-white font-sans text-gray-800">
+    <div className="font-sans text-gray-800 bg-white">
       {/* Header */}
       <header
-        className="relative bg-cover bg-center text-black flex flex-col items-center rounded-md p-8 pt-9"
+        className="relative flex flex-col items-center p-8 text-black bg-center bg-cover rounded-md pt-9"
         style={{
           backgroundImage: "url('https://images.pexels.com/photos/462162/pexels-photo-462162.jpeg')",
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="relative z-10 flex flex-col items-center">
-          <h1 className="text-2xl font-bold text-center mb-2 text-white">
+          <h1 className="mb-2 text-2xl font-bold text-center text-white">
             Encuentra la experiencia que quieres vivir
           </h1>
           <div className="relative w-full max-w-md mt-8">
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
             <button
-              className="absolute top-1/2 right-0 w-10 h-10 flex items-center justify-center bg-brandYellow text-white rounded-full transform -translate-y-1/2 hover:bg-orange-600 transition-all"
+              className="absolute right-0 flex items-center justify-center w-10 h-10 text-white transition-all transform -translate-y-1/2 rounded-full top-1/2 bg-brandYellow hover:bg-orange-600"
               onClick={handleSearch}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
@@ -104,23 +104,23 @@ const Home: React.FC = () => {
       <main className="px-4">
         {/* Popular Section */}
         <section className="mt-8">
-          <h2 className="text-xl font-semibold mb-3">Popular</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <h2 className="mb-3 text-xl font-semibold">Popular</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {popularExperiences.map((experience) => (
-              <div key={experience.id} className="bg-gray-50 rounded-md overflow-hidden">
+              <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50">
                 <div
-                  className="w-11/12 h-40 bg-cover bg-center rounded-lg mx-auto mt-2"
+                  className="w-11/12 h-40 mx-auto mt-2 bg-center bg-cover rounded-lg"
                   style={{
-                    backgroundImage: `url(${experience.image || imageCity})`,
+                    backgroundImage: `url(${imageCity})`,
                   }}
                 ></div>
                 <div className="flex items-center justify-between p-4">
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">{experience.title} {getCodeCountry(experience.location[0])}</h3>
+                    <h3 className="mb-2 text-lg font-semibold">{experience.title} {getCodeCountry(experience.location[0])}</h3>
                     <p className="text-sm text-gray-600">{formatCategory(experience.tags)} - {formatToShortDate(experience.createdAt)}</p>
                   </div>
                   <button
-                    className="px-4 py-2 bg-brandYellow text-white rounded-md hover:bg-orange-600 transition-all"
+                    className="px-4 py-2 text-white transition-all rounded-md bg-brandYellow hover:bg-orange-600"
                     onClick={() => handleImageClick(experience.id)}
                   >
                     Ver más
@@ -133,18 +133,18 @@ const Home: React.FC = () => {
 
         {/* Más recientes */}
         <section className="mt-8">
-          <h2 className="text-xl font-semibold mb-3">Más recientes</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <h2 className="mb-3 text-xl font-semibold">Más recientes</h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {ultimaLlamadaExperiences.map((experience) => (
-              <div key={experience.id} className="bg-gray-50 rounded-md overflow-hidden" onClick={() => handleImageClick(experience.id)}>
+              <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50" onClick={() => handleImageClick(experience.id)}>
                 <img
-                  src={experience.image || imageCity}
+                  src={imageCity}
                   alt={experience.title}
-                  className="w-full h-auto object-cover"
+                  className="object-cover w-full h-auto"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-semibold">{experience.title}</h3>
-                  <p className="text-sm text-gray-600">{experience.date}</p>
+                  <p className="text-sm text-gray-600"></p>
                 </div>
               </div>
             ))}
@@ -153,12 +153,12 @@ const Home: React.FC = () => {
 
         {/* Categorías Section */}
         <section className="mt-8 mb-8">
-          <h2 className="text-xl font-semibold mb-3">Categorías</h2>
+          <h2 className="mb-3 text-xl font-semibold">Categorías</h2>
           <div className="flex flex-wrap gap-2">
             {["Rural y agro", "Naturaleza", "Comida", "Tours", "Náutico", "Ciudad", "Eventos"].map((category, index) => (
               <span
                 key={index}
-                className="text-sm bg-brandYellow text-white px-4 py-2 rounded-full cursor-pointer hover:bg-orange-600 transition-all"
+                className="px-4 py-2 text-sm text-white transition-all rounded-full cursor-pointer bg-brandYellow hover:bg-orange-600"
                 onClick={() => handleCategoryClick(category)}
               >
                 {category}

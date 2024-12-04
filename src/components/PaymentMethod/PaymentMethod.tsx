@@ -4,9 +4,11 @@ import visaLogo from '../../assets/img/visa.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/auth.context'; // Importamos el contexto de autenticación
 import image from "../../assets/img/vacationImage.png"; // Imagen de la experiencia (reemplaza esta con la correcta)
+import { ReservationContext } from '../../contexts/reservation.context';
 
 const PaymentMethod: React.FC = () => {
-    const [selectedMethod, setSelectedMethod] = useState<'mastercard' | 'visa' | null>(null);
+    const { reservation, updateReservationData, removeReservationData } = useContext(ReservationContext)
+    const [selectedMethod, setSelectedMethod] = useState<'mastercard' | 'visa' | null>(reservation?.paymentMethod ? reservation.paymentMethod : null);
     const [error, setError] = useState<string>(''); // Estado para el error
     const navigate = useNavigate(); // Hook de React Router para navegación
 
@@ -15,6 +17,16 @@ const PaymentMethod: React.FC = () => {
 
     // Bloquear el scroll al montar el componente
     useEffect(() => {
+        // Si el contexto no tiene experiencia, debería navegar a la página de búsqueda de experiencias
+        if (!reservation || !user) {
+            removeReservationData()
+            navigate("/")
+        } else {
+            // const reservation = localStorage.getItem("reservation")
+
+            // reservation && updateReservationData(JSON.parse(reservation))
+        }
+
         document.body.style.overflow = 'hidden'; // Desactivar scroll
         return () => {
             document.body.style.overflow = 'auto'; // Reactivar scroll al desmontar
@@ -25,13 +37,23 @@ const PaymentMethod: React.FC = () => {
         if (!selectedMethod) {
             setError('Por favor, selecciona un método de pago (Visa o MasterCard).');
         } else {
+            const updatedData = {
+                ...reservation,
+                paymentMethod: selectedMethod
+            }
+
+            updateReservationData(updatedData)
+
+
+            localStorage.setItem("reservation", JSON.stringify(updatedData))
             setError(''); // Limpiar el error si se seleccionó un método
         }
     };
 
     // Función para manejar la flecha de regreso
     const handleGoBack = () => {
-        navigate(-1); // Vuelve a la página anterior
+        // navigate(-1); // Vuelve a la página anterior
+        navigate("/booking")
     };
 
     return (
@@ -40,9 +62,9 @@ const PaymentMethod: React.FC = () => {
 
                 {/* Nuevo icono de flecha para regresar */}
                 <div className="flex items-center mb-8">
-                    <button 
-                        type="button" 
-                        className="text-2xl flex items-center justify-center bg-transparent border-none" 
+                    <button
+                        type="button"
+                        className="text-2xl flex items-center justify-center bg-transparent border-none"
                         aria-label="Regresar"
                         onClick={handleGoBack} // Llamar a la función para ir hacia atrás
                     >
@@ -57,14 +79,14 @@ const PaymentMethod: React.FC = () => {
                 {/* Información del usuario */}
                 {user && (
                     <div className="flex items-center gap-4 mb-6">
-                        <img 
-                            src={user.avatar} 
-                            alt="Avatar" 
+                        <img
+                            src={user.avatar}
+                            alt="Avatar"
                             className="w-12 h-12 rounded-full object-cover"
                         />
                         <div>
                             <p className="font-semibold text-black">{user.name}</p>
-                            <p className="text-sm text-gray-500">{user.email}</p>
+                            <p className="text-sm text-gray-500">{reservation?.email || user.email}</p>
                         </div>
                     </div>
                 )}
@@ -76,11 +98,14 @@ const PaymentMethod: React.FC = () => {
                             src={image} // Cambiar por una imagen real de las vacaciones
                             alt="Vacaciones"
                             className="w-16 h-16 rounded-lg object-cover" // Tamaño reducido
-                            />
+                        />
                     </div>
                     <div>
                         <h2 className="font-bold">Cocktail en la playa</h2>
-                        <p className="text-sm text-gray-500">Fecha de reserva: 26 de noviembre de 2024</p>
+                        <p className="text-sm text-gray-500">
+                            Fecha de reserva:<span> </span>
+                            {reservation?.bookingDate?.toLocaleDateString()},<span> </span>
+                            {reservation?.bookingDate?.toLocaleString(undefined, { hour: "2-digit", minute: "2-digit" })}</p>
                     </div>
                 </div>
 
@@ -91,8 +116,8 @@ const PaymentMethod: React.FC = () => {
                     <span className="text-sm text-black font-bold">Precio total (IVA inc)</span>
                     <div className="flex items-center">
                         {/* Aquí los dos spans están juntos sin espacio adicional */}
-                        <span className="font-bold text-lg">$1200</span>
-                        <span className="text-lg">/2 Personas</span>
+                        <span className="font-bold text-lg">{reservation?.totalPrice}€</span>
+                        <span className="text-lg">/{reservation?.participants} Personas</span>
                     </div>
                 </div>
 
@@ -111,7 +136,7 @@ const PaymentMethod: React.FC = () => {
                             type="radio"
                             name="paymentMethod"
                             className="w-5 h-5 peer"
-                            checked={selectedMethod === 'mastercard'}
+                            checked={(selectedMethod || reservation?.paymentMethod) === 'mastercard'}
                             onChange={() => setSelectedMethod('mastercard')}
                         />
                     </label>
@@ -126,7 +151,7 @@ const PaymentMethod: React.FC = () => {
                             type="radio"
                             name="paymentMethod"
                             className="w-5 h-5 peer"
-                            checked={selectedMethod === 'visa'}
+                            checked={(selectedMethod || reservation?.paymentMethod) === 'visa'}
                             onChange={() => setSelectedMethod('visa')}
                         />
                     </label>
@@ -147,9 +172,9 @@ const PaymentMethod: React.FC = () => {
                     >
                         <button
                             type="button"
-                            className={`w-full py-2 text-white rounded-full ${selectedMethod ? 'bg-primary' : 'bg-gray-300 cursor-not-allowed'}`}
+                            className="w-full py-2 text-white rounded-full"
                             onClick={handlePaymentClick} // Llamar a la validación
-                            disabled={!selectedMethod} // Deshabilitar si no se selecciona un método
+                            disabled={!selectedMethod && !reservation?.paymentMethod} // Deshabilitar si no se selecciona un método
                         >
                             Pagar
                         </button>
