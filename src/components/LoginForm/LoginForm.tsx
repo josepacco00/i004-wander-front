@@ -1,12 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, loginSchema } from "../../schemas/login.schema";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom"; // Para redirección
 import AuthLayout from "../../layout/AuthLayout.tsx"; // Asegúrate de importar el AuthLayout
 import "./LoginForm.css";
 import authServices from "../../services/auth.services.ts";
+import { AuthContext } from "../../contexts/auth.context.tsx";
+import { User } from "../../types/user.ts";
 
 // Constantes de URL de la API
 const API_URL = import.meta.env.VITE_API_URL;
@@ -25,6 +27,7 @@ const Login: React.FC = () => {
   // Manejo de notificaciones
   const [reqError, setReqError] = useState<string | null>(null);
   const [successNotification, setSuccessNotification] = useState<string | null>(null);
+  const  { setUser } = useContext(AuthContext)
   const navigate = useNavigate();
 
   const onSubmit = async (credentials: LoginSchema) => {
@@ -38,8 +41,19 @@ const Login: React.FC = () => {
         reset(); // Limpiar el formulario
         setSuccessNotification("Inicio de sesión exitoso");
 
-        // Guardar el token en localStorage
+        console.log(response.data)
+        // Guardar el token en localStorage o en un estado global (ejemplo)
         localStorage.setItem("authToken", response.data.token);
+
+        const user: User = {
+          ...response.data.user,
+          _id: response.data.userId
+          // _id: response.data.userId
+        }
+
+        console.log(user)
+        localStorage.setItem("user", JSON.stringify(user))
+        setUser(user)
 
         // Redirigir después de un tiempo
         setTimeout(() => navigate("/"), 2000);
