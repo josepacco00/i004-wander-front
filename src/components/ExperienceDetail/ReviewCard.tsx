@@ -1,4 +1,16 @@
-function ReviewCard() {
+import { formatToShortDate } from "../../utils/getDateFormat"
+
+interface IReview {
+    id: string
+    userId: string
+    rating: number
+    comment: string
+    createdAt: string
+}
+
+function ReviewCard({review} : {review: IReview}) {
+
+  const { rating, comment, createdAt } = review;
 
   const getRating = (rating: number) => {
     switch (rating) {
@@ -22,12 +34,12 @@ function ReviewCard() {
             <div className="w-12 h-12 rounded-full bg-primary"></div>
             <div className="flex flex-col">
                 <h1>Mariana Garcia Rodiguez</h1>
-                <p className=""><span className="text-primary">{getRating(3)?.stars}</span> 16 Dec 2021</p>
+                <p className=""><span className="text-primary">{getRating(rating)?.stars}</span> {formatToShortDate(createdAt)}</p>
             </div>
         </div>
         <div>
-            <h1 className="pt-3 pb-2 font-bold">{getRating(3)?.text}</h1>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptate fugit, corrupti ut itaque optio atque!</p>
+            <h1 className="pt-3 pb-2 font-bold">{getRating(rating)?.text}</h1>
+            <p>{comment}</p>
         </div>
     </div>
   )
