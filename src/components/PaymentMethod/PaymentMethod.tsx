@@ -4,8 +4,10 @@ import visaLogo from '../../assets/img/visa.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/auth.context'; // Importamos el contexto de autenticación
 import image from "../../assets/img/vacationImage.png"; // Imagen de la experiencia (reemplaza esta con la correcta)
+import { ReservationContext } from '../../contexts/reservation.context';
 
 const PaymentMethod: React.FC = () => {
+    const { reservation } = useContext(ReservationContext)
     const [selectedMethod, setSelectedMethod] = useState<'mastercard' | 'visa' | null>(null);
     const [error, setError] = useState<string>(''); // Estado para el error
     const navigate = useNavigate(); // Hook de React Router para navegación
@@ -31,7 +33,8 @@ const PaymentMethod: React.FC = () => {
 
     // Función para manejar la flecha de regreso
     const handleGoBack = () => {
-        navigate(-1); // Vuelve a la página anterior
+        // navigate(-1); // Vuelve a la página anterior
+        navigate("/booking")
     };
 
     return (
@@ -91,7 +94,7 @@ const PaymentMethod: React.FC = () => {
                     <span className="text-sm text-black font-bold">Precio total (IVA inc)</span>
                     <div className="flex items-center">
                         {/* Aquí los dos spans están juntos sin espacio adicional */}
-                        <span className="font-bold text-lg">$1200</span>
+                        <span className="font-bold text-lg">{ reservation?.totalPrice }</span>
                         <span className="text-lg">/2 Personas</span>
                     </div>
                 </div>
