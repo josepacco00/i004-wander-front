@@ -1,10 +1,10 @@
-import React from 'react';
-
 interface LocationInputProps {
+  value: string;  // Recibe el valor de city
+  onChange: (value: string) => void;  // Recibe la función para manejar cambios
   updateQueryParams: (params: Record<string, string | undefined>) => void;
 }
 
-const LocationInput: React.FC<LocationInputProps> = ({ updateQueryParams }) => {
+const LocationInput: React.FC<LocationInputProps> = ({ value, onChange, updateQueryParams }) => {
   return (
     <>
       {/* Country Filter */}
@@ -34,7 +34,8 @@ const LocationInput: React.FC<LocationInputProps> = ({ updateQueryParams }) => {
           type="text"
           placeholder="Ciudad"
           className="w-full p-2 border rounded-lg"
-          onChange={(e) => updateQueryParams({ city: e.target.value || undefined })}
+          value={value}  // Usa el valor recibido del componente padre
+          onChange={(e) => onChange(e.target.value)}  // Llama a la función onChange para actualizar el valor de city en el estado
         />
       </div>
     </>
