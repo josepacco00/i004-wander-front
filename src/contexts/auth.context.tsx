@@ -58,13 +58,11 @@ const AuthProviderWrapper = ({ children }: AuthProviderProps) => {
                 const { data }: { data: User } = await authServices.verify(token)
                 const storedUser = localStorage.getItem("user")
 
-                console.log(data)
-
                 if(storedUser && JSON.parse(storedUser).email === data.sub) {
                     setUser(JSON.parse(storedUser))
                 } else {
-                    console.log("Los datos inicio de sesión no coinciden")
-                    // logout()
+                    // console.log("Los datos inicio de sesión no coinciden")
+                    logout()
                 }
 
                 setIsLoading(false)

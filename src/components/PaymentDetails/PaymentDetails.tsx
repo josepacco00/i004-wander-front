@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import mastercardLogo from "../../assets/img/iconomastercard.png";
 import visaLogo from "../../assets/img/iconovisa.png";
+import bookingServices from "../../services/booking.services";
+import { ReservationContext } from "../../contexts/reservation.context";
 
 const PaymentDetails: React.FC = () => {
     const location = useLocation();
     const { selectedMethod } = location.state || { selectedMethod: null };
     const navigate = useNavigate();
+    const { reservation } = useContext(ReservationContext)
 
     const [cardNumber, setCardNumber] = useState("");
     const [cvv, setCvv] = useState("");
@@ -99,10 +102,22 @@ const PaymentDetails: React.FC = () => {
         setExpiryError("");
     };
 
-    const handlePaymentClick = () => {
-        if (!cardError && !expiryError && !cvvError) {
-            console.log("Pago realizado con éxito");
-            navigate("/confirmation-view"); // Redirige a la página de confirmación
+    const handlePaymentClick = async () => {
+        if (!cardError && !expiryError && !cvvError && reservation) {
+            try {
+                const reservationFinal = {
+                    experienceId: reservation.experienceId!,
+                    userId: reservation.userId!,
+                    bookingDate: new Date(reservation.bookingDate!.setMilliseconds(0)),
+                    participants: Number(reservation.participants!),
+                }
+
+
+                console.log(reservationFinal)
+                await bookingServices.create(reservationFinal)
+            } catch (error) {
+                console.log
+            }
         }
     };
     

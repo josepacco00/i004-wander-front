@@ -8,7 +8,8 @@ const defaultState: IReservationContext = {
 	experience: null,
 	setExperience: () => { },
 	reservation: null,
-	updateReservationData: () => { }
+	updateReservationData: () => { },
+	removeReservationData: () => { }
 }
 
 export const ReservationContext = createContext<IReservationContext>(defaultState)
@@ -19,18 +20,46 @@ type ReservationProviderProps = {
 }
 
 const ReservationProvider = ({ children }: ReservationProviderProps) => {
-	const storedExperience = localStorage.getItem("experience")
-	const storedReservation = localStorage.getItem("reservation")
+	// const storedExperience = localStorage.getItem("experience")
+	// const storedReservation = localStorage.getItem("reservation")
 
-	const initialExperience = storedExperience ? JSON.parse(storedExperience) : null
-	const initialReservation = storedReservation ? JSON.parse(storedReservation) : null
+	// const calculateInitialReservationData = (): Partial<INewReservation> => {
+	// 	const data: INewReservation = JSON.parse(storedReservation!)
 
-	const [experience, setExperience] = useState<IExperience | null>(initialExperience)
-	const [reservation, setReservation] = useState<Partial<INewReservation> | null>(initialReservation)
+	// 	return  {
+	// 		...data,
+	// 		bookingDate: new Date(data.bookingDate)
+	// 	}
+	// }
 
-	const updateReservationData = (updatedData: Partial<INewReservation>) => {
+	// const initialExperience = storedExperience ? JSON.parse(storedExperience) : null
+	// const initialReservation = storedReservation ? calculateInitialReservationData() : null
+
+	// const [experience, setExperience] = useState<IExperience | null>(initialExperience)
+	// const [reservation, setReservation] = useState<Partial<INewReservation> | null>(initialReservation)
+
+    const [experience, setExperience] = useState<IExperience | null>(() => {
+        const storedExperience = localStorage.getItem("experience");
+        return storedExperience ? JSON.parse(storedExperience) : null;
+    });
+
+    const [reservation, setReservation] = useState<Partial<INewReservation> | null>(() => {
+        const storedReservation = localStorage.getItem("reservation");
+        if (storedReservation) {
+            const data: INewReservation = JSON.parse(storedReservation);
+            return {
+                ...data,
+                bookingDate: new Date(data.bookingDate),
+            };
+        }
+        return null;
+    });
+
+	const updateReservationData = (updatedData: Partial<INewReservation> | null) => {
 		setReservation((prev) => prev ? ({ ...prev, ...updatedData }) : { ...updatedData })
 	}
+
+	const removeReservationData = () => setReservation(null)
 
 	return (
 		<ReservationContext.Provider
@@ -38,7 +67,8 @@ const ReservationProvider = ({ children }: ReservationProviderProps) => {
 				experience,
 				setExperience,
 				reservation,
-				updateReservationData
+				updateReservationData,
+				removeReservationData
 			}}>
 			{children}
 		</ReservationContext.Provider>
