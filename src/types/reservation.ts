@@ -9,6 +9,7 @@ export interface IReservationContext {
 	setExperience: (experience: IExperience) => void,
 	reservation: Partial<INewReservation> | null,
 	updateReservationData: (updatedData: Partial<INewReservation> | null) => void
+	removeReservationData: () => void
 }
 
 export interface IReservation {
@@ -25,13 +26,13 @@ export interface IReservation {
 }
 
 export interface INewReservation {
-	experienceId: string | null,
 	userId: string | null,
-	participants: number,
-	totalPrice: number,
-	bookingDate: Date,
+	experienceId: string | null,
 	paymentStatus: ReservationPaymentStatus,
 	status: ReservationStatus,
+	bookingDate: Date,
+	participants: number,
+	totalPrice: number,
 	email?: string | null,
 	phone?: string | null,
 	paymentMethod?: ReservationPaymentMethod  // Agregada la propiedad 'paymentMethod' como opcional
