@@ -4,22 +4,14 @@ import iconDate from "../../assets/icons/icon-date.svg";
 import iconCapacity from "../../assets/icons/icon-capacity.svg";
 
 import { useState } from "react";
-function InfoExperience({description, capacity, location } : {description: string, capacity: number, location: string[]}) {
+import { formatCategory, formatToShortDate } from "../../utils/getDateFormat";
+
+function InfoExperience({description, capacity, location, createdAt, tags } : {description: string, capacity: number, location: string[], createdAt: string, tags: string[]}) {
 
   const country = location?.[0] ?? "Unknown country";
   const city = location?.[1] ?? "Unknown city";
 
-  // const dateHour = "2024-11-28T15:23:52.174+00:00";
-  // const date = new Date(dateHour);
 
-  // const day = String(date.getDate()).padStart(2, '0');
-  // const month = String(date.getMonth() + 1).padStart(2, '0');
-  // const year = date.getFullYear();
-
-
-  // const formatDate = `${day}/${month}/${year}`;
-
-  
 
   return (
     <section className="p-5">
@@ -35,11 +27,11 @@ function InfoExperience({description, capacity, location } : {description: strin
         <h1 className="pb-5 text-xl font-bold">Informacion</h1>
         <div>
           <div className="flex justify-between gap-3">
-            <InfoCard icon={iconCategory} first="Categoria" second="Naturaleza" />          
+            <InfoCard icon={iconCategory} first="Categoria" second={formatCategory(tags)} />          
             <InfoCard icon={iconLocation} first={country} second={city} />
           </div>
           <div className="flex justify-between gap-3 my-3">
-            <InfoCard icon={iconDate} first="Fecha" second="28/11/2024" />
+            <InfoCard icon={iconDate} first="Fecha" second={formatToShortDate(createdAt)} />
             <InfoCard icon={iconCapacity} first="Cupos" second={capacity} />
           </div>
         </div>

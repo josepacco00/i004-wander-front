@@ -1,126 +1,129 @@
-/**
- * @copyright 2024 Luis Iannello
- *
- */
-
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./homePage.css";
 import { useNavigate } from "react-router-dom";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa/index";
-import axios from "axios";
+import { formatCategory, formatToShortDate } from "../../utils/getDateFormat";
+import { DetailExperience } from "../../types/detailexperience";
+
+import imageCity from '../../assets/img/City.jpg';
 
 const Home: React.FC = () => {
+  const BACK_URL = import.meta.env.VITE_API_URL;
+
   const [search, setSearch] = useState("");
-  const [popularExperiences, setPopularExperiences] = useState([]);
-  const [ultimaLlamadaExperiences, setUltimaLlamadaExperiences] = useState<
-    any[]
-  >([]);
+  const [popularExperiences, setPopularExperiences] = useState<DetailExperience[]>([]);
+  const [ultimaLlamadaExperiences, setUltimaLlamadaExperiences] = useState<DetailExperience[]>([]);
   const navigate = useNavigate();
 
+  const getCodeCountry = (country: string) => {
+    switch (country) {
+      case "España":
+        return "ESP";
+      case "Francia":
+        return "FRA";
+      case "Italia":
+        return "ITA";
+      default:
+        return "";
+    }
+  };
+
   const handleCategoryClick = (category: string) => {
-    // Redirigir al filtro correspondiente con la categoría en minúsculas
-    navigate(`/filters?category=${encodeURIComponent(category.toLowerCase())}`);
+    navigate(`/filters?tags=${encodeURIComponent(category.toLowerCase())}`);
+  };
+
+  const handleImageClick = (id: string) => {
+    navigate(`/experience/${id}`);
   };
 
   useEffect(() => {
-    // Llamar a la API
-    const fetchExperiences = async () => {
+    const fetchPopularExperiences = async () => {
       try {
-        const response = await fetch(
-          "https://newapi.rutasvip.click/api/experiences/get-all"
-        );
+        const response = await fetch(`${BACK_URL}/experiences/get-all`);
         const data = await response.json();
-        setPopularExperiences(data.slice(0, 2)); // Guardar solo las dos primeras experiencias
+        setPopularExperiences(data.slice(0, 2));
       } catch (error) {
-        console.error("Error fetching experiences:", error);
+        console.error("Error fetching popular experiences:", error);
       }
     };
-    fetchExperiences();
+    fetchPopularExperiences();
   }, []);
 
   useEffect(() => {
-    // Llamar a la API
-    const fetchExperiences = async () => {
+    const fetchUltimaLlamadaExperiences = async () => {
       try {
-        const response = await fetch(
-          "https://newapi.rutasvip.click/api/experiences/latest"
-        );
+        const response = await fetch(`${BACK_URL}/experiences/latest`);
         const data = await response.json();
-        setUltimaLlamadaExperiences(data.slice(0, 4)); // Guardar solo las dos primeras experiencias
+        setUltimaLlamadaExperiences(data.slice(0, 4));
       } catch (error) {
-        console.error("Error fetching experiences:", error);
+        console.error("Error fetching última llamada experiences:", error);
       }
     };
-    fetchExperiences();
+    fetchUltimaLlamadaExperiences();
   }, []);
 
+  const handleSearch = () => {
+    const query = search.trim() ? encodeURIComponent(search) : "";
+    navigate(`/filters?title=${query}`);
+  };
+
   return (
-    <div className="home">
-      <header className="header">
-        {/* <img src="src\assets\img\imagelogo.png" alt="Logo" className="logo" /> */}
-        <h1 className="header-title">
-          Encuentra la experiencia que quieres vivir
-        </h1>
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Busca experiencias"
-            className="search-input"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)} // Actualizar el estado
-          />
-          <button
-            onClick={() => {
-              // Si search está vacío, simplemente redirigimos a la ruta de filtros sin ningún query.
-              const query = search.trim() ? encodeURIComponent(search) : ""; // Si search está vacío, no se pasa nada
-              navigate(`/filters?title=${query}`);
-            }}
-            className="search-button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
+    <div className="bg-white font-sans text-gray-800">
+      {/* Header */}
+      <header
+        className="relative bg-cover bg-center text-black flex flex-col items-center rounded-md p-8 pt-9"
+        style={{
+          backgroundImage: "url('https://images.pexels.com/photos/462162/pexels-photo-462162.jpeg')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative z-10 flex flex-col items-center">
+          <h1 className="text-2xl font-bold text-center mb-2 text-white">
+            Encuentra la experiencia que quieres vivir
+          </h1>
+          <div className="relative w-full max-w-md mt-8">
+            <input
+              type="text"
+              placeholder="Busca experiencias"
+              className="w-full p-2 pr-8 border border-gray-300 rounded-3xl"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <button
+              className="absolute top-1/2 right-0 w-10 h-10 flex items-center justify-center bg-brandYellow text-white rounded-full transform -translate-y-1/2 hover:bg-orange-600 transition-all"
+              onClick={handleSearch}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35m2.6-7.4a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"
-              />
-            </svg>
-          </button>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m2.6-7.4a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
-      <main>
-        {/* Sección Popular */}
-        <section className="section section-padding">
-          <h2 className="section-title">Popular</h2>
-          <div className="grid-container">
+      {/* Main Content */}
+      <main className="px-4">
+        {/* Popular Section */}
+        <section className="mt-8">
+          <h2 className="text-xl font-semibold mb-3">Popular</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {popularExperiences.map((experience) => (
-              <div key={experience.id} className="experience-card">
+              <div key={experience.id} className="bg-gray-50 rounded-md overflow-hidden">
                 <div
-                  className="experience-image"
+                  className="w-11/12 h-40 bg-cover bg-center rounded-lg mx-auto mt-2"
                   style={{
-                    backgroundImage: `url(${
-                      experience.image || "https://via.placeholder.com/600"
-                    })`,
+                    backgroundImage: `url(${experience.image || imageCity})`,
                   }}
                 ></div>
-                <div className="experience-info">
-                  <div className="experience-info-content">
-                    <h3 className="experience-title">{experience.title}</h3>
-                    <p className="experience-date">{experience.date}</p>
+                <div className="flex items-center justify-between p-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">{experience.title} {getCodeCountry(experience.location[0])}</h3>
+                    <p className="text-sm text-gray-600">{formatCategory(experience.tags)} - {formatToShortDate(experience.createdAt)}</p>
                   </div>
                   <button
-                    className="reserve-button"
-                    onClick={() => navigate(`/experiences/${experience.id}`)}
+                    className="px-4 py-2 bg-brandYellow text-white rounded-md hover:bg-orange-600 transition-all"
+                    onClick={() => handleImageClick(experience.id)}
                   >
-                    Reservar
+                    Ver más
                   </button>
                 </div>
               </div>
@@ -128,82 +131,39 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* Sección Última llamada */}
-        <section className="ultima-llamada section-padding mt-8">
-          <h2 className="section-title2">Última llamada</h2>
-          <div className="grid-container2">
+        {/* Más recientes */}
+        <section className="mt-8">
+          <h2 className="text-xl font-semibold mb-3">Más recientes</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {ultimaLlamadaExperiences.map((experience) => (
-              <div key={experience.id} className="experience-card2">
-                <div
-                  className="experience-image"
-                  style={{
-                    backgroundImage: `url(${
-                      experience.image || "https://via.placeholder.com/200"
-                    })`,
-                  }}
-                  onClick={() => handleImageClick(experience.id)} // Click on image redirects
-                ></div>
-                <div className="experience-info2">
-                  <h3 className="experience-title2">{experience.title}</h3>
-                  <p className="experience-date2">{experience.date}</p>
+              <div key={experience.id} className="bg-gray-50 rounded-md overflow-hidden" onClick={() => handleImageClick(experience.id)}>
+                <img
+                  src={experience.image || imageCity}
+                  alt={experience.title}
+                  className="w-full h-auto object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold">{experience.title}</h3>
+                  <p className="text-sm text-gray-600">{experience.date}</p>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Sección Categorías */}
-        <section className="section">
-          <h2 className="section-title">Categorías</h2>
-          <div className="category-tags">
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Rural y agro")}
-            >
-              Rural y agro
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Naturaleza")}
-            >
-              Naturaleza
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Comida")}
-            >
-              Comida
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Tours")}
-            >
-              Tours
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Náutico")}
-            >
-              Náutico
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Ciudad")}
-            >
-              Ciudad
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Eventos")}
-            >
-              Eventos
-            </span>
-            <span
-              className="category"
-              onClick={() => handleCategoryClick("Última llamada")}
-            >
-              Última llamada
-            </span>
+        {/* Categorías Section */}
+        <section className="mt-8 mb-8">
+          <h2 className="text-xl font-semibold mb-3">Categorías</h2>
+          <div className="flex flex-wrap gap-2">
+            {["Rural y agro", "Naturaleza", "Comida", "Tours", "Náutico", "Ciudad", "Eventos"].map((category, index) => (
+              <span
+                key={index}
+                className="text-sm bg-brandYellow text-white px-4 py-2 rounded-full cursor-pointer hover:bg-orange-600 transition-all"
+                onClick={() => handleCategoryClick(category)}
+              >
+                {category}
+              </span>
+            ))}
           </div>
         </section>
       </main>

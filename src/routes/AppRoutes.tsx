@@ -8,7 +8,6 @@ import PaymentMethod from '../components/PaymentMethod/PaymentMethod'
 import PaymentDetails from '../components/PaymentDetails/PaymentDetails'
 import ForgotPasswordVerifyCode from '../components/ForgotPasswordVerifyCode/ForgotPasswordVerifyCode'
 import ForgotPassword from '../components/ForgotPassword/ForgotPassword'
-import ChangePassword from '../components/ChangePassword/ChangePassword'
 import Book from '../components/Book/Book'
 import { ReservationProviderWrapper } from '../contexts/reservation.context'
 import ExperienceDetail from '../components/ExperienceDetail/ExperienceDetail'
@@ -31,8 +30,7 @@ const AppRoutes = () => {
                 <Route path="/confirm-register" element={<ConfirmRegister />} />
                 <Route path="/forgot-password-verify-code" element={<ForgotPasswordVerifyCode />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/change-password" element={<ChangePassword />} />  {/* this route is not yet implemented */}
-            </Route>
+            {/* </Route> */}
 
             {/* Rutas privadas sin contexto de reserva */}
             <Route element={<PrivateRoute />}>

@@ -32,7 +32,6 @@ const Login: React.FC = () => {
 
   const onSubmit = async (credentials: LoginSchema) => {
     try {
-      console.log(API_URL);
       // Usar el servicio para la petición de login
       const response = await authServices.login(credentials);
 
