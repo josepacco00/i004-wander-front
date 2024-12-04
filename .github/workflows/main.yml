@@ -1,11 +1,14 @@
 name: cicd-wander
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag for the Docker image" # Descripción del input
-        required: true # Hace que este campo sea obligatorio
-        default: "latest"
+  push:
+    branches:
+      - develop
+  # workflow_dispatch:
+  #   inputs:
+  #     tag:
+  #       description: "Tag for the Docker image" # Descripción del input
+  #       required: true # Hace que este campo sea obligatorio
+  #       default: "latest"
 
 jobs:
   build-and-test:
@@ -25,13 +28,13 @@ jobs:
 
       - run: npm run build
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
 
-      - name: Deploy in aws
-        if: success()
-        run: aws s3 sync ./dist s3://${{ vars.WEBSITE }}
+      # - name: Deploy in aws
+      #   if: success()
+      #   run: aws s3 sync ./dist s3://${{ vars.WEBSITE }}
