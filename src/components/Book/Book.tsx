@@ -88,7 +88,7 @@ const Book: React.FC = () => {
     const onChange = (date: Date | null) => {
         if (date) {
             setStartDate(date)
-            setValue("bookingDate", undefined)
+            // setValue("bookingDate", undefined)
             calculateAvailableHours(date)
         }
     }
@@ -133,7 +133,7 @@ const Book: React.FC = () => {
     }
 
     return (
-        <div className="relative w-full h-dvh flex flex-col gap-4 p-6 mb-28">
+        <div className="relative flex flex-col w-full gap-4 p-6 h-dvh mb-28">
             <div>
                 <p>{experience!.title}</p>
             </div>

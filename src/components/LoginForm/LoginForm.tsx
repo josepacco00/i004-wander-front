@@ -10,9 +10,6 @@ import authServices from "../../services/auth.services.ts";
 import { AuthContext } from "../../contexts/auth.context.tsx";
 import { User } from "../../types/user.ts";
 
-// Constantes de URL de la API
-const API_URL = import.meta.env.VITE_API_URL;
-
 const Login: React.FC = () => {
   const {
     register,
