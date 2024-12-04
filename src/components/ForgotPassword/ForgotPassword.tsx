@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AuthLayout from "../../layout/AuthLayout";
-import { useNavigate } from "react-router-dom"; // Importamos useNavigate para redirigir
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Importamos axios para hacer solicitudes HTTP
 
 const ForgotPassword: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ const ForgotPassword: React.FC = () => {
     };
 
     // Maneja el envío del formulario
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         // Validación del correo electrónico
@@ -29,17 +30,34 @@ const ForgotPassword: React.FC = () => {
             return;
         }
 
-        console.log("Correo válido:", email);
-        setIsSuccess(true); // Marca como exitoso el envío del código
-        
-        // Redirige a la página de verificación de código
-        setTimeout(() => {
-            navigate("/forgot-password-verify-code");
-        }, 1000);
+        try {
+            // Usamos la variable de entorno VITE_API_URL para construir la URL de la API
+            const apiUrl = `${import.meta.env.VITE_API_URL}/recovery/forgot-password`;
+
+            // Realizamos la solicitud POST para enviar el correo de recuperación
+            const response = await axios.post(apiUrl, {
+                email: email,
+            });
+
+            if (response.data.message === "Password recovery request sent successfully.") {
+                setIsSuccess(true); // Marca como exitoso el envío del código
+                setTimeout(() => {
+                    navigate("/forgot-password-verify-code"); // Redirige a la página de verificación de código
+                }, 1000);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response?.data) {
+                    setErrorMessage(error.response.data.message || "Error en el servidor");
+                } else {
+                    setErrorMessage("Error desconocido");
+                }
+            }
+        }
     };
 
     return (
-        <AuthLayout showText = {false}>
+        <AuthLayout showText={false}>
             <div className="text-center">
                 <h2 className="mb-4 text-3xl font-bold text-dark">
                     <span>Recupera</span> <br />

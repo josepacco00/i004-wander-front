@@ -10,7 +10,7 @@
 /* Header */
 .header {
   @apply relative bg-cover bg-center text-black flex flex-col items-center rounded-md p-8 pt-9;
-  background-image: url('https://picsum.photos/seed/picsum/1500/1500'); /* Añadido padding-top para mover el contenido hacia abajo */
+  background-image: url("https://picsum.photos/seed/picsum/1500/1500"); /* Añadido padding-top para mover el contenido hacia abajo */
 }
 
 .header-title {
@@ -21,11 +21,11 @@
 }
 
 .search-input {
-  @apply w-full p-2 pr-8 border border-gray-300 rounded-3xl  ; /* Espacio a la derecha para el botón */
+  @apply w-full p-2 pr-8 border border-gray-300 rounded-3xl; /* Espacio a la derecha para el botón */
 }
 
 .search-button {
-  @apply absolute top-1/2 right-0 w-10 h-10 flex items-center justify-center bg-orange-500 text-white rounded-full transform -translate-y-1/2 hover:bg-orange-600 transition-all; /* Posición absoluta a la derecha con diseño circular */
+  @apply absolute top-1/2 right-0 w-10 h-10 flex items-center justify-center bg-primary text-white rounded-full transform -translate-y-1/2 hover:bg-orange-600 transition-all; /* Posición absoluta a la derecha con diseño circular */
 }
 
 /* Sección Popular */
@@ -35,9 +35,9 @@
 .grid-container {
   @apply grid grid-cols-2 gap-4;
 }
-.experience-card {
+/* .experience-card {
   @apply bg-gray-50 rounded-md overflow-hidden;
-}
+} */
 .experience-image {
   @apply w-11/12 h-40 bg-cover bg-center rounded-lg mx-auto; /* Reduce ancho, centra con `mx-auto` */
 }
@@ -62,33 +62,44 @@
 .ultima-llamada {
   @apply mt-6;
 }
+
 .section-title2 {
   @apply text-xl font-semibold mb-2;
 }
+
 .grid-container2 {
-  @apply grid grid-cols-4 gap-4;
+  @apply grid grid-cols-4 gap-4; /* Cambié el gap a 4 para dar más espacio entre los elementos */
 }
+
 .experience-card2 {
   @apply mt-2 bg-gray-50 shadow-md rounded-md overflow-hidden;
   background-size: cover;
   background-position: center;
+  /* Esto fuerza a que las tarjetas tengan el mismo tamaño */
+  height: 175px; /* Puedes ajustar la altura según lo que necesites */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
+
 .experience-info2 {
-  @apply p-6 bg-black bg-opacity-40 text-white;
+  @apply mt-3 p-6  text-white shadow-md rounded-md overflow-hidden;
+  height: 100%; /* Esto asegura que el contenedor de la información ocupe todo el alto disponible */
 }
+
 .experience-title2 {
-  @apply text-lg font-semibold mb-2;
+  @apply text-sm font-semibold mb-2;
 }
+
 .experience-date2 {
   @apply text-sm;
 }
-
 /* Sección Categorías */
 .category-tags {
   @apply flex flex-wrap gap-2 mt-6;
 }
 .category {
-  @apply text-sm bg-primary text-gray-800 px-4 py-2 rounded-full cursor-pointer hover:bg-orange-200 transition-all;
+  @apply text-sm bg-primary text-white font-semibold px-4 py-2 rounded-full cursor-pointer hover:bg-orange-200 transition-all;
 }
 
 /* Responsivo */

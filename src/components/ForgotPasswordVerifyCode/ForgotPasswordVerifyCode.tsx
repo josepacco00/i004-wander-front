@@ -10,7 +10,6 @@ const ForgotPasswordVerifyCode: React.FC = () => {
     const [password, setPassword] = useState(""); // Nueva contraseña
     const [confirmPassword, setConfirmPassword] = useState(""); // Confirmar contraseña
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // Para manejar el error de validación
-    const [passwordError, setPasswordError] = useState(""); // Para manejar errores en las contraseñas
     const [isSubmitting, setIsSubmitting] = useState(false); // Para manejar el estado de envío
     const [isPasswordValid, setIsPasswordValid] = useState(false); // Para manejar si la contraseña es válida
     const [isPasswordsMatch, setIsPasswordsMatch] = useState(false); // Para verificar que las contraseñas coincidan
@@ -57,7 +56,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         e.preventDefault();
 
         if (!isPasswordValid || !isPasswordsMatch) {
-            setPasswordError("Las contraseñas no son válidas o no coinciden.");
+            setErrorMessage("Las contraseñas no son válidas o no coinciden.");
             return;
         }
 
@@ -71,7 +70,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
             setShowModal(true);
             setErrorMessage(null); // Limpiar cualquier mensaje de error
         } catch (error) {
-            setPasswordError("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
+            setErrorMessage("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
         } finally {
             setIsSubmitting(false);
         }
@@ -160,9 +159,8 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             placeholder="Repite tu nueva contraseña"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${passwordError ? "border-red-500" : ""}`}
+                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${errorMessage ? "border-red-500" : ""}`}
                         />
-                        {passwordError && <div className="form__notification form__notification--error">{passwordError}</div>}
                     </div>
 
                     {/* Temporizador y mensaje de reenvío */}
@@ -197,7 +195,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                     <button
                         type="submit"
                         disabled={!isPasswordValid || !isPasswordsMatch}
-                        className="w-full py-3 text-white FFA500 rounded-3xl mt-6"
+                        className="w-full py-3 text-white bg-orange-500 rounded-3xl mt-6"
                     >
                         {isSubmitting ? "Cambiando..." : "Cambiar Contraseña"}
                     </button>
@@ -233,7 +231,6 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                     </div>
                 </div>
             )}
-
         </AuthLayout>
     );
 };
