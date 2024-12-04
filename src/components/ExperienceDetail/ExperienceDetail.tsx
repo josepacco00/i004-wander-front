@@ -10,15 +10,15 @@ import { getExperienceById } from "../../services/experience.services";
 
 import { useContext } from "react";
 import { ReservationContext } from "../../contexts/reservation.context";
-import { IExperience } from "../../types/experience";
+import { DetailExperience } from "../../types/detailexperience";
 
 function ExperienceDetail() {
   const navigate = useNavigate();
 
   const { setExperience } = useContext(ReservationContext);
 
-  const [experience, setDataExperience] = useState<IExperience>(
-    {} as IExperience
+  const [experience, setDataExperience] = useState<DetailExperience>(
+    {} as DetailExperience
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,8 @@ function ExperienceDetail() {
 
   // Redirige a booking y manda informacion al contexto
   const handleBooking = () => {
-    setExperience(experience);
+    // @ts-ignore
+     setExperience(experience);
     navigate("/booking");
   };
 
@@ -70,6 +71,8 @@ function ExperienceDetail() {
 
       {/* Informacion detallada de la experiencia */}
       <InfoExperience
+        tags={experience?.tags}
+        createdAt={experience?.createdAt}
         location={experience?.location || []}
         description={experience?.description}
         capacity={experience?.capacity}
@@ -80,7 +83,7 @@ function ExperienceDetail() {
       <MapSection coords={experience?.location} />
 
       {/* Seccion de reseñas de la experiencia */}
-      <ReviewSection />
+      <ReviewSection id={experience?.id} />
 
       <div className="fixed z-[100] bottom-0 flex items-center justify-between w-full gap-12 p-5 px-5 bg-white container-shadow">
         <h1 className="text-primary">
