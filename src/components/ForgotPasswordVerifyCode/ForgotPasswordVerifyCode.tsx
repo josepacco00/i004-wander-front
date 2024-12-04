@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
 import AuthLayout from "../../layout/AuthLayout";
-import { useNavigate } from "react-router-dom"; // Para redirección
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ForgotPasswordVerifyCode: React.FC = () => {
     const navigate = useNavigate();
-    const [timer, setTimer] = useState(60); // Temporizador para reenvío de código
-    const [resendEnabled, setResendEnabled] = useState(false); // Estado para habilitar el botón de reenvío
-    const [code, setCode] = useState(""); // Para almacenar el código ingresado
-    const [password, setPassword] = useState(""); // Nueva contraseña
-    const [confirmPassword, setConfirmPassword] = useState(""); // Confirmar contraseña
-    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Para manejar el error de validación
-    const [isSubmitting, setIsSubmitting] = useState(false); // Para manejar el estado de envío
-    const [isPasswordValid, setIsPasswordValid] = useState(false); // Para manejar si la contraseña es válida
-    const [isPasswordsMatch, setIsPasswordsMatch] = useState(false); // Para verificar que las contraseñas coincidan
-    const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal de éxito
-    const [passwordTouched, setPasswordTouched] = useState(false); // Para saber si el usuario ya tocó el campo de la contraseña
+    const [timer, setTimer] = useState(60);
+    const [resendEnabled, setResendEnabled] = useState(false);
+    const [code, setCode] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [codeError, setCodeError] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Para los mensajes de error
+    const [resendAttempts, setResendAttempts] = useState(0); // Contador de intentos de reenvío
+
+    const email = localStorage.getItem("userEmail");
+
+    if (!email) {
+        navigate("/forgot-password");
+    }
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -22,21 +30,52 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         }, 1000);
 
         if (timer === 0) {
-            setResendEnabled(true); // Habilitar el botón de reenvío cuando el tiempo se haya agotado
+            setResendEnabled(true);
         }
 
         return () => clearInterval(interval);
     }, [timer]);
 
-    const handleResend = () => {
-        if (timer === 0) {
-            console.log("Código reenviado");
-            setTimer(60);
-            setResendEnabled(false); // Deshabilitar el botón de reenvío hasta que pasen otros 60 segundos
+    const handleResend = async () => {
+        if (timer === 0 && resendAttempts < 3) {
+            try {
+                setResendEnabled(false);
+                setTimer(60); // Reinicia el temporizador
+                setResendAttempts((prev) => prev + 1); // Incrementa el contador de intentos
+                console.log("Reenviando código...");
+    
+                // Llamada a la API para reenviar el código
+                const apiUrl = `${import.meta.env.VITE_API_URL}/recovery/forgot-password`; // URL de la API
+    
+                const response = await axios.post(apiUrl, { email });
+    
+                // Verifica la respuesta completa de la API
+                console.log("Respuesta de la API:", response);
+    
+                if (response.status === 200) {
+                    console.log("Código reenviado exitosamente");
+                    setErrorMessage(null); // Limpiar cualquier error anterior
+    
+                    // Aquí verificamos si la respuesta contiene un nuevo código
+                    if (response.data.newCode) {
+                        console.log("Nuevo código recibido:", response.data.newCode);
+                        setCode(response.data.newCode); // Actualizamos el estado con el nuevo código
+                    } else {
+                        console.log("No se recibió un nuevo código, usando el actual.");
+                    }
+                } else {
+                    setErrorMessage("Hubo un problema al reenviar el código. Inténtalo de nuevo.");
+                }
+            } catch (error) {
+                console.error("Error al intentar reenviar el código:", error);
+                setErrorMessage("No se pudo reenviar el código. Por favor, intenta más tarde.");
+            }
+        } else if (resendAttempts >= 3) {
+            setErrorMessage("Has alcanzado el límite de intentos. Intenta más tarde.");
         }
     };
+    
 
-    // Validación de la contraseña (mínimo 8 caracteres, una mayúscula, un número y un carácter especial)
     const validatePassword = (password: string) => {
         const lengthValid = password.length >= 8;
         const lowerCaseValid = /[a-z]/.test(password);
@@ -44,56 +83,81 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         const numberValid = /\d/.test(password);
         const specialCharValid = /[@#!]/.test(password);
 
-        setIsPasswordValid(lengthValid && lowerCaseValid && upperCaseValid && numberValid && specialCharValid);
+        if (!lengthValid) return "Debe tener al menos 8 caracteres.";
+        if (!lowerCaseValid || !upperCaseValid || !numberValid || !specialCharValid) {
+            return "Debe contener una minúscula, una mayúscula, un número y un carácter especial (@, #, !).";
+        }
+        return null;
     };
-
-    // Verificamos que las contraseñas coincidan
-    useEffect(() => {
-        setIsPasswordsMatch(password === confirmPassword);
-    }, [password, confirmPassword]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!isPasswordValid || !isPasswordsMatch) {
-            setErrorMessage("Las contraseñas no son válidas o no coinciden.");
+        const passwordValidation = validatePassword(password);
+        if (passwordValidation) {
+            setPasswordError(passwordValidation);
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setConfirmPasswordError("Las contraseñas no coinciden.");
             return;
         }
 
         try {
             setIsSubmitting(true);
 
-            // Simulamos la lógica de cambio de contraseña
-            console.log("Contraseña cambiada con éxito:", password);
+            const apiUrl = `${import.meta.env.VITE_API_URL}/recovery/reset-password`;
 
-            // Si todo va bien, mostramos el modal de éxito
-            setShowModal(true);
-            setErrorMessage(null); // Limpiar cualquier mensaje de error
-        } catch (error) {
-            setErrorMessage("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
+            const response = await axios.post(apiUrl, {
+                email,
+                code,
+                newPassword: password,
+            });
+
+            if (response.status === 200) {
+                setShowModal(true);
+                setCodeError(null);
+                setPasswordError(null);
+                setConfirmPasswordError(null);
+            } else {
+                setCodeError("El código ingresado no es válido. Por favor, verifica e inténtalo nuevamente.");
+            }
+        } catch (error: any) {
+            console.error("Error al hacer la solicitud:", error);
+
+            if (error.response && error.response.data) {
+                const { message } = error.response.data;
+
+                if (message.includes("invalid code")) {
+                    setCodeError("El código ingresado no es válido. Por favor, verifica e inténtalo nuevamente.");
+                } else {
+                    setCodeError("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
+                }
+            } else {
+                setCodeError("Hubo un error inesperado. Por favor, inténtalo más tarde.");
+            }
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    // Función para redirigir al login
-    const handleLoginRedirect = () => {
-        navigate("/login");
-    };
-
     const handleCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
-
-        // Solo permite números y limita la longitud a 6 caracteres
         if (/^\d*$/.test(value) && value.length <= 6) {
-            setCode(value); // Actualiza el código solo si es válido
+            setCode(value);
+            setCodeError(null);
         }
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
-        validatePassword(e.target.value); // Validamos la contraseña mientras se escribe
-        setPasswordTouched(true); // Marcamos que el usuario ya tocó el campo
+        setPasswordError(null);
+    };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        setConfirmPasswordError(null);
     };
 
     return (
@@ -101,11 +165,10 @@ const ForgotPasswordVerifyCode: React.FC = () => {
             <div className="text-center">
                 <p className="mb-4 text-sm text-gray-700">
                     Ingresa el código de verificación enviado<br />
-                    al correo <span className="font-semibold text-dark">correo@gmail.com</span>
+                    al correo <span className="font-semibold text-dark">{email}</span>
                 </p>
 
                 <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-6">
-                    {/* Código */}
                     <div className="w-full">
                         <label htmlFor="code" className="block text-sm font-medium text-left text-dark">
                             Código
@@ -118,14 +181,11 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             onChange={handleCodeChange}
                             maxLength={6}
                             inputMode="numeric"
-                            className="w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark"
+                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${codeError ? "border-red-500" : ""}`}
                         />
+                        {codeError && <p className="text-xs text-red-500 mt-1">{codeError}</p>}
                     </div>
-                    {errorMessage && (
-                        <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
-                    )}
 
-                    {/* Nueva contraseña */}
                     <div className="w-full">
                         <label htmlFor="password" className="block text-sm font-medium text-left text-dark">
                             Nueva contraseña
@@ -136,19 +196,11 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             placeholder="Escribe tu nueva contraseña"
                             value={password}
                             onChange={handlePasswordChange}
-                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${passwordTouched && password.length < 8 ? "border-red-500" : ""}`}
+                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${passwordError ? "border-red-500" : ""}`}
                         />
-                        {passwordTouched && password.length < 8 && (
-                            <p className="text-xs text-red-500 mt-1">La contraseña debe tener al menos 8 caracteres</p>
-                        )}
-                        {passwordTouched && !isPasswordValid && password.length >= 8 && (
-                            <p className="text-xs text-red-500 mt-1">
-                                La contraseña debe contener al menos una minúscula, una mayúscula, un número y uno de los siguientes caracteres (@, #, or !)
-                            </p>
-                        )}
+                        {passwordError && <p className="text-xs text-red-500 mt-1">{passwordError}</p>}
                     </div>
 
-                    {/* Confirmar contraseña */}
                     <div className="w-full">
                         <label htmlFor="confirmPassword" className="block text-sm font-medium text-left text-dark">
                             Confirmar contraseña
@@ -158,79 +210,69 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             type="password"
                             placeholder="Repite tu nueva contraseña"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${errorMessage ? "border-red-500" : ""}`}
+                            onChange={handleConfirmPasswordChange}
+                            className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${confirmPasswordError ? "border-red-500" : ""}`}
                         />
+                        {confirmPasswordError && <p className="text-xs text-red-500 mt-1">{confirmPasswordError}</p>}
                     </div>
 
-                    {/* Temporizador y mensaje de reenvío */}
-                    <div className="text-center mt-4">
+                    {/* Botón para reenviar el código */}
+                    <div className="text-center mt-6">
                         <p className="text-sm text-dark font-semibold">
                             ¿No recibiste el código?{" "}
                             <button
                                 onClick={handleResend}
-                                disabled={!resendEnabled}
-                                className={`text-orange-500 font-semibold ml-2 transition-colors ${resendEnabled ? "hover:text-orange-600" : "opacity-50 cursor-not-allowed"}`}
-                                style={{
-                                    backgroundColor: resendEnabled ? 'transparent' : 'transparent',
-                                    border: 'none',
-                                    cursor: resendEnabled ? 'pointer' : 'not-allowed',
-                                }}
+                                disabled={!resendEnabled || resendAttempts >= 3}
+                                className={`text-brandYellow font-semibold ml-2 ${!resendEnabled || resendAttempts >= 3 ? "opacity-50 cursor-not-allowed" : "hover:text-yellow-600"}`}
+                                style={{ backgroundColor: "transparent", border: "none", padding: 0 }}
                             >
                                 Reenviar
                             </button>
                         </p>
+
+                        {/* Contador de tiempo restante */}
+                        <p className="text-sm text-dark mt-2">
+                            Tiempo restante: {timer}s
+                        </p>
+
+                        {/* Barra de progreso del temporizador */}
                         <div className="w-48 h-2 mt-3 bg-gray-300 rounded-full mx-auto">
                             <div
                                 className="h-2 rounded-full"
                                 style={{
-                                    width: `${(timer / 60) * 100}%`,
-                                    backgroundColor: timer > 0 ? "#FFA500" : "#4CAF50", // Naranja
+                                    width: `${(timer / 60) * 100}%`,  // Ancho de la barra basado en el tiempo restante
+                                    backgroundColor: timer > 0 ? "#FFA500" : "#4CAF50",  // Amarillo cuando cuenta, verde al terminar
                                 }}
                             />
                         </div>
-                        <p className="mt-1 text-sm text-dark">{timer} segundos restantes</p>
+
+                        {errorMessage && <p className="text-sm text-red-500 mt-3">{errorMessage}</p>}
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={!isPasswordValid || !isPasswordsMatch}
-                        className="w-full py-3 text-white bg-orange-500 rounded-3xl mt-6"
-                    >
-                        {isSubmitting ? "Cambiando..." : "Cambiar Contraseña"}
-                    </button>
+                    <div className="flex justify-center w-full">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full px-6 py-3 mt-6 text-white bg-brandYellow rounded-full disabled:bg-gray-400"
+                        >
+                            {isSubmitting ? "Cargando..." : "Confirmar"}
+                        </button>
+                    </div>
                 </form>
-            </div>
-
-            {/* Modal de éxito */}
-            {showModal && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white rounded-[2rem] p-8 w-80 shadow-lg">
-                        <div className="flex flex-col items-center space-y-8">
-                            <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
-                                <svg
-                                    className="w-14 h-14 text-white"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="3"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <h2 className="text-2xl font-bold text-center text-dark flex flex-wrap justify-center">
-                                ¡Contraseña <span className="block">cambiada correctamente!</span>
-                            </h2>
+                {showModal && (
+                    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+                        <div className="bg-white p-6 rounded-lg text-center">
+                            <h3 className="text-lg font-semibold text-dark">Contraseña cambiada con éxito</h3>
                             <button
-                                onClick={handleLoginRedirect} // Redirigir al login
-                                className="w-[200px] py-6 text-white bg-brandYellow rounded-3xl"
+                                onClick={() => navigate("/login")}
+                                className="mt-4 px-6 py-2 bg-dark text-white rounded-full"
                             >
                                 Iniciar sesión
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </AuthLayout>
     );
 };

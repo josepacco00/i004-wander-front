@@ -18,27 +18,30 @@ const ForgotPassword: React.FC = () => {
     // Maneja el envío del formulario
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
+    
         // Validación del correo electrónico
         if (!email) {
             setErrorMessage("Por favor, ingresa un correo electrónico.");
             return;
         }
-
+    
         if (!/\S+@\S+\.\S+/.test(email)) {
             setErrorMessage("Por favor, ingresa un correo electrónico válido.");
             return;
         }
-
+    
         try {
+            // Guardar el correo en el localStorage
+            localStorage.setItem("userEmail", email);
+    
             // Usamos la variable de entorno VITE_API_URL para construir la URL de la API
             const apiUrl = `${import.meta.env.VITE_API_URL}/recovery/forgot-password`;
-
+    
             // Realizamos la solicitud POST para enviar el correo de recuperación
             const response = await axios.post(apiUrl, {
                 email: email,
             });
-
+    
             if (response.data.message === "Password recovery request sent successfully.") {
                 setIsSuccess(true); // Marca como exitoso el envío del código
                 setTimeout(() => {
@@ -54,7 +57,7 @@ const ForgotPassword: React.FC = () => {
                 }
             }
         }
-    };
+    };    
 
     return (
         <AuthLayout showText={false}>
