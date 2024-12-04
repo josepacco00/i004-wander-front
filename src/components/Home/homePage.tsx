@@ -4,9 +4,57 @@
  */
 
 import React from "react";
+import { useState, useEffect } from "react";
 import "./homePage.css";
+import { useNavigate } from "react-router-dom";
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa/index";
+import axios from "axios";
 
 const Home: React.FC = () => {
+  const [search, setSearch] = useState("");
+  const [popularExperiences, setPopularExperiences] = useState([]);
+  const [ultimaLlamadaExperiences, setUltimaLlamadaExperiences] = useState<
+    any[]
+  >([]);
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (category: string) => {
+    // Redirigir al filtro correspondiente con la categoría en minúsculas
+    navigate(`/filters?category=${encodeURIComponent(category.toLowerCase())}`);
+  };
+
+  useEffect(() => {
+    // Llamar a la API
+    const fetchExperiences = async () => {
+      try {
+        const response = await fetch(
+          "https://newapi.rutasvip.click/api/experiences/get-all"
+        );
+        const data = await response.json();
+        setPopularExperiences(data.slice(0, 2)); // Guardar solo las dos primeras experiencias
+      } catch (error) {
+        console.error("Error fetching experiences:", error);
+      }
+    };
+    fetchExperiences();
+  }, []);
+
+  useEffect(() => {
+    // Llamar a la API
+    const fetchExperiences = async () => {
+      try {
+        const response = await fetch(
+          "https://newapi.rutasvip.click/api/experiences/latest"
+        );
+        const data = await response.json();
+        setUltimaLlamadaExperiences(data.slice(0, 4)); // Guardar solo las dos primeras experiencias
+      } catch (error) {
+        console.error("Error fetching experiences:", error);
+      }
+    };
+    fetchExperiences();
+  }, []);
+
   return (
     <div className="home">
       <header className="header">
@@ -19,8 +67,17 @@ const Home: React.FC = () => {
             type="text"
             placeholder="Busca experiencias"
             className="search-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)} // Actualizar el estado
           />
-          <button className="search-button">
+          <button
+            onClick={() => {
+              // Si search está vacío, simplemente redirigimos a la ruta de filtros sin ningún query.
+              const query = search.trim() ? encodeURIComponent(search) : ""; // Si search está vacío, no se pasa nada
+              navigate(`/filters?title=${query}`);
+            }}
+            className="search-button"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -44,36 +101,30 @@ const Home: React.FC = () => {
         <section className="section section-padding">
           <h2 className="section-title">Popular</h2>
           <div className="grid-container">
-            <div className="experience-card">
-              <div
-                className="experience-image"
-                style={{
-                  backgroundImage: "url(https://picsum.photos/600/600)",
-                }}
-              ></div>
-              <div className="experience-info">
-                <div className="experience-info-content">
-                  <h3 className="experience-title">Nature's Symphony (FR)</h3>
-                  <p className="experience-date">Cascading Falls 17/08/2023</p>
+            {popularExperiences.map((experience) => (
+              <div key={experience.id} className="experience-card">
+                <div
+                  className="experience-image"
+                  style={{
+                    backgroundImage: `url(${
+                      experience.image || "https://via.placeholder.com/600"
+                    })`,
+                  }}
+                ></div>
+                <div className="experience-info">
+                  <div className="experience-info-content">
+                    <h3 className="experience-title">{experience.title}</h3>
+                    <p className="experience-date">{experience.date}</p>
+                  </div>
+                  <button
+                    className="reserve-button"
+                    onClick={() => navigate(`/experiences/${experience.id}`)}
+                  >
+                    Reservar
+                  </button>
                 </div>
-                <button className="reserve-button">Reservar</button>
               </div>
-            </div>
-            <div className="experience-card">
-              <div
-                className="experience-image"
-                style={{
-                  backgroundImage: "url(https://picsum.photos/600/600)",
-                }}
-              ></div>
-              <div className="experience-info">
-                <div className="experience-info-content">
-                  <h3 className="experience-title">Cultural Rhythms (ITA)</h3>
-                  <p className="experience-date">Heritage House 19/09/2023</p>
-                </div>
-                <button className="reserve-button">Reservar</button>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
@@ -81,42 +132,23 @@ const Home: React.FC = () => {
         <section className="ultima-llamada section-padding mt-8">
           <h2 className="section-title2">Última llamada</h2>
           <div className="grid-container2">
-            <div
-              className="experience-card2"
-              style={{ backgroundImage: "url(https://picsum.photos/200/200)" }}
-            >
-              <div className="experience-info2">
-                <h3 className="experience-title2">Ancient</h3>
-                <p className="experience-date2">Grand Plaza 20/09/2023</p>
+            {ultimaLlamadaExperiences.map((experience) => (
+              <div key={experience.id} className="experience-card2">
+                <div
+                  className="experience-image"
+                  style={{
+                    backgroundImage: `url(${
+                      experience.image || "https://via.placeholder.com/200"
+                    })`,
+                  }}
+                  onClick={() => handleImageClick(experience.id)} // Click on image redirects
+                ></div>
+                <div className="experience-info2">
+                  <h3 className="experience-title2">{experience.title}</h3>
+                  <p className="experience-date2">{experience.date}</p>
+                </div>
               </div>
-            </div>
-            <div
-              className="experience-card2"
-              style={{ backgroundImage: "url(https://picsum.photos/200/200)" }}
-            >
-              <div className="experience-info2">
-                <h3 className="experience-title2">Flavors of the Market</h3>
-                <p className="experience-date2">Market Street 22/09/2023</p>
-              </div>
-            </div>
-            <div
-              className="experience-card2"
-              style={{ backgroundImage: "url(https://picsum.photos/200/200)" }}
-            >
-              <div className="experience-info2">
-                <h3 className="experience-title2">Excitement</h3>
-                <p className="experience-date2">Peak Point 23/09/2023</p>
-              </div>
-            </div>
-            <div
-              className="experience-card2"
-              style={{ backgroundImage: "url(https://picsum.photos/200/200)" }}
-            >
-              <div className="experience-info2">
-                <h3 className="experience-title2">Tranquil Haven</h3>
-                <p className="experience-date2">Zeh Garden Resort 29/09/2023</p>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
@@ -124,14 +156,54 @@ const Home: React.FC = () => {
         <section className="section">
           <h2 className="section-title">Categorías</h2>
           <div className="category-tags">
-            <span className="category">Rural y agro</span>
-            <span className="category">Naturaleza</span>
-            <span className="category">Comida</span>
-            <span className="category">Tours</span>
-            <span className="category">Náutico</span>
-            <span className="category">Ciudad</span>
-            <span className="category">Eventos</span>
-            <span className="category">Última llamada</span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Rural y agro")}
+            >
+              Rural y agro
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Naturaleza")}
+            >
+              Naturaleza
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Comida")}
+            >
+              Comida
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Tours")}
+            >
+              Tours
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Náutico")}
+            >
+              Náutico
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Ciudad")}
+            >
+              Ciudad
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Eventos")}
+            >
+              Eventos
+            </span>
+            <span
+              className="category"
+              onClick={() => handleCategoryClick("Última llamada")}
+            >
+              Última llamada
+            </span>
           </div>
         </section>
       </main>
