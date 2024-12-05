@@ -21,14 +21,10 @@ interface QueryParams {
   tags?: string;
 }
 
-
-
 const Filters: React.FC = () => {
   const BACK_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const location = useLocation();
-
-  
 
   const [filters, setFilters] = useState<Filters>({
     title: "",
@@ -41,8 +37,29 @@ const Filters: React.FC = () => {
   const [experiences, setExperiences] = useState<IExperience[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [inputErrors, setInputErrors] = useState<{ [key: string]: string }>({
+    title: "",
+    city: "",
+  });
 
   const handleInputChange = (key: string, value: string) => {
+    // Validación para campos 'title' y 'city'
+    const regex = /^[A-Za-z\s]*$/; // Solo letras y espacios
+    if (value.length > 50 || !regex.test(value)) {
+      setInputErrors((prev) => ({
+        ...prev,
+        [key]: `${
+          key === "title" ? "El título" : "La ciudad"
+        } debe contener solo letras y un maximo de 50 caracteres.`,
+      }));
+    } else {
+      setInputErrors((prev) => ({
+        ...prev,
+        [key]: "", // Limpiar error si el valor es válido
+      }));
+    }
+
+    // Actualizar los filtros
     setFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -51,26 +68,30 @@ const Filters: React.FC = () => {
 
   const applyFilters = () => {
     const { title, country, city, maxPrice, category } = filters;
-  
-    
-    const locationParam = (country && city) 
-      ? `${country},${city}` 
-      : (country || city); 
-  
+
+    const locationParam =
+      country && city
+        ? `${country},${city}`
+        : country
+        ? country
+        : city
+        ? `,${city}`
+        : undefined;
+
     const newQueryParams = {
       title: title || undefined,
-      location: locationParam || undefined, 
+      location: locationParam || undefined,
       maxPrice: maxPrice || undefined,
-      tags: category || undefined, 
+      tags: category || undefined,
     };
-  
+
     navigate(`?${queryString.stringify(newQueryParams)}`);
   };
-  
+
   const fetchExperiences = async (queryParams: QueryParams) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await axios.get(
         `${BACK_URL}/experiences/get-all?${queryString.stringify(queryParams)}`
@@ -83,28 +104,44 @@ const Filters: React.FC = () => {
     }
   };
 
+  const capitalizeCity = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+  
   const handleSearchExperiences = () => {
     const { title, country, city, maxPrice, category } = filters;
-
-    // Construimos `location` combinando `country` y `city`
-    const locationParam = country && city ? `${country},${city}` : undefined;
-
+  
+    // Capitalizar la primera letra de 'city' y el resto en minúsculas
+    const formattedCity = city ? capitalizeCity(city) : "";
+  
+    const locationParam =
+      country && formattedCity
+        ? `${country},${formattedCity}`
+        : country
+        ? country
+        : formattedCity
+        ? `,${formattedCity}`
+        : undefined;
+  
     const queryParams = {
       title: title || undefined,
-      location: locationParam || undefined, // Pasamos `location` combinado
+      location: locationParam || undefined,
       maxPrice: maxPrice || undefined,
-      tags: category || undefined, // Mapeamos `category` a `tags`
+      tags: category || undefined,
     };
-
+  
+    // Hacer la petición al backend con los parámetros formateados
     fetchExperiences(queryParams);
     applyFilters();
   };
+  
+  
 
   useEffect(() => {
     const params = queryString.parse(location.search);
 
     const [country, city] = (params.location as string)?.split(",") || ["", ""];
-    
+
     //@ts-ignore
     setFilters((prev) => ({
       ...prev,
@@ -112,19 +149,20 @@ const Filters: React.FC = () => {
       country: country || "",
       city: city || "",
       maxPrice: params.maxPrice || "",
-      category: params.tags || "", // Mapeamos `tags` a `category` en el estado
+      category: params.tags || "",
     }));
 
     fetchExperiences(params);
-    
   }, [location.search]);
 
   return (
     <div>
       <div className="p-4 mt-4 bg-gray-100 rounded-lg shadow-md">
         <div className="flex justify-between">
-        <h2 className="mb-4 text-lg font-bold">Filtros</h2>
-        <p className="px-3 text-sm" onClick={() => { navigate('/filters')}}>Resetear Filtros</p>
+          <h2 className="mb-4 text-lg font-bold">Filtros</h2>
+          <p className="px-3 text-sm" onClick={() => navigate("/filters")}>
+            Resetear Filtros
+          </p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
@@ -145,6 +183,8 @@ const Filters: React.FC = () => {
           </div>
 
           <LocationInput
+            value={filters.city} // Valor actual de city
+            onChange={(value) => handleInputChange("city", value)} // Llama a handleInputChange para validar y actualizar el estado
             updateQueryParams={(params) =>
               setFilters((prev) => ({
                 ...prev,
@@ -182,7 +222,15 @@ const Filters: React.FC = () => {
           </div>
         </div>
 
+        {inputErrors.title !== "" && (
+          <p className="text-red-500">{inputErrors.title}</p>
+        )}
+        {inputErrors.city !== "" && (
+          <p className="text-red-500">{inputErrors.city}</p>
+        )}
+
         <button
+          disabled={inputErrors.title !== "" || inputErrors.city !== ""}
           onClick={handleSearchExperiences}
           className="w-full py-2 mt-4 font-bold text-white bg-yellow-500 rounded-full hover:bg-yellow-600"
         >
@@ -210,7 +258,9 @@ const Filters: React.FC = () => {
                       className="object-cover w-full h-32 rounded-t-lg"
                     />
                     <div className="mt-2">
-                      <h3 className="font-medium text-md">{experience.title}</h3>
+                      <h3 className="font-medium text-md">
+                        {experience.title}
+                      </h3>
                       <p className="text-sm text-gray-600">
                         {experience.location[0] + ", " + experience.location[1]}
                       </p>
@@ -219,11 +269,12 @@ const Filters: React.FC = () => {
                         <span>
                           📍 {experience.location[0]}, {experience.location[1]}
                         </span>
-                        <span>
-                          📍 {experience.tags[0]}
-                        </span>
+                        <span>📍 {experience.tags[0]}</span>
                       </div>
-                      <button onClick={() => navigate('/experience/' + experience.id)}  className="w-full py-2 mt-4 font-bold text-white bg-yellow-500 rounded-full hover:bg-yellow-600">
+                      <button
+                        onClick={() => navigate("/experience/" + experience.id)}
+                        className="w-full py-2 mt-4 font-bold text-white bg-yellow-500 rounded-full hover:bg-yellow-600"
+                      >
                         Más detalles
                       </button>
                     </div>
