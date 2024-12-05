@@ -34,13 +34,13 @@ jobs:
 
       - run: set VITE_API_URL=${{ secrets.VITE_API_URL }} && npm run build
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_ID }}
-          aws-secret-access-key: ${{ secrets.SECRET_KEY }}
-          aws-region: us-east-1
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.ACCESS_ID }}
+      #     aws-secret-access-key: ${{ secrets.SECRET_KEY }}
+      #     aws-region: us-east-1
 
-      - name: Deploy in aws
-        if: success()
-        run: aws s3 sync ./dist s3://${{ secrets.WEBSITE }}
+      # - name: Deploy in aws
+      #   if: success()
+      #   run: aws s3 sync ./dist s3://${{ secrets.WEBSITE }}
