@@ -13,10 +13,9 @@ type Coords = [number | undefined, number | undefined];
 type infoCoords = any;
 
 const AddExperience = () => {
-
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [images, setImages] = useState<File[]>([]);
   const [availability, setAvailability] = useState<{
     [date: string]: string[];
@@ -39,6 +38,42 @@ const AddExperience = () => {
     "Ciudad",
     "Eventos",
   ];
+
+  // Validaciones
+  const validateForm = (): boolean => {
+    if (!title.trim()) {
+      setErrorMessage("El campo 'Título' es obligatorio.");
+      return false;
+    }
+    if (!description.trim()) {
+      setErrorMessage("El campo 'Descripción' es obligatorio.");
+      return false;
+    }
+    if (!price || price <= 0) {
+      setErrorMessage("El campo 'Precio' debe ser mayor a 0.");
+      return false;
+    }
+    if (!capacity || capacity <= 0) {
+      setErrorMessage("El campo 'Capacidad' debe ser mayor a 0.");
+      return false;
+    }
+    if (tags.length === 0) {
+      setErrorMessage("Debe seleccionar al menos una categoría.");
+      return false;
+    }
+    if (!selectedDate) {
+      setErrorMessage("Debe seleccionar una fecha.");
+      return false;
+    }
+    if (!coords[0] || !coords[1]) {
+      setErrorMessage("Debe seleccionar una ubicación.");
+      return false;
+    }
+    return true;
+  };
+
+  const [errorMessage, setErrorMessage] = useState<string>(""); // Para mostrar el mensaje de error
+  const [showModal, setShowModal] = useState(false); // Para mostrar/ocultar el modal
 
   // Manejar la carga de imágenes
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,10 +173,21 @@ const AddExperience = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    const location = [infoCoords.country, infoCoords.city, coords[0]?.toFixed(4), coords[1]?.toFixed(4)];
-  
+    e.preventDefault(); // Prevenir el envío del formulario
+
+    if (!validateForm()) {
+      setShowModal(true); // Mostrar el modal si la validación falla
+      return; // No continuar si la validación falla
+    }
+
+    // Si la validación pasa, puedes hacer la llamada al backend
+    const location = [
+      infoCoords.country,
+      infoCoords.city,
+      coords[0]?.toFixed(4),
+      coords[1]?.toFixed(4),
+    ];
+
     const payload = {
       title,
       description,
@@ -152,15 +198,12 @@ const AddExperience = () => {
       tags,
       capacity,
     };
-  
-    console.log("Payload enviado al backend:", payload);
-  
+
     try {
       const response = await experienceServices.addExperience(payload);
       console.log("Respuesta del backend:", response.data);
       alert("¡Experiencia añadida con éxito!");
-      navigate('/user-profile')
-
+      navigate("/user-profile");
     } catch (error) {
       console.error("Error al enviar los datos al backend:", error);
       alert("Hubo un error al añadir la experiencia. Inténtalo nuevamente.");
@@ -191,17 +234,31 @@ const AddExperience = () => {
     const fetchLocationData = async () => {
       if (coords[0] !== undefined && coords[1] !== undefined) {
         const data = await reverseGeocode(coords[0], coords[1]);
-        
+
         setInfoCoords(data);
-        
       }
     };
 
     fetchLocationData();
   }, [coords]); // Ejecutar cuando coords cambie
 
+  const closeModal = () => {
+    setShowModal(false);
+    setErrorMessage(""); // Limpiar el mensaje de error al cerrar el modal
+  };
+
   return (
     <form onSubmit={handleSubmit} className="mb-5">
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p className="modal-text">{errorMessage}</p>
+            <button className="modal-close-button" onClick={closeModal}>
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
       {/* Sección de imágenes */}
       <div className="image-section">
         <label className="label-1">Añadir experiencia</label>
@@ -310,7 +367,6 @@ const AddExperience = () => {
         </div>
       </div>
 
-
       {/* Disponibilidad */}
       <div className="form-group">
         <label className="label">Disponibilidad</label>
@@ -386,12 +442,21 @@ const AddExperience = () => {
       {/* Otros campos */}
       <div className="px-3 form-group">
         <label className="label">Capacidad</label>
-        <input onChange={(e) => setCapacity(Number(e.target.value))} type="number" className="input" placeholder="Ejemplo: 2" />
+        <input
+          onChange={(e) => setCapacity(Number(e.target.value))}
+          type="number"
+          className="input"
+          placeholder="Ejemplo: 2"
+        />
       </div>
-      
+
       <div className="mb-4">
         <h1 className="label">Ubicación</h1>
-      <SelectCords coords={coords} setCoords={setCoords} infoCoords={infoCoords} />
+        <SelectCords
+          coords={coords}
+          setCoords={setCoords}
+          infoCoords={infoCoords}
+        />
       </div>
 
       <div className="px-3 form-group">
@@ -407,7 +472,7 @@ const AddExperience = () => {
         </div>
       </div>
       {/* Etiquetas (Lista desplegable) */}
-     
+
       <div className="button-container">
         <button type="submit" className="submit-button">
           Añadir experiencia
