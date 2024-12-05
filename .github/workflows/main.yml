@@ -41,4 +41,4 @@ jobs:
 
       - name: Deploy in aws
         if: success()
-        run: aws s3 sync ./dist s3://${{ vars.WEBSITE }}
+        run: aws s3 sync ./dist s3://${{ secrets.WEBSITE }}
