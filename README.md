@@ -1,3 +1,5 @@
+[![cicd-wander](https://github.com/igrowker/i004-wander-front/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/igrowker/i004-wander-front/actions/workflows/main.yml)
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
