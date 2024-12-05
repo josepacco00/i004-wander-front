@@ -1,4 +1,4 @@
-[![cicd-wander](https://github.com/igrowker/i004-wander-front/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/igrowker/i004-wander-front/actions/workflows/main.yml)
+[![cicd-wander](https://github.com/igrowker/i004-wander-front/actions/workflows/main.yml/badge.svg?branch=develop&event=push)](https://github.com/igrowker/i004-wander-front/actions/workflows/main.yml)
 
 # React + TypeScript + Vite
 
