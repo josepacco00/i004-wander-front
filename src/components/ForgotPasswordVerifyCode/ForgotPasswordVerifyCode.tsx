@@ -88,7 +88,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         try {
             setIsSubmitting(true);
 
-            const apiUrl = "http://localhost:5005/api/recovery/reset-password";
+            const apiUrl = `${import.meta.env.VITE_API_URL}/recovery/reset-password`;
 
             const response = await axios.post(apiUrl, {
                 email,
