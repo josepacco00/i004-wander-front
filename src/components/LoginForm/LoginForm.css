@@ -1,7 +1,46 @@
-.form__error-notification {
-	@apply text-[10px] text-red-500
-}
-
-.form__success-notification {
-	@apply text-[10px] text-green-500
-}
+/* Estilo para el contenedor de errores globales (en la parte superior) */
+.form__global-error-container {
+	background-color: #ffe5e5; /* Fondo rojo claro */
+	color: #d32f2f; /* Texto rojo */
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid #f44336;
+	margin-bottom: 20px;
+	text-align: center;
+	font-weight: bold;
+  }
+  
+  /* Estilo para el mensaje de error en los campos individuales */
+  .form__error-container {
+	background-color: #ffe5e5; /* Fondo rojo claro */
+	color: #d32f2f; /* Texto rojo */
+	padding: 6px;
+	border-radius: 8px;
+	border: 1px solid #f44336; /* Borde rojo */
+	font-size: 0.875rem;
+	margin-top: 10px;
+	text-align: left;
+  }
+  
+  /* Estilo para el mensaje de error */
+  .form__error-message {
+	font-weight: bold;
+  }
+  
+  /* Estilo para el contenedor de éxito */
+  .form__success-container {
+	background-color: #d4edda;
+	color: #155724;
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid #28a745;
+	margin-top: 20px;
+	text-align: center;
+	font-weight: bold;
+  }
+  
+  /* Estilo para el mensaje de éxito */
+  .form__success-message {
+	font-weight: bold;
+  }
+  

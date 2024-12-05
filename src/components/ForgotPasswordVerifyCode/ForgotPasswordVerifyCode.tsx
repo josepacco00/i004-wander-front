@@ -10,11 +10,12 @@ const ForgotPasswordVerifyCode: React.FC = () => {
     const [code, setCode] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [codeError, setCodeError] = useState<string | null>(null); // Error del código
-    const [passwordError, setPasswordError] = useState<string | null>(null); // Error de contraseña
-    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null); // Error de confirmación
+    const [codeError, setCodeError] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [errorResend, setErrorResend] = useState<string | null>(null);  // Error para reenviar el código
     const email = localStorage.getItem("userEmail");
 
     if (!email) {
@@ -33,81 +34,94 @@ const ForgotPasswordVerifyCode: React.FC = () => {
         return () => clearInterval(interval);
     }, [timer]);
 
-    const handleResend = () => {
+    const handleResend = async () => {
         if (timer === 0) {
-            console.log("Código reenviado");
-            setTimer(60);
-            setResendEnabled(false);
+            try {
+                const apiUrl = "http://localhost:5005/api/recovery/forgot-password";
+                const response = await axios.post(apiUrl, { email });
+
+                if (response.status === 200) {
+                    setTimer(60);
+                    setResendEnabled(false);
+                    setErrorResend(null);
+                    console.log("Código reenviado con éxito");
+                }
+            } catch (error: any) {
+                console.error("Error al reenviar el código:", error);
+                setErrorResend("Hubo un error al reenviar el código. Intenta nuevamente.");
+            }
         }
     };
 
     const validatePassword = (password: string) => {
-        const lengthValid = password.length >= 8;
+        const lengthValid = password.length >= 8 && password.length <= 12;
         const lowerCaseValid = /[a-z]/.test(password);
         const upperCaseValid = /[A-Z]/.test(password);
         const numberValid = /\d/.test(password);
         const specialCharValid = /[@#!]/.test(password);
 
-        if (!lengthValid) return "Debe tener al menos 8 caracteres.";
-        if (!lowerCaseValid || !upperCaseValid || !numberValid || !specialCharValid) {
-            return "Debe contener una minúscula, una mayúscula, un número y un carácter especial (@, #, !).";
+        let errorMessage = "";
+        if (password.length > 12) {
+            errorMessage = "La contraseña no puede ser mayor de 12 caracteres.";
+        } else if (password.length < 8) {
+            errorMessage = "La contraseña debe tener al menos 8 caracteres.";
+        } else if (!lowerCaseValid || !upperCaseValid || !numberValid || !specialCharValid) {
+            errorMessage = "Debe contener una minúscula, una mayúscula, un número y un carácter especial (@, #, !).";
         }
-        return null;
+        return errorMessage;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const passwordValidation = validatePassword(password);
-    if (passwordValidation) {
-        setPasswordError(passwordValidation);
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        setConfirmPasswordError("Las contraseñas no coinciden.");
-        return;
-    }
-
-    try {
-        setIsSubmitting(true);
-
-        const apiUrl = `${import.meta.env.VITE_API_URL}/recovery/reset-password`;
-
-        const response = await axios.post(apiUrl, {
-            email,
-            code,
-            newPassword: password,
-        });
-
-        if (response.status === 200) {
-            setShowModal(true);
-            setCodeError(null);
-            setPasswordError(null);
-            setConfirmPasswordError(null);
-        } else {
-            setCodeError("El código ingresado no es válido. Por favor, verifica e inténtalo nuevamente.");
+        const passwordValidation = validatePassword(password);
+        if (passwordValidation) {
+            setPasswordError(passwordValidation);
+            return;
         }
-    } catch (error: any) {
-        console.error("Error al hacer la solicitud:", error);
 
-        if (error.response && error.response.data) {
-            const { message } = error.response.data;
-            
-            // Manejar el error basado en el mensaje de la API
-            if (message.includes("invalid code")) {
-                setCodeError("El código ingresado no es válido. Por favor, verifica e inténtalo nuevamente.");
+        if (password !== confirmPassword) {
+            setConfirmPasswordError("Las contraseñas no coinciden.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+
+            const apiUrl = "http://localhost:5005/api/recovery/reset-password";
+
+            const response = await axios.post(apiUrl, {
+                email,
+                code,
+                newPassword: password,
+            });
+
+            if (response.status === 200) {
+                setShowModal(true);
+                setCodeError(null);
+                setPasswordError(null);
+                setConfirmPasswordError(null);
             } else {
-                setCodeError("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
+                setCodeError("El código ingresado no es válido. Por favor, verifica e inténtalo nuevamente.");
             }
-        } else {
-            setCodeError("Hubo un error inesperado. Por favor, inténtalo más tarde.");
-        }
-    } finally {
-        setIsSubmitting(false);
-    }
-};
+        } catch (error: any) {
+            console.error("Error al hacer la solicitud:", error);
 
+            if (error.response && error.response.data) {
+                const { message } = error.response.data;
+
+                if (message.includes("invalid code")) {
+                    setCodeError("El código ingresado no es válido. Por favor, verifica e inténtalo nuevamente.");
+                } else {
+                    setCodeError("Hubo un error al cambiar la contraseña. Intenta de nuevo.");
+                }
+            } else {
+                setCodeError("Hubo un error inesperado. Por favor, inténtalo más tarde.");
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const handleCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -184,10 +198,23 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                         {confirmPasswordError && <p className="text-xs text-red-500 mt-1">{confirmPasswordError}</p>}
                     </div>
 
+                    {/* Mensaje para reenviar código */}
+                    <div className="mt-6 text-sm">
+                        <p className="text-gray-700">¿No recibiste el codigo?</p>
+                        <button
+                            onClick={handleResend}
+                            disabled={!resendEnabled}
+                            className={`mt-2 px-6 py-3 rounded-full text-white ${resendEnabled ? "bg-secondary" : "bg-gray-400 cursor-not-allowed"}`}
+                        >
+                            {resendEnabled ? "Reenviar código" : `Reenviar en ${timer}s`}
+                        </button>
+                        {errorResend && <p className="text-xs text-red-500 mt-1">{errorResend}</p>}
+                    </div>
+
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-3 text-white bg-orange-500 rounded-3xl mt-6"
+                        className="w-full py-3 text-white bg-brandYellow rounded-3xl mt-6"
                     >
                         {isSubmitting ? "Cambiando..." : "Cambiar Contraseña"}
                     </button>
@@ -196,15 +223,27 @@ const ForgotPasswordVerifyCode: React.FC = () => {
 
             {showModal && (
                 <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white rounded-3xl p-8 w-96 shadow-lg text-center">
-                        <h2 className="text-2xl font-semibold text-dark">¡Contraseña cambiada correctamente!</h2>
-                        <p className="text-sm text-gray-500">Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión.</p>
-                        <button
-                            onClick={() => navigate("/login")}
-                            className="mt-4 py-3 px-8 bg-brandYellow text-white rounded-full shadow-md hover:bg-secondary transition duration-200"
-                        >
-                            Iniciar Sesión
-                        </button>
+                    <div className="bg-white rounded-[2rem] p-8 w-80 shadow-lg">
+                        <div className="flex flex-col items-center space-y-8">
+                            <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
+                                <svg
+                                    className="w-14 h-14 text-white"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-bold text-center">¡Contraseña cambiada con éxito!</h2>
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="w-[200px] py-6 text-white bg-brandYellow rounded-3xl"
+                            >
+                                Ir a Iniciar Sesión
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
