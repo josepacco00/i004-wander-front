@@ -54,7 +54,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
     };
 
     const validatePassword = (password: string) => {
-        const lengthValid = password.length >= 8 && password.length <= 12;
+        // const lengthValid = password.length >= 8 && password.length <= 12;
         const lowerCaseValid = /[a-z]/.test(password);
         const upperCaseValid = /[A-Z]/.test(password);
         const numberValid = /\d/.test(password);
@@ -165,7 +165,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             inputMode="numeric"
                             className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${codeError ? "border-red-500" : ""}`}
                         />
-                        {codeError && <p className="text-xs text-red-500 mt-1">{codeError}</p>}
+                        {codeError && <p className="mt-1 text-xs text-red-500">{codeError}</p>}
                     </div>
 
                     <div className="w-full">
@@ -180,7 +180,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             onChange={handlePasswordChange}
                             className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${passwordError ? "border-red-500" : ""}`}
                         />
-                        {passwordError && <p className="text-xs text-red-500 mt-1">{passwordError}</p>}
+                        {passwordError && <p className="mt-1 text-xs text-red-500">{passwordError}</p>}
                     </div>
 
                     <div className="w-full">
@@ -195,7 +195,7 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                             onChange={handleConfirmPasswordChange}
                             className={`w-full px-6 py-3 mt-2 text-left border-2 rounded-full text-dark ${confirmPasswordError ? "border-red-500" : ""}`}
                         />
-                        {confirmPasswordError && <p className="text-xs text-red-500 mt-1">{confirmPasswordError}</p>}
+                        {confirmPasswordError && <p className="mt-1 text-xs text-red-500">{confirmPasswordError}</p>}
                     </div>
 
                     {/* Mensaje para reenviar código */}
@@ -208,13 +208,13 @@ const ForgotPasswordVerifyCode: React.FC = () => {
                         >
                             {resendEnabled ? "Reenviar código" : `Reenviar en ${timer}s`}
                         </button>
-                        {errorResend && <p className="text-xs text-red-500 mt-1">{errorResend}</p>}
+                        {errorResend && <p className="mt-1 text-xs text-red-500">{errorResend}</p>}
                     </div>
 
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-3 text-white bg-brandYellow rounded-3xl mt-6"
+                        className="w-full py-3 mt-6 text-white bg-brandYellow rounded-3xl"
                     >
                         {isSubmitting ? "Cambiando..." : "Cambiar Contraseña"}
                     </button>
@@ -222,12 +222,12 @@ const ForgotPasswordVerifyCode: React.FC = () => {
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
                     <div className="bg-white rounded-[2rem] p-8 w-80 shadow-lg">
                         <div className="flex flex-col items-center space-y-8">
-                            <div className="w-24 h-24 rounded-full bg-brandYellow flex items-center justify-center">
+                            <div className="flex items-center justify-center w-24 h-24 rounded-full bg-brandYellow">
                                 <svg
-                                    className="w-14 h-14 text-white"
+                                    className="text-white w-14 h-14"
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     stroke="currentColor"
