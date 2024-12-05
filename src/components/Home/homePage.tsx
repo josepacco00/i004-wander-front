@@ -143,7 +143,7 @@ const Home: React.FC = () => {
                   className="object-cover w-full h-auto"
                 />
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold">{experience.title}</h3>
+                  <h3 className="text-[15px] font-semibold max-h-[80px] truncate">{experience.title}</h3>
                   <p className="text-sm text-gray-600"></p>
                 </div>
               </div>
