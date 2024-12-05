@@ -1,8 +1,20 @@
 name: cicd-wander
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - "*"
+      - "!devops-main"
+    types:
+      - opened
+      - synchronize
   workflow_dispatch:
   #   inputs:
   #     tag:
