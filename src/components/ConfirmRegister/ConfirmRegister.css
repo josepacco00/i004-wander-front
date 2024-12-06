@@ -42,7 +42,12 @@
 	padding: 0; /* Sin relleno */
   }
   
+  .resend-button:hover {
+	@apply bg-transparent text-tertiary;
+  }
+
   .resend-button:disabled {
+	background-color: transparent;
 	cursor: not-allowed;
 	color: #d1d5db; /* Gris claro cuando está deshabilitado */
   }

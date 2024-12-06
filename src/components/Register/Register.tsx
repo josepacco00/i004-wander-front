@@ -5,9 +5,9 @@ import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SignUpSchema, signUpSchema } from "../../schemas/signUp.schema"
 import AuthLayout from "../../layout/AuthLayout";
-import "./Register.css"
 import authServices from "../../services/auth.services";
 import { countriesPhoneList } from "../../mocks/countriesPhoneList.mock";
+// import "./Register.css"
 
 const Register: React.FC = () => {
     const {
@@ -62,15 +62,17 @@ const Register: React.FC = () => {
             }, 5000)
 
         } catch (error) {
+            
             if (error instanceof AxiosError) {
                 if (error.response?.data) {
-
+                    
                     if (error.response.data.errors) {
                         setReqError(error.response.data.errors)
                     } else {
-                        setReqError([error.response.data.details.message])
+                        setReqError([error.response.data.message])
                     }
                 } else {
+
                     setReqError([error.message])
                 }
             } else {
@@ -88,7 +90,7 @@ const Register: React.FC = () => {
                 className="w-full flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-sm [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm"
             >
                 <div>
-                    <label htmlFor="name">Nombre</label>
+                    <label htmlFor="name">Nombre *</label>
                     <input
                         {...register("name")}
                         type="text"
@@ -99,7 +101,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation"> {errors.name.message} </span>}
                 </div>
                 <div>
-                    <label htmlFor="email">Correo electrónico</label>
+                    <label htmlFor="email">Correo electrónico *</label>
                     <input
                         {...register("email")}
                         type="email"
@@ -110,7 +112,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.email.message}</span>}
                 </div>
                 <div>
-                    <label htmlFor="password">Contraseña</label>
+                    <label htmlFor="password">Contraseña *</label>
                     <input
                         {...register("password")}
                         type="password"
@@ -120,7 +122,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.password.message}</span>}
                 </div>
                 <div>
-                    <label htmlFor="confirmPassword">Repite tu contraseña</label>
+                    <label htmlFor="confirmPassword">Repite tu contraseña *</label>
                     <input
                         {...register("confirmPassword")}
                         type="password"
@@ -130,7 +132,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.confirmPassword.message}</span>}
                 </div>
                 <div>
-                    <label htmlFor="location">País</label>
+                    <label htmlFor="location">País *</label>
                     <input
                         {...register("location")}
                         type="text"
@@ -140,7 +142,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.location.message}</span>}
                 </div>
                 <div>
-                    <label htmlFor="phone">Teléfono</label>
+                    <label htmlFor="phone">Teléfono *</label>
                     <div className="flex gap-2">
                         <Controller
                             name="phone.prefix"
@@ -173,7 +175,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.phone.number.message}</span>}
                 </div>
                 <div className="relative">
-                    <label htmlFor="role">Quiero registrarme como...</label>
+                    <label htmlFor="role">Quiero registrarme como... *</label>
                     <select
                         {...register("role")}
                         id="role"
@@ -188,7 +190,7 @@ const Register: React.FC = () => {
                         <span className="form__error-validation">{errors.role.message}</span>}
                 </div>
                 <div className="mt-2">
-                    <label className="!text-xs">Para registrarte en la plataforma debes ser mayor de edad. Al marcar la siguiente casilla confirmas tener al menos 18 años.</label>
+                    <label className="!text-xs">Para registrarte en la plataforma debes ser mayor de edad. Al marcar la siguiente casilla confirmas tener al menos 18 años. *</label>
                     <div className="flex items-center gap-2">
                         <input
                             {...register("age")}
@@ -223,10 +225,11 @@ const Register: React.FC = () => {
                     {
                         reqError.map((e, i) => <p key={`${Date.now()}-${i}`}>{e}</p>)
                     }
-                </div>
-            }
+                </div>}
             {successNotification &&
-                <p className="form__notification form__notification--success">{successNotification}</p>}
+                <div className="form__notification form__notification--success">
+                    <p>{successNotification}</p>
+                </div>}
         </AuthLayout >
     )
 }
