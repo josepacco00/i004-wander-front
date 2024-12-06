@@ -5,12 +5,14 @@ export const signUpSchema = z
     name: z
         .string()
         .min(2, "El nombre debe tener al menos 2 caracteres")
+        .max(50, "El nombre no puede superar los 50 caracteres")
         .regex(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/, "Por favor, usa solo letras")
         .trim()
         .transform((val) => val.replace(/\s+/g, ' ').trim()),
     email: z
         .string()
         .min(1, "El correo es obligatorio")
+        .max(50, "El correo electrónico no puede superar los 50 caracteres")
         .email({
             message: "Formato incorrecto: example@demo.com"
         })
