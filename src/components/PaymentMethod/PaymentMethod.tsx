@@ -64,11 +64,11 @@ const PaymentMethod: React.FC = () => {
                 <div className="flex items-center mb-8">
                     <button
                         type="button"
-                        className="text-2xl flex items-center justify-center bg-transparent border-none"
+                        className="text-2xl flex items-center justify-center bg-transparent hover:bg-transparent border-none"
                         aria-label="Regresar"
                         onClick={handleGoBack} // Llamar a la función para ir hacia atrás
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-black hover:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
@@ -117,7 +117,7 @@ const PaymentMethod: React.FC = () => {
                     <div className="flex items-center">
                         {/* Aquí los dos spans están juntos sin espacio adicional */}
                         <span className="font-bold text-lg">{reservation?.totalPrice}€</span>
-                        <span className="text-lg">/{reservation?.participants} Personas</span>
+                        <span className="text-lg">/ { reservation?.participants } Persona{ reservation!.participants! > 1 ? "s" : "" }</span>
                     </div>
                 </div>
 
