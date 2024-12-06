@@ -4,11 +4,12 @@ import mastercardLogo from "../../assets/img/iconomastercard.png";
 import visaLogo from "../../assets/img/iconovisa.png";
 import bookingServices from "../../services/booking.services";
 import { ReservationContext } from "../../contexts/reservation.context";
+import { format, parseISO } from "date-fns";
 
 const PaymentDetails: React.FC = () => {
     const location = useLocation();
-    const { selectedMethod } = location.state || { selectedMethod: null };
     const navigate = useNavigate();
+    const { selectedMethod } = location.state || { selectedMethod: null };
     const { reservation } = useContext(ReservationContext)
 
     const [cardNumber, setCardNumber] = useState("");
@@ -17,6 +18,8 @@ const PaymentDetails: React.FC = () => {
     const [cardError, setCardError] = useState("");
     const [expiryError, setExpiryError] = useState("");
     const [cvvError, setCvvError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+
 
     useEffect(() => {
         if (!selectedMethod) {
@@ -105,18 +108,30 @@ const PaymentDetails: React.FC = () => {
     const handlePaymentClick = async () => {
         if (!cardError && !expiryError && !cvvError && reservation) {
             try {
+                setIsSubmitting(true)
+
+                // Mantener hasta finalizar pruebas
+                // const ISOBookingDate = parseISO(reservation.bookingDate!.toISOString())
+                // const formattedBookingDate = format(ISOBookingDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+                // console.log(formattedBookingDate)
+
                 const reservationFinal = {
-                    experienceId: reservation.experienceId!,
+                    experienceId: reservation.experienceId,
                     userId: reservation.userId!,
-                    bookingDate: new Date(reservation.bookingDate!.setMilliseconds(0)),
+                    bookingDate: reservation.bookingDate,
                     participants: Number(reservation.participants!),
                 }
 
-
-                console.log(reservationFinal)
+                // console.log(reservationFinal)
                 await bookingServices.create(reservationFinal)
+
+                // console.log(response)
+
+                navigate("/confirmation-view")
             } catch (error) {
-                console.log
+                console.log(error)
+            } finally {
+                setIsSubmitting(false)
             }
         }
     };
@@ -137,12 +152,12 @@ const PaymentDetails: React.FC = () => {
                     <button
                         type="button"
                         onClick={() => navigate(-1)}
-                        className="text-2xl flex items-center justify-center bg-transparent border-none"
+                        className="text-2xl flex items-center justify-center bg-transparent hover:bg-transparent border-none"
                         aria-label="Regresar"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="w-7 h-7 text-black"
+                            className="w-7 h-7 text-black hover:text-primary"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -251,8 +266,9 @@ const PaymentDetails: React.FC = () => {
             <div className="fixed bottom-0 left-0 w-full p-3 bg-white container-shadow">
                 <div className="flex justify-center items-center space-x-6">
                     <p className="text-lg font-bold text-orange-500">
-                        $1200
-                        <span className="text-sm text-orange-400"> / 2 Personas</span>
+                        {reservation?.totalPrice}€
+                        {/* Itentar resolver la existencia de reservation de otra manera */}
+                        <span className="text-sm text-orange-400"> / { reservation?.participants } Persona{ reservation!.participants! > 1 ? "s" : "" }</span>
                     </p>
                     <button
                         type="button"
@@ -262,9 +278,9 @@ const PaymentDetails: React.FC = () => {
                                 : "bg-gray-300 cursor-not-allowed"
                         } text-white rounded-lg`}
                         onClick={handlePaymentClick}
-                        disabled={!isFormValid}
+                        disabled={!isFormValid || isSubmitting}
                     >
-                        Pagar
+                        { isSubmitting ? "Pagando..." : "Pagar" }
                     </button>
                 </div>
             </div>

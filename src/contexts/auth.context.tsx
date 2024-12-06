@@ -73,18 +73,17 @@ const AuthProviderWrapper = ({ children }: AuthProviderProps) => {
                     localStorage.clear()
                 }
 
-                setIsLoading(false)
                 onSuccess()
             } catch (err) {
                 console.error("Authentication error:", err)
-
+                
                 localStorage.clear()
                 // Este logout no funciona, porque el token no sería válido, tampoco para ejecutar la operación
                 // logout()
+            } finally {
+                setIsLoading(false)
             }
         } else {
-            console.log("NO HAY TOKEN BRO")
-
             setIsLoading(false)
             // Si no hay token, no se puede realizar esta petición, porque necesita de un token
             // logout()

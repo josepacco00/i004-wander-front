@@ -1,14 +1,26 @@
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa"; // Para los iconos
 import AuthLayout from "../../layout/AuthLayout"; // Importamos AuthLayout
 import vacationImage from "../../assets/img/vacationImage.png"; // Asegúrate de tener la imagen en esta ruta
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import './ConfirmationView.css';
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ReservationContext } from "../../contexts/reservation.context";
 
 const ConfirmationView = () => {
-
   const { experience, reservation } = useContext(ReservationContext)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    localStorage.removeItem("experience")
+    localStorage.removeItem("reservation")
+  }, [])
+
+  const handleClick = () => {
+    localStorage.removeItem("experience")
+    localStorage.removeItem("reservation")
+
+    navigate("/")
+  }
 
   return (
     <AuthLayout showText={false} logoClassName="logoClassName" showTextImage={false} showBackButton={false}> {/* Solo aquí se pasa la clase personalizada */}
@@ -49,11 +61,9 @@ const ConfirmationView = () => {
             </div>
 
             {/* Botón de volver con hover rojo */}
-            <Link to="/">
-              <button className="w-full py-3 bg-brandYellow text-white font-bold rounded-full hover:bg-tertiary hover:text-white transition mb-0"> {/* Eliminamos margen inferior del botón */}
+               <button onClick={handleClick} className="w-full py-3 bg-brandYellow text-white font-bold rounded-full hover:bg-tertiary hover:text-white transition mb-0"> {/* Eliminamos margen inferior del botón */}
                 Volver al inicio
               </button>
-            </Link>
           </div>
         </div>
     </AuthLayout>

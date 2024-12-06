@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "./AddExperience.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from "date-fns";
 import { experienceServices } from "../../services/addExperience.services";
 import SelectCords from "./Map/SelectionCoords";
-import { useContext } from "react";
 import { AuthContext } from "../../contexts/auth.context";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +33,7 @@ const AddExperience = () => {
     "Naturaleza",
     "Comida",
     "Tours",
-    "Nautico",
+    "Náutico",
     "Ciudad",
     "Eventos",
   ];
@@ -355,19 +354,19 @@ const AddExperience = () => {
 
       {/* Descripción */}
       <div className="content">
-        <h1 className="label">Descripcion</h1>
+        <h1 className="label">Descripción</h1>
         <textarea
           className="description-input"
-          placeholder="Escribe una descripcion de la experiencia"
+          placeholder="Escribe una descripción de la experiencia"
           value={description}
           maxLength={250}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
-      <div className="px-3 form-grou">
-        <label className="label">Categorias</label>
+      <div className="px-3 form-group">
+        <label className="label">Categorías</label>
         <select value="" onChange={handleTagSelect} className="tags-select">
-          <option value="">Selecciona una Categoria</option>
+          <option value="">Selecciona una Categoría</option>
           {availableTags.map((tag, index) => (
             <option key={index} value={tag}>
               {tag}
