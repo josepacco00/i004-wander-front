@@ -3,12 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, loginSchema } from "../../schemas/login.schema";
 import { useContext, useState } from "react";
 import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom"; // Para redirección
-import AuthLayout from "../../layout/AuthLayout.tsx"; // Asegúrate de importar el AuthLayout
-import "./LoginForm.css";
+import { useNavigate } from "react-router-dom";
+import AuthLayout from "../../layout/AuthLayout.tsx";
 import authServices from "../../services/auth.services.ts";
 import { AuthContext } from "../../contexts/auth.context.tsx";
 import { User } from "../../types/user.ts";
+// import "./LoginForm.css";
 
 const Login: React.FC = () => {
   const {
@@ -24,6 +24,7 @@ const Login: React.FC = () => {
   // Manejo de notificaciones
   const [reqError, setReqError] = useState<string | null>(null);
   const [successNotification, setSuccessNotification] = useState<string | null>(null);
+
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -34,25 +35,28 @@ const Login: React.FC = () => {
 
       // Si la respuesta es exitosa
       if (response.status === 200) {
-        reset(); // Limpiar el formulario
         setSuccessNotification("Inicio de sesión exitoso");
 
-        console.log(response.data);
-        // Guardar el token en localStorage o en un estado global (ejemplo)
-        localStorage.setItem("authToken", response.data.token);
+        // console.log(response.data);
 
         const user: User = {
           ...response.data.user,
           _id: response.data.userId,
         };
 
-        console.log(user);
+        localStorage.setItem("authToken", response.data.token);
         localStorage.setItem("user", JSON.stringify(user));
-        setUser(user);
-
+        // console.log(user);
+        
         // Redirigir después de un tiempo
-        setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => {
+          reset(); // Limpiar el formulario
+          setUser(user)
+          navigate("/")
+        }, 2000);
       }
+
+
     } catch (error) {
       // Manejo de errores
       if (error instanceof AxiosError && error.response?.data) {
@@ -62,7 +66,8 @@ const Login: React.FC = () => {
           setReqError(error.response.data.message);
         }
       } else {
-        setReqError("Error desconocido. Por favor intente de nuevo.");
+        console.log(error)
+        setReqError("Error en la comunicación con el servidor");
       }
       setTimeout(() => setReqError(null), 5000);
     }
@@ -70,13 +75,6 @@ const Login: React.FC = () => {
 
   return (
     <AuthLayout>
-      {/* Mostrar errores globales en la parte superior */}
-      {reqError && (
-        <div className="form__global-error-container">
-          <span className="form__error-message">{reqError}</span>
-        </div>
-      )}
-
       {/* Formulario de inicio de sesión */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -90,6 +88,9 @@ const Login: React.FC = () => {
             id="email"
             placeholder="john@doe.com"
           />
+          {errors.email && (
+            <span className="form__error-validation">{errors.email.message}</span>
+          )}
         </div>
         <div>
           <label htmlFor="password">Contraseña</label>
@@ -99,6 +100,9 @@ const Login: React.FC = () => {
             id="password"
             placeholder="••••••••"
           />
+          {errors.password && (
+            <span className="form__error-validation">{errors.password.message}</span>
+          )}
         </div>
         <div className="text-right">
           <a
@@ -124,22 +128,17 @@ const Login: React.FC = () => {
         </p>
       </form>
 
-      {/* Mostrar errores específicos de cada campo debajo del formulario */}
-      {errors.email && (
-        <div className="form__error-container">
-          <span className="form__error-message">{errors.email.message}</span>
-        </div>
-      )}
-      {errors.password && (
-        <div className="form__error-container">
-          <span className="form__error-message">{errors.password.message}</span>
+      {/* Mostrar errores globales en la parte superior */}
+      {reqError && (
+        <div className="form__notification form__notification--error">
+          <p>{reqError}</p>
         </div>
       )}
 
       {/* Notificación de éxito */}
       {successNotification && (
-        <div className="form__success-container">
-          <span className="form__success-message">{successNotification}</span>
+        <div className="form__notification form__notification--success">
+          <p>{successNotification}</p>
         </div>
       )}
     </AuthLayout>
