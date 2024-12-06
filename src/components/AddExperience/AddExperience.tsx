@@ -39,14 +39,32 @@ const AddExperience = () => {
     "Eventos",
   ];
 
+  // Validar texto sin caracteres especiales
+  const isValidText = (text: string): boolean => {
+    const regex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/; // Permite letras, números y espacios
+    return regex.test(text);
+  };
+
   // Validaciones
   const validateForm = (): boolean => {
     if (!title.trim()) {
       setErrorMessage("El campo 'Título' es obligatorio.");
       return false;
     }
+    if (!isValidText(title)) {
+      setErrorMessage(
+        "El título solo puede contener letras, números y espacios."
+      );
+      return false;
+    }
     if (!description.trim()) {
       setErrorMessage("El campo 'Descripción' es obligatorio.");
+      return false;
+    }
+    if (!isValidText(description)) {
+      setErrorMessage(
+        "La descripción solo puede contener letras, números y espacios."
+      );
       return false;
     }
     if (!price || price <= 0) {
@@ -250,10 +268,13 @@ const AddExperience = () => {
   return (
     <form onSubmit={handleSubmit} className="mb-5">
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <p className="modal-text">{errorMessage}</p>
-            <button className="modal-close-button" onClick={closeModal}>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-4 shadow-lg w-80">
+            <p className="text-primary font-medium mb-4">{errorMessage}</p>
+            <button
+              onClick={closeModal}
+              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-orange"
+            >
               Cerrar
             </button>
           </div>
@@ -327,6 +348,7 @@ const AddExperience = () => {
           className="titulo-input"
           placeholder="Escribe el Titulo de la Experiencia"
           value={title}
+          maxLength={20}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
@@ -338,6 +360,7 @@ const AddExperience = () => {
           className="description-input"
           placeholder="Escribe una descripcion de la experiencia"
           value={description}
+          maxLength={250}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
@@ -447,6 +470,7 @@ const AddExperience = () => {
           type="number"
           className="input"
           placeholder="Ejemplo: 2"
+          min="1"
         />
       </div>
 
@@ -467,6 +491,8 @@ const AddExperience = () => {
             type="number"
             className="input price-field"
             placeholder="Ejemplo: 20"
+            min="0"
+            value={price || ""}
             onChange={(e) => setPrice(Number(e.target.value))}
           />
         </div>

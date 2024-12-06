@@ -137,7 +137,7 @@
 /*Tags */
 /* Contenedor de las etiquetas */
 .tags-select{
-  @apply w-1/2  bg-orange-100 border rounded-md px-4 py-2 text-xs ;
+  @apply will-change-auto  bg-orange-100 border rounded-md px-4 py-2 text-xs ;
 }
 
 .tags-list {
