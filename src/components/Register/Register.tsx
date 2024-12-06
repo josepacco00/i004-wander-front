@@ -5,9 +5,9 @@ import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SignUpSchema, signUpSchema } from "../../schemas/signUp.schema"
 import AuthLayout from "../../layout/AuthLayout";
-import "./Register.css"
 import authServices from "../../services/auth.services";
 import { countriesPhoneList } from "../../mocks/countriesPhoneList.mock";
+// import "./Register.css"
 
 const Register: React.FC = () => {
     const {
@@ -62,15 +62,17 @@ const Register: React.FC = () => {
             }, 5000)
 
         } catch (error) {
+            
             if (error instanceof AxiosError) {
                 if (error.response?.data) {
-
+                    
                     if (error.response.data.errors) {
                         setReqError(error.response.data.errors)
                     } else {
-                        setReqError([error.response.data.details.message])
+                        setReqError([error.response.data.message])
                     }
                 } else {
+
                     setReqError([error.message])
                 }
             } else {
@@ -223,10 +225,11 @@ const Register: React.FC = () => {
                     {
                         reqError.map((e, i) => <p key={`${Date.now()}-${i}`}>{e}</p>)
                     }
-                </div>
-            }
+                </div>}
             {successNotification &&
-                <p className="form__notification form__notification--success">{successNotification}</p>}
+                <div className="form__notification form__notification--success">
+                    <p>{successNotification}</p>
+                </div>}
         </AuthLayout >
     )
 }
