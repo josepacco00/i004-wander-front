@@ -50,6 +50,7 @@ function ExperienceDetail() {
   const handleBooking = () => {
     // @ts-ignore
      setExperience(experience);
+    localStorage.setItem("experience", JSON.stringify(experience))
     navigate("/booking");
   };
 
