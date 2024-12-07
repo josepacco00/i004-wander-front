@@ -38,16 +38,40 @@ const AddExperience = () => {
     "Eventos",
   ];
 
+  // Validar texto sin caracteres especiales
+  const isValidText = (text: string): boolean => {
+    const regex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ.,\s]+$/; // Permite letras, números y espacios
+    return regex.test(text);
+  };
+
   // Validaciones
   const validateForm = (): boolean => {
     if (!title.trim()) {
       setErrorMessage("El campo 'Título' es obligatorio.");
       return false;
     }
+    if (!isValidText(title)) {
+      setErrorMessage(
+        "El título solo puede contener letras, números y espacios."
+      );
+      return false;
+    }
     if (!description.trim()) {
       setErrorMessage("El campo 'Descripción' es obligatorio.");
       return false;
     }
+    if (!isValidText(description)) {
+      setErrorMessage(
+        "La descripción solo puede contener letras, números y espacios."
+      );
+      return false;
+    }
+
+    if(Object.keys(availability).length === 0){
+      setErrorMessage("Debe seleccionar al menos una fecha y una hora.");
+      return false;
+    }
+
     if (!price || price <= 0) {
       setErrorMessage("El campo 'Precio' debe ser mayor a 0.");
       return false;
@@ -187,6 +211,7 @@ const AddExperience = () => {
       coords[1]?.toFixed(4),
     ];
 
+
     const payload = {
       title,
       description,
@@ -197,6 +222,9 @@ const AddExperience = () => {
       tags,
       capacity,
     };
+
+    
+    console.log(payload)
 
     try {
       const response = await experienceServices.addExperience(payload);
@@ -249,10 +277,13 @@ const AddExperience = () => {
   return (
     <form onSubmit={handleSubmit} className="mb-5">
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <p className="modal-text">{errorMessage}</p>
-            <button className="modal-close-button" onClick={closeModal}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-4 bg-white rounded-lg shadow-lg w-80">
+            <p className="mb-4 font-medium text-primary">{errorMessage}</p>
+            <button
+              onClick={closeModal}
+              className="px-4 py-2 text-white rounded-md bg-primary hover:bg-orange"
+            >
               Cerrar
             </button>
           </div>
@@ -326,6 +357,7 @@ const AddExperience = () => {
           className="titulo-input"
           placeholder="Escribe el Titulo de la Experiencia"
           value={title}
+          maxLength={20}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
@@ -337,6 +369,7 @@ const AddExperience = () => {
           className="description-input"
           placeholder="Escribe una descripción de la experiencia"
           value={description}
+          maxLength={250}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
@@ -446,6 +479,7 @@ const AddExperience = () => {
           type="number"
           className="input"
           placeholder="Ejemplo: 2"
+          min="1"
         />
       </div>
 
@@ -466,6 +500,8 @@ const AddExperience = () => {
             type="number"
             className="input price-field"
             placeholder="Ejemplo: 20"
+            min="0"
+            value={price || ""}
             onChange={(e) => setPrice(Number(e.target.value))}
           />
         </div>
@@ -473,7 +509,7 @@ const AddExperience = () => {
       {/* Etiquetas (Lista desplegable) */}
 
       <div className="button-container">
-        <button type="submit" className="submit-button">
+        <button onClick={() => console.log(availability)} type="submit" className="submit-button">
           Añadir experiencia
         </button>
       </div>

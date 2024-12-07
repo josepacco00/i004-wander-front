@@ -146,18 +146,18 @@ const PaymentDetails: React.FC = () => {
         expiryDate.length === 8;
 
     return (
-        <div className="w-full mx-auto h-dvh flex flex-col items-center p-6 pb-20">
+        <div className="flex flex-col items-center w-full p-6 pb-20 mx-auto h-dvh">
             <div className="w-full max-w-md">
                 <div className="flex items-center mb-6">
                     <button
                         type="button"
                         onClick={() => navigate(-1)}
-                        className="text-2xl flex items-center justify-center bg-transparent hover:bg-transparent border-none"
+                        className="flex items-center justify-center text-2xl bg-transparent border-none hover:bg-transparent"
                         aria-label="Regresar"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="w-7 h-7 text-black hover:text-primary"
+                            className="text-black w-7 h-7 hover:text-primary"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -170,7 +170,7 @@ const PaymentDetails: React.FC = () => {
                             />
                         </svg>
                     </button>
-                    <h1 className="text-xl font-bold ml-4">Confirmar y pagar</h1>
+                    <h1 className="ml-4 text-xl font-bold">Confirmar y pagar</h1>
                 </div>
 
                 <div className="mb-6">
@@ -179,7 +179,7 @@ const PaymentDetails: React.FC = () => {
                         style={{ height: "180px" }}
                     >
                         <h3 className="text-lg font-bold">MARIA VELLER LOPEZ</h3>
-                        <p className="text-sm my-2">
+                        <p className="my-2 text-sm">
                             {selectedMethod === "mastercard"
                                 ? "MasterCard"
                                 : selectedMethod === "visa"
@@ -197,7 +197,7 @@ const PaymentDetails: React.FC = () => {
                                         : visaLogo
                                 }
                                 alt={selectedMethod}
-                                className="w-17 h-10"
+                                className="h-10 w-17"
                             />
                         </div>
                     </div>
@@ -207,7 +207,7 @@ const PaymentDetails: React.FC = () => {
                     <div>
                         <label
                             htmlFor="cardNumber"
-                            className="block text-sm text-slate-800 font-medium mb-2"
+                            className="block mb-2 text-sm font-medium text-slate-800"
                         >
                             Número de tarjeta
                         </label>
@@ -218,15 +218,15 @@ const PaymentDetails: React.FC = () => {
                             onChange={handleCardNumberChange}
                             placeholder="1234 5678 1234 5678"
                             maxLength={19}
-                            className="w-full px-4 py-3 text-sm ring-1 ring-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-300"
+                            className="w-full px-4 py-3 text-sm rounded-lg ring-1 ring-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300"
                         />
-                        {cardError && <p className="text-red-500 text-sm">{cardError}</p>}
+                        {cardError && <p className="text-sm text-red-500">{cardError}</p>}
                     </div>
 
                     <div>
                         <label
                             htmlFor="cvv"
-                            className="block text-sm text-slate-800 font-medium mb-2"
+                            className="block mb-2 text-sm font-medium text-slate-800"
                         >
                             CVV
                         </label>
@@ -237,15 +237,15 @@ const PaymentDetails: React.FC = () => {
                             onChange={handleCvvChange}
                             placeholder="123"
                             maxLength={3}
-                            className="w-full px-4 py-3 text-sm ring-1 ring-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-300"
+                            className="w-full px-4 py-3 text-sm rounded-lg ring-1 ring-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300"
                         />
-                        {cvvError && <p className="text-red-500 text-sm">{cvvError}</p>}
+                        {cvvError && <p className="text-sm text-red-500">{cvvError}</p>}
                     </div>
 
                     <div>
                         <label
                             htmlFor="expiryDate"
-                            className="block text-sm text-slate-800 font-medium mb-2"
+                            className="block mb-2 text-sm font-medium text-slate-800"
                         >
                             Fecha de vencimiento (MM/DD/AA)
                         </label>
@@ -256,15 +256,15 @@ const PaymentDetails: React.FC = () => {
                             onChange={handleExpiryDateChange}
                             placeholder="MM/DD/AA"
                             maxLength={8}
-                            className="w-full px-4 py-3 text-sm ring-1 ring-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-300"
+                            className="w-full px-4 py-3 text-sm rounded-lg ring-1 ring-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300"
                         />
-                        {expiryError && <p className="text-red-500 text-sm">{expiryError}</p>}
+                        {expiryError && <p className="text-sm text-red-500">{expiryError}</p>}
                     </div>
                 </form>
             </div>
 
             <div className="fixed bottom-0 left-0 w-full p-3 bg-white container-shadow">
-                <div className="flex justify-center items-center space-x-6">
+                <div className="flex items-center justify-center space-x-6">
                     <p className="text-lg font-bold text-orange-500">
                         {reservation?.totalPrice}€
                         {/* Itentar resolver la existencia de reservation de otra manera */}
