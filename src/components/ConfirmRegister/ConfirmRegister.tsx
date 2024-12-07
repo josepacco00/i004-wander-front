@@ -49,7 +49,7 @@ const ConfirmRegister = () => {
       setShowModal(true); // Si el código es válido, mostramos el modal de éxito
     } catch (error) {
       if(error instanceof AxiosError) {
-        console.log(error)
+        // console.log(error)
         if(error.response?.data.details) {
           setErrorMessage(error.response?.data.details.message)
         } else {

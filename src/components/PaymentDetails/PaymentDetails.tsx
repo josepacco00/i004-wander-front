@@ -4,6 +4,7 @@ import mastercardLogo from "../../assets/img/iconomastercard.png";
 import visaLogo from "../../assets/img/iconovisa.png";
 import bookingServices from "../../services/booking.services";
 import { ReservationContext } from "../../contexts/reservation.context";
+// import { format, parseISO } from "date-fns";
 
 const PaymentDetails: React.FC = () => {
     const location = useLocation();

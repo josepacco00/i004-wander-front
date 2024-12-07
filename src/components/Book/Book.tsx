@@ -128,14 +128,11 @@ const Book: React.FC = () => {
 
     return (
         <div className="relative flex flex-col w-full gap-4 p-6 h-dvh mb-28">
-            <div>
-                <p>{experience!.title}</p>
-            </div>
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-[10px] [&_input]:px-4 [&_input]:py-2.5 mb-32"
             >
-                <p className="text-base font-semibold">Selecciona una fecha entre las disponibles</p>
+                <p className="text-base font-semibold">Selecciona una fecha y hora</p>
                 <div className="mx-auto">
                     <DatePicker
                         selected={startDate ? startDate : undefined}
@@ -148,7 +145,6 @@ const Book: React.FC = () => {
                         availableHours
                         && (
                             <div>
-                                <p className="text-xs">Selecciona una hora entre de las disponibles</p>
                                 <div className="flex gap-2 mt-2">
                                     {
                                         availableHours.map((date, i) => {
