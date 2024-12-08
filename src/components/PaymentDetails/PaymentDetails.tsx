@@ -4,6 +4,7 @@ import mastercardLogo from "../../assets/img/iconomastercard.png";
 import visaLogo from "../../assets/img/iconovisa.png";
 import bookingServices from "../../services/booking.services";
 import { ReservationContext } from "../../contexts/reservation.context";
+import { AuthContext } from "../../contexts/auth.context";
 // import { format, parseISO } from "date-fns";
 
 const PaymentDetails: React.FC = () => {
@@ -11,6 +12,7 @@ const PaymentDetails: React.FC = () => {
     const navigate = useNavigate();
     const { selectedMethod } = location.state || { selectedMethod: null };
     const { reservation } = useContext(ReservationContext)
+    const { user } = useContext(AuthContext)
 
     const [cardNumber, setCardNumber] = useState("");
     const [cvv, setCvv] = useState("");
@@ -178,7 +180,7 @@ const PaymentDetails: React.FC = () => {
                         className={`${cardClass} rounded-xl p-6 shadow-md relative`}
                         style={{ height: "180px" }}
                     >
-                        <h3 className="text-lg font-bold">MARIA VELLER LOPEZ</h3>
+                        <h3 className="text-lg font-bold">{ user?.name.toUpperCase() }</h3>
                         <p className="my-2 text-sm">
                             {selectedMethod === "mastercard"
                                 ? "MasterCard"
