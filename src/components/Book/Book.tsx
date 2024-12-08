@@ -11,6 +11,9 @@ import { INewReservation } from "../../types/reservation";
 import { useNavigate } from "react-router-dom";
 // import bookingServices from "../../services/booking.services";
 import { AuthContext } from "../../contexts/auth.context";
+import { registerLocale } from  "react-datepicker";
+import { es } from 'date-fns/locale/es';
+registerLocale('es', es)
 
 const Book: React.FC = () => {
     const { experience, reservation, updateReservationData, removeReservationData } = useContext(ReservationContext)
@@ -135,6 +138,7 @@ const Book: React.FC = () => {
                 <p className="text-base font-semibold">Selecciona una fecha y hora</p>
                 <div className="mx-auto">
                     <DatePicker
+                        locale={es}
                         selected={startDate ? startDate : undefined}
                         onChange={onChange}
                         includeDates={excludeDates()}
@@ -203,7 +207,7 @@ const Book: React.FC = () => {
                 </div>
 
                 { watch("email") !== user?.email &&
-                    <p className="p-2 bg-yellow-200 text-yellow-600 text-xs rounded-md">IMPORTANTE: si cambias el correo electrónico para la reserva, asegúrate de que usas una dirección correcta y a la que tengas acceso. Es posible que la utilicemos para enviarte notificaciones sobre la experiencia.</p>}
+                    <p className="p-2 text-xs text-yellow-600 bg-yellow-200 rounded-md">IMPORTANTE: si cambias el correo electrónico para la reserva, asegúrate de que usas una dirección correcta y a la que tengas acceso. Es posible que la utilicemos para enviarte notificaciones sobre la experiencia.</p>}
                 <div className="actions shadow-top fixed right-0 left-0 bottom-0 w-full p-6 !flex-row flex-1 bg-white [&>button]:w-full [&>button]:p-2">
                     <button disabled={isSubmitting} type="submit" className="bg-neutral-100 hover:text-white text-neutral-500" onClick={handleGoBack}>
                         Volver
