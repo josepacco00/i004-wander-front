@@ -33,18 +33,29 @@ function PanelProvider() {
     <div>
       <HeaderPanel title="Mis Experiencias" />
       {loading ? (
+        
         <div className="flex flex-col items-center justify-center h-screen gap-2">
           <div className="w-6 h-6 border-b-2 border-current rounded-full animate-spin"></div>
         </div>
-      ) : (
+      ) : experiences && experiences.length > 0 ? (
+        
         <div className="mt-5">
           {experiences.map((experience) => (
-            <ExperienceCardProvider experienceId={experience.id} status={experience.status} price={experience.price} title={experience.title} key={experience.id}/>
+            <ExperienceCardProvider
+              key={experience.id}
+              experienceId={experience.id}
+              status={experience.status}
+              price={experience.price}
+              title={experience.title}
+            />
           ))}
         </div>
+      ) : (
+        <p className="mt-10 text-center">No tienes experiencias disponibles.</p>
       )}
     </div>
   );
+  
 }
 
 export default PanelProvider;
