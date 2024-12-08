@@ -11,7 +11,7 @@ function ExperiencePanel() {
   console.log(user)
   
 
-  return user?.role !== 'TOURIST' ? <PanelTourist/> : <PanelProvider/>
+  return user?.role === 'TOURIST' ? <PanelTourist/> : <PanelProvider/>
 }
 
 export default ExperiencePanel;
