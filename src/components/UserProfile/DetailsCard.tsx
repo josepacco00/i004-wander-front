@@ -9,11 +9,7 @@ const DetailsCard: React.FC<UserDetails> = ({ email, location, phone, role }) =>
     const dataMap = { email, location, phone }
 
     const handleBookingsClick = () => {
-        if (role === 'TOURIST') {
-            navigate('/mis-reservas')
-        } else if (role === 'PROVIDER') {
-            navigate('/reservas-de-clientes')
-        }
+        navigate('/my-experiences')
     }
 
     return (
@@ -23,7 +19,7 @@ const DetailsCard: React.FC<UserDetails> = ({ email, location, phone, role }) =>
 
                     const { field, icon, title } = deet
                     const data = dataMap[field as keyof typeof dataMap] || ''
-                    const adjustedTitle = field === 'bookings' && role === 'PROVIDER' ? 'Reservas de Clientes' : title
+                    const adjustedTitle = field === 'bookings' && role.toLocaleUpperCase() === 'PROVIDER' ? 'Gestionar Reservas' : title
 
                     return (
                         <li key={i}>

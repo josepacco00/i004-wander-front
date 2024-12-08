@@ -1,127 +1,131 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from "react";
+//@ts-ignore
+import Cookies from "js-cookie";
+import { useParams } from "react-router-dom";
+import imageSafari from "../../assets/img/Safari.jpg";
+import { AuthContext } from "../../contexts/auth.context";
+import HeaderPanel from "../ExperiencePanel/HeaderPanel";
+import reviewServices from "../../services/review.services";
+import { useNavigate } from "react-router-dom";
 
 const Reviews: React.FC = () => {
-  const [rating, setRating] = useState<number | string>('');
-  const [review, setReview] = useState<string>('');
+  const { id } = useParams();
+  const { user } = useContext(AuthContext);
+  const userId = user?._id;
+  const navigate = useNavigate();
+
+  const [rating, setRating] = useState<number | undefined>();
+  const [review, setReview] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean | null>(null);
-  const [activity, setActivity] = useState<{ title: string; image: string } | null>(null);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ rating?: string; review?: string }>({
+    rating: "",
+    review: "",
+  });
+  const [message, setMessage] = useState<string | null>(null);
 
- 
-  useEffect(() => {
-    const fetchActivity = async () => {
-      try {
-        setFetchError(null);
-        const response = await fetch('https://jsonplaceholder.typicode.com/photos/1');
-        if (!response.ok) {
-          throw new Error('Failed to fetch activity details');
-        }
-        const data = await response.json();
-        setActivity({
-          title: data.title || 'Default Activity Title',
-          image: data.url || 'https://via.placeholder.com/300x150',
-        });
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Error fetching activity:', error.message);
-          setFetchError(error.message);
-        } else {
-          console.error('Unexpected error:', error);
-          setFetchError('An unexpected error occurred while fetching activity details');
-        }
-      }
-    };
+  const CookieExperience = Cookies.get("experience");
+  const experience = JSON.parse(CookieExperience);
 
-    fetchActivity();
-  }, []);
+  // Validación de campos
+  const isFormValid = () => {
+    let formIsValid = true;
+    const errors: { rating?: string; review?: string } = {};
+
+    if (!rating || rating < 1 || rating > 5) {
+      errors.rating = "La calificación debe ser entre 1 y 5.";
+      formIsValid = false;
+    }
+    if (!review || review.length < 10) {
+      errors.review = "La reseña debe tener al menos 10 caracteres.";
+      formIsValid = false;
+    }
+
+    setErrors(errors);
+    return formIsValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar antes de proceder
+    if (!isFormValid()) {
+      console.log("Formulario inválido: Verifica los campos.");
+      return;
+    }
+
+    // Verificar que el usuario y el ID de la experiencia estén disponibles
+    if (!userId || !id) {
+      setMessage("Información de usuario o experiencia faltante.");
+      return;
+    }
+
     setLoading(true);
-    setSuccess(null);
+    setMessage(null); // Limpiar el mensaje anterior
 
     try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          rating,
-          review,
-          activity: activity?.title,
-        }),
-      });
+      const data = {
+        experienceId: id,
+        userId,
+        rating: Number(rating),
+        comment: review,
+      };
+      console.log("Datos enviados: ", data);
 
-      if (!response.ok) {
-        throw new Error('Failed to submit review');
-      }
+      const response = await reviewServices.create(data);
+      console.log(response);
 
-      const data = await response.json();
-      console.log('Review submitted successfully:', data);
-
-      setSuccess(true);
-      setRating('');
-      setReview('');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error('Error submitting review:', error.message);
-        setSuccess(false);
+      if (response.status === 200) {
+        setRating(0);
+        setReview("");
+        setMessage("Reseña enviada con éxito!");
+        console.log("Reseña enviada con éxito");
+      } else if (response.message === "Review uploaded successfully.") {
+        setMessage("Reseña enviada con éxito!");
+        setTimeout(() => navigate(-1), 2500);
       } else {
-        console.error('Unexpected error:', error);
-        setSuccess(false);
+        setMessage("Hubo un error al enviar la reseña.");
       }
+    } catch (error) {
+      console.error("Error al enviar la reseña:", error);
+      setMessage("Error al enviar la reseña. Intenta nuevamente.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-
-      <div className="flex items-center mb-6">
-        <button className="text-lg text-gray-600 mb-6">{"<"} </button>
-        <h1 className="text-lg font-bold text-gray-700 text-center mb-6">Añadir reseña</h1>
+    <div className="px-4 mx-auto rounded-lg">
+      <div className="py-2">
+        <HeaderPanel title="Agregar Reseña" />
       </div>
 
-
-      {fetchError ? (
-        <p className="text-red-500 text-center">Error: {fetchError}</p>
-      ) : !activity ? (
-        <p className="text-gray-500 text-center">
-          Cargando datos de la actividad...
-        </p>
-      ) : (
-        <>
-
-          <div className="mb-6">
-            <img
-              src={activity.image} 
-              alt={activity.title}
-              className="w-[300px] h-[150px] object-cover rounded-lg mx-auto"
-            />
-          </div>
-          <h2 className="text-xl font-bold text-center text-gray-800 mb-6">
-            {activity.title}
-          </h2>
-        </>
-      )}
+      <>
+        <div className="mb-6">
+          <img
+            src={experience?.image || imageSafari}
+            alt={experience?.title}
+            className="w-full h-[150px] object-cover rounded-lg mx-auto"
+          />
+        </div>
+        <h2 className="mb-6 text-xl font-bold text-center text-gray-800">
+          {experience?.title}
+        </h2>
+      </>
 
       <form onSubmit={handleSubmit}>
-
         <div className="mb-6">
           <label
             htmlFor="rating"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block mb-2 text-sm font-medium text-gray-700"
           >
             Calificación
           </label>
           <select
             id="rating"
             value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            className="w-full p-3 border rounded-lg text-gray-700 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+            //@ts-ignore
+            onChange={(e) => setRating(Number(e.target.value))}
+            className="w-full p-3 text-gray-700 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             disabled={loading}
           >
             <option value="">Selecciona una calificación</option>
@@ -131,12 +135,15 @@ const Reviews: React.FC = () => {
             <option value="2">2 - Regular</option>
             <option value="1">1 - Malo</option>
           </select>
+          {errors.rating && (
+            <p className="mt-2 text-sm text-red-500">{errors.rating}</p>
+          )}
         </div>
 
         <div className="mb-6">
           <label
             htmlFor="review"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block mb-2 text-sm font-medium text-gray-700"
           >
             Reseña
           </label>
@@ -145,33 +152,35 @@ const Reviews: React.FC = () => {
             value={review}
             onChange={(e) => setReview(e.target.value)}
             placeholder="Describe tu experiencia."
-            className="w-full p-3 border rounded-lg text-gray-700 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-y"
+            className="w-full p-3 text-gray-700 bg-white border rounded-lg shadow-sm resize-y focus:outline-none focus:ring-2 focus:ring-orange-500"
             rows={4}
             disabled={loading}
           ></textarea>
+          {errors.review && (
+            <p className="mt-2 text-sm text-red-500">{errors.review}</p>
+          )}
         </div>
 
         <button
           type="submit"
           className={`w-full py-3 rounded-lg font-medium ${
-            loading ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
+            loading ? "bg-gray-400" : ""
           } text-white shadow-md transition duration-200`}
           disabled={loading}
         >
           {loading ? "Enviando..." : "Añadir reseña"}
         </button>
-      </form>
 
-      {success === true && (
-        <p className="text-green-500 text-center mt-6">
-          Reseña enviada con éxito.
-        </p>
-      )}
-      {success === false && (
-        <p className="text-red-500 text-center mt-6">
-          Error al enviar la reseña. Intenta de nuevo.
-        </p>
-      )}
+        {message && (
+          <p
+            className={`text-center ${
+              message.includes("error") ? "text-red-500" : "text-green-500"
+            } mt-4`}
+          >
+            {message}
+          </p>
+        )}
+      </form>
     </div>
   );
 };

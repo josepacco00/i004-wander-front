@@ -5,12 +5,15 @@ interface IReview {
     userId: string
     rating: number
     comment: string
-    createdAt: string
+    createdAt: string,
+    userAvatar: string,
+    userName: string,
 }
 
 function ReviewCard({review} : {review: IReview}) {
 
-  const { rating, comment, createdAt } = review;
+  const { rating, comment, createdAt, userName, userAvatar } = review;
+  console.log(review)
 
   const getRating = (rating: number) => {
     switch (rating) {
@@ -31,9 +34,9 @@ function ReviewCard({review} : {review: IReview}) {
   return (
     <div className="border-gray-300 border-[1.5px] rounded-xl p-4">
         <div className="flex gap-4">
-            <div className="w-12 h-12 rounded-full bg-primary"></div>
+            <img className="w-12 h-12 rounded-full" src={userAvatar ?? ""} alt="" />
             <div className="flex flex-col">
-                <h1>Mariana Garcia Rodiguez</h1>
+                <h1>{userName ?? "Usuario"}</h1>
                 <p className=""><span className="text-primary">{getRating(rating)?.stars}</span> {formatToShortDate(createdAt)}</p>
             </div>
         </div>

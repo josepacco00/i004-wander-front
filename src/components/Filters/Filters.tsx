@@ -6,6 +6,12 @@ import CategorySelect from "./CategorySelect";
 import LocationInput from "./LocationInput";
 import { IExperience } from "../../types/experience";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { formatCategory, formatToShortDate } from "../../utils/getDateFormat";
+import { InfoCard } from "../ExperienceDetail/InfoExperience";
+
+import imageSafari from "../../assets/img/Safari.jpg";
+import iconLocation from "../../assets/icons/icon-location.svg";
+import iconPrice from "../../assets/icons/icon-price.svg";
 
 interface Filters {
   title: string;
@@ -44,7 +50,8 @@ const Filters: React.FC = () => {
   });
 
   const handleInputChange = (key: string, value: string) => {
-    const regex = /^[A-Za-z\s]*$/; // Only letters and spaces
+    const regex = /^[A-Za-záéíóúÁÉÍÓÚ\s]*$/;
+    // Only letters and spaces
     if (value.length > 50 || !regex.test(value)) {
       setInputErrors((prev) => ({
         ...prev,
@@ -65,27 +72,32 @@ const Filters: React.FC = () => {
     }));
   };
 
-  const fetchExperiences = useCallback(async (queryParams: QueryParams) => {
-    setLoading(true);
-    setError(null);
+  const fetchExperiences = useCallback(
+    async (queryParams: QueryParams) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const response = await axios.get(
-        `${BACK_URL}/experiences/get-all?${queryString.stringify(queryParams)}`
-      );
-      console.log("API Response:", response.data); // Debugging API response
-      if (Array.isArray(response.data)) {
-        setExperiences(response.data);
-      } else {
-        setExperiences([]); // Fallback if response is not an array
+      try {
+        const response = await axios.get(
+          `${BACK_URL}/experiences/get-all?${queryString.stringify(
+            queryParams
+          )}`
+        );
+        console.log("API Response:", response.data); // Debugging API response
+        if (Array.isArray(response.data)) {
+          setExperiences(response.data);
+        } else {
+          setExperiences([]); // Fallback if response is not an array
+        }
+      } catch (err) {
+        setError("No existen experiencias.");
+        setExperiences([]); // Clear experiences on error
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError("No existen experiencias.");
-      setExperiences([]); // Clear experiences on error
-    } finally {
-      setLoading(false);
-    }
-  }, [BACK_URL]);
+    },
+    [BACK_URL]
+  );
 
   const applyFilters = () => {
     const { title, country, city, maxPrice, category } = filters;
@@ -164,7 +176,7 @@ const Filters: React.FC = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2 relative">
+          <div className="relative col-span-2">
             <label
               htmlFor="title"
               className="block text-sm font-medium text-gray-700"
@@ -179,7 +191,7 @@ const Filters: React.FC = () => {
               onChange={(e) => handleInputChange("title", e.target.value)}
               className="w-full p-2 border rounded-full"
             />
-            <MagnifyingGlassIcon className="absolute right-4 top-9 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 right-4 top-9" />
           </div>
 
           <LocationInput
@@ -218,18 +230,19 @@ const Filters: React.FC = () => {
               <option value="50">€50</option>
               <option value="100">€100</option>
               <option value="200">€200</option>
-              
             </select>
           </div>
         </div>
 
-        {inputErrors.title && <p className="text-red-500">{inputErrors.title}</p>}
+        {inputErrors.title && (
+          <p className="text-red-500">{inputErrors.title}</p>
+        )}
         {inputErrors.city && <p className="text-red-500">{inputErrors.city}</p>}
 
         <button
           disabled={inputErrors.title !== "" || inputErrors.city !== ""}
           onClick={handleSearchExperiences}
-          className="w-full py-2 mt-4 font-bold text-white bg-yellow-500 rounded-full hover:bg-yellow-600"
+          className="w-full py-2 mt-4 font-bold text-white rounded-full"
         >
           Buscar Experiencias
         </button>
@@ -242,7 +255,8 @@ const Filters: React.FC = () => {
           <p className="text-center text-red-500">{error}</p>
         ) : (
           <div>
-            <h2 className="mb-4 text-lg font-bold">Experiencias</h2>
+            <h2 className="pl-4 mb-4 text-lg font-bold">Experiencias</h2>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {Array.isArray(experiences) && experiences.length > 0 ? (
                 experiences.map((experience) => (
@@ -252,23 +266,34 @@ const Filters: React.FC = () => {
                   >
                     <img
                       alt={experience.title}
-                      className="object-cover w-full h-32 rounded-t-lg"
+                      src={imageSafari}
+                      className="object-cover w-full rounded-xl h-44"
                     />
                     <div className="mt-2">
-                      <h3 className="font-medium text-md">{experience.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        {experience.location[0] + ", " + experience.location[1]}
+                      <div>
+                        <p>Categoria: {formatCategory(experience.tags[0])}</p>
+                      </div>
+                      <h3 className="my-2 overflow-hidden text-xl font-bold truncate">
+                        {experience.title}
+                      </h3>
+                      <p className="overflow-hidden max-h-24">
+                        {experience.description}
                       </p>
-                      <div className="flex justify-between mt-2 text-sm text-gray-600">
-                        <span>💰 ${experience.price}</span>
-                        <span>
-                          📍 {experience.location[0]}, {experience.location[1]}
-                        </span>
-                        <span>📍 {experience.tags[0]}</span>
+                      <div className="flex gap-3 mt-2 text-sm text-gray-600">
+                        <InfoCard
+                          icon={iconPrice}
+                          first="Precio"
+                          second={"€" + experience.price}
+                        />
+                        <InfoCard
+                          icon={iconLocation}
+                          first={experience.location[0]}
+                          second={experience.location[1]}
+                        />
                       </div>
                       <button
                         onClick={() => navigate("/experience/" + experience.id)}
-                        className="w-full py-2 mt-4 font-bold text-white bg-yellow-500 rounded-full hover:bg-yellow-600"
+                        className="w-full py-2 mt-4 font-bold text-white rounded-full"
                       >
                         Más detalles
                       </button>

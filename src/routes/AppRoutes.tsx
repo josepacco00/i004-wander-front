@@ -18,6 +18,10 @@ import ConfirmationView from '../components/ConfirmationView/ConfirmationView'
 import { ProtectedPublicRoute } from './ProtectedPublicRoutes'
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react'
+import ExperiencePanel from '../components/ExperiencePanel/ExperiencePanel'
+import BookingInfo from '../components/ExperiencePanel/BookingInfo/BookingInfo'
+import ManageCustomers from '../components/ExperiencePanel/ManageCustomers/ManageCustomers'
+import Reviews from '../components/Reviews/Reviews'
 
 const AppRoutes = () => {
 
@@ -45,6 +49,11 @@ const AppRoutes = () => {
             <Route element={<PrivateRoute />}>
                 <Route path="/user-profile" element={<UserProfile />} />
                 <Route path="/add-experience" element={<AddExperience />} />
+                <Route path="/my-experiences" element={<ExperiencePanel />} />
+                <Route path="/booking-info/:id" element={<BookingInfo />} />
+                <Route path="/customers/:id" element={<ManageCustomers />} />
+                <Route path="/review/:id" element={<Reviews />} />
+                
             </Route>
 
             {/* Rutas que necesitan contexto de reserva */}
@@ -61,6 +70,8 @@ const AppRoutes = () => {
                 </Route>
             </Route>
 
+            
+
             <Route path="*" element={<h1>404</h1>} />
 
         </Routes>
@@ -69,3 +80,4 @@ const AppRoutes = () => {
 
 
 export default AppRoutes
+
