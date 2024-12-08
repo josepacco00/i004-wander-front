@@ -44,7 +44,7 @@ function InfoExperience({description, capacity, location, createdAt, tags } : {d
 
 export default InfoExperience;
 
-const InfoCard = ({ icon, first, second } : { icon: string, first: string, second: string | number }) => {
+export const InfoCard = ({ icon, first, second } : { icon: string, first: string, second: string | number }) => {
   return (
     <div className="flex items-center w-1/2 gap-4 px-3 py-2 border-[1.5px] border-gray-300 rounded-2xl ">
       <img src={icon} alt="iconEmail" className="w-6 h-6" />
