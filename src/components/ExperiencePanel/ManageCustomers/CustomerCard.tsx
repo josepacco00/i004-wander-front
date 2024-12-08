@@ -40,7 +40,7 @@ function CustomerCard({ activeTab, dataBooking, onBookingUpdate }: any) {
   const userId = user?._id;
 
   const { tourist, participants, id: bookingId } = dataBooking;
-  const { avatar, name, email, phone } = tourist;
+  const { name, email, phone } = tourist;
   console.log(tourist)
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -94,7 +94,7 @@ function CustomerCard({ activeTab, dataBooking, onBookingUpdate }: any) {
   return (
     <section className="flex flex-col gap-3 p-3 border border-gray-300 rounded-xl">
       <div className="flex h-full gap-2">
-        <img src={avatar ?? ""} alt="" className="w-24 rounded-xl" />
+        <img src={"https://medvirturials.com/img/default-image.png"} alt="" className="w-24 rounded-xl" />
         <div>
           <h1 className="font-bold">{name}</h1>
           <h2>{email}</h2>
