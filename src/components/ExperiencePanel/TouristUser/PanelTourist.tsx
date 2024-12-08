@@ -35,22 +35,29 @@ function PanelTourist() {
   return (
     <div>
       <HeaderPanel title="Mis Experiencias" />
-
-      {/* Muestra el loader mientras está en carga */}
+      {/* Mostrar el loader mientras se cargan los datos */}
       {loading ? (
         <div className="flex flex-col items-center justify-center h-screen gap-2">
           <div className="w-6 h-6 border-b-2 border-current rounded-full animate-spin"></div>
         </div>
-      ) : (
-        // RENDERIZA LOS BOOKINGS
+      ) : bookings && bookings.length > 0 ? (
+        
         <div className="flex flex-col gap-2 mt-4">
-          {bookings?.map((booking) => (
-            <ExperienceCard bookingInfo={booking} key={booking.id} idBooking={booking.id} />
+          {bookings.map((booking) => (
+            <ExperienceCard
+              bookingInfo={booking}
+              key={booking.id}
+              idBooking={booking.id}
+            />
           ))}
         </div>
+      ) : (
+        <p className="mt-10 text-center">No tienes reservas.</p>
       )}
     </div>
   );
+  
+  
 }
 
 export default PanelTourist;
