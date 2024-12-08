@@ -417,7 +417,7 @@ const AddExperience = () => {
         {/* Selección de rango de fechas */}
         <div className="date-picker">
           <DatePicker
-          locale={es}
+            locale={es}
             selected={selectedDate}
             onChange={handleDateChange} // Ahora actualiza la fecha seleccionada
             minDate={new Date()}
