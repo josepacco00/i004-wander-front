@@ -6,7 +6,7 @@ import CategorySelect from "./CategorySelect";
 import LocationInput from "./LocationInput";
 import { IExperience } from "../../types/experience";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { formatCategory, formatToShortDate } from "../../utils/getDateFormat";
+import { formatCategory } from "../../utils/getDateFormat";
 import { InfoCard } from "../ExperienceDetail/InfoExperience";
 
 import imageSafari from "../../assets/img/Safari.jpg";
