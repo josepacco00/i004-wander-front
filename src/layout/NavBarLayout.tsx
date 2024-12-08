@@ -24,6 +24,7 @@ function NavBarLayout() {
     try {
       await userServices.logOutUser(); 
       setUser(null);
+      localStorage.clear()
       handleModal();
       navigate('/login');
     } catch (error) {

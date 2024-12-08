@@ -23,7 +23,7 @@ const detailsList = [
     {
         field: 'bookings',
         icon: card,
-        title: 'Reservas',
+        title: 'Mis experiencias',
     },
 ]
 

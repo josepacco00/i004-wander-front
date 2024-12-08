@@ -5,6 +5,4 @@
     width: 100%; /* Ajusta el tamaño al 100% del contenedor */
     max-width: 180px; /* Limita el tamaño máximo de la imagen */
     height: auto; /* Mantiene la proporción */
-    margin-top: 90px;
   }
-  

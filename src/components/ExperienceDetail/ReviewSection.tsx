@@ -13,6 +13,7 @@ function ReviewSection({ id }: { id: string }) {
         const response = await fetch(`${BACK_URL}/reviews/experience/${id}`);
         const data = await response.json();
         setReviews(data);
+        console.log(reviews)
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }

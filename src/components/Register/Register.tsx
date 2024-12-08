@@ -15,6 +15,7 @@ const Register: React.FC = () => {
         handleSubmit,
         reset,
         control,
+        watch,
         formState: { errors, isValid, isSubmitting },
     } = useForm<SignUpSchema>({
         defaultValues: {
@@ -26,12 +27,15 @@ const Register: React.FC = () => {
                 prefix: "+34",
                 number: ""
             },
-            role: "tourist",
+            location: undefined,
+            role: "TOURIST",
             age: false,
         },
         mode: "onChange",
         resolver: zodResolver(signUpSchema)
     })
+
+    console.log(watch())
 
     // Para gestionar las notificaciones del BFF
     const [reqError, setReqError] = useState<string[] | null>()
@@ -131,13 +135,21 @@ const Register: React.FC = () => {
                     {errors.confirmPassword &&
                         <span className="form__error-validation">{errors.confirmPassword.message}</span>}
                 </div>
-                <div>
+                <div className="relative">
                     <label htmlFor="location">País *</label>
-                    <input
+                    <select
                         {...register("location")}
-                        type="text"
+                        name="location"
                         id="location"
-                    />
+                        className="hover:bg-neutral-300">
+                        <option disabled>--</option>
+                        <option value="España">España</option>
+                        <option value="Francia">Francia</option>
+                        <option value="Italia">Italia</option>
+                    </select>
+                    <div className="absolute right-4 top-[calc(50%+4px)] p-1.5 pt-[5px] pb-[7px] rounded-full pointer-events-none">
+                        <i className="w-2 h-2 block border-neutral-800 border-l-2 border-b-2 -rotate-45"></i>
+                    </div>
                     {errors.location &&
                         <span className="form__error-validation">{errors.location.message}</span>}
                 </div>
@@ -150,7 +162,8 @@ const Register: React.FC = () => {
                             render={({ field }) => (
                                 <select
                                     {...field}
-                                    id="phone-prefix">
+                                    id="phone-prefix"
+                                    className="hover:bg-neutral-300">
                                     {
                                         countriesPhoneList.map((ph, i) =>
                                             <option key={`${Date.now()}-${i}`} value={ph.prefijo}>{`${ph.bandera} ${ph.prefijo}`}</option>)
@@ -180,8 +193,9 @@ const Register: React.FC = () => {
                         {...register("role")}
                         id="role"
                         className="hover:bg-neutral-300">
-                        <option value="tourist" className="bg-white">Turista</option>
-                        <option value="provider" className="bg-white">Proveedor</option>
+                        <option disabled>--</option>
+                        <option value="TOURIST">Turista</option>
+                        <option value="PROVIDER">Proveedor</option>
                     </select>
                     <div className="absolute right-4 top-[calc(50%+4px)] p-1.5 pt-[5px] pb-[7px] rounded-full pointer-events-none">
                         <i className="w-2 h-2 block border-neutral-800 border-l-2 border-b-2 -rotate-45"></i>
@@ -189,7 +203,8 @@ const Register: React.FC = () => {
                     {errors.role &&
                         <span className="form__error-validation">{errors.role.message}</span>}
                 </div>
-                <div className="mt-2">
+                <hr className="mt-2" />
+                <div>
                     <label className="!text-xs">Para registrarte en la plataforma debes ser mayor de edad. Al marcar la siguiente casilla confirmas tener al menos 18 años. *</label>
                     <div className="flex items-center gap-2">
                         <input

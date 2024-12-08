@@ -35,14 +35,15 @@ const UserProfile: React.FC = () => {
         }
     }, [])
 
-    const {  email, location, name, phone, role } = userInfo
+    const {  email, avatar , location, name, phone, role } = userInfo
+    
 
     return (
         <div className='flex flex-col items-center mt-4'>
             <div className='w-full px-8 mb-12'>
                 <ProfileCard
                     name={name}
-                    avatar={userImage}
+                    avatar={avatar || userImage}
                 />
             </div>
             {role.toUpperCase() === 'PROVIDER' && (

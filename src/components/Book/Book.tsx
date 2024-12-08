@@ -20,20 +20,14 @@ const Book: React.FC = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        // Si el contexto no tiene experiencia, debería navegar a la página de búsqueda de experiencias
-        if (!experience  || !user) {
-            removeReservationData()
-            navigate("/")
-        } else {
-            updateReservationData({
-                userId: user._id,
-                experienceId: experience.id,
-                paymentStatus: "paid",
-                status: "pending",
-                email: user.email,
-                phone: user.phone
-            })
-        }
+        updateReservationData({
+            userId: user?._id,
+            experienceId: experience?.id,
+            paymentStatus: "paid",
+            status: "pending",
+            email: user?.email,
+            phone: user?.phone
+        })
     }, [experience, user])
 
     const {
@@ -123,7 +117,7 @@ const Book: React.FC = () => {
     const handleGoBack = () => {
         const reservationTemp = localStorage.getItem("reservation")
 
-        if(reservationTemp) {
+        if (reservationTemp) {
             localStorage.removeItem("reservation")
         }
 
@@ -134,14 +128,11 @@ const Book: React.FC = () => {
 
     return (
         <div className="relative flex flex-col w-full gap-4 p-6 h-dvh mb-28">
-            <div>
-                <p>{experience!.title}</p>
-            </div>
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 [&_label]:text-[10px] [&_input]:px-4 [&_input]:py-2.5 mb-32"
             >
-                <p className="text-base font-semibold">Selecciona una fecha entre las disponibles</p>
+                <p className="text-base font-semibold">Selecciona una fecha y hora</p>
                 <div className="mx-auto">
                     <DatePicker
                         selected={startDate ? startDate : undefined}
@@ -154,16 +145,15 @@ const Book: React.FC = () => {
                         availableHours
                         && (
                             <div>
-                                <p className="text-xs">Selecciona una hora entre de las disponibles</p>
                                 <div className="flex gap-2 mt-2">
                                     {
-                                        availableHours.map(date => {
+                                        availableHours.map((date, i) => {
                                             const hours = String(new Date(date).getHours()).padStart(2, "0")
                                             const minutes = String(new Date(date).getMinutes()).padStart(2, "0")
 
                                             console.log(date.toString() === startDate?.toString())
 
-                                            return <button type="button" className={`px-2 py-1 ${date.toString() === startDate?.toString() ? "!bg-tertiary" : ""}`} onClick={() => handleChangeTime(date)}>{hours}:{minutes}</button>
+                                            return <button type="button" key={Date.now() + i} className={`px-2 py-1 ${date.toString() === startDate?.toString() ? "!bg-tertiary" : ""}`} onClick={() => handleChangeTime(date)}>{hours}:{minutes}</button>
                                         })
                                     }
 
@@ -173,9 +163,9 @@ const Book: React.FC = () => {
                         )
                     }
                     {
-                        watch("bookingDate") && <p className="text-xs">Fecha seleccionada: {watch("bookingDate").toLocaleString()}</p>
+                        watch("bookingDate") && <p className="text-xs">Fecha seleccionada: {watch("bookingDate").toLocaleString().slice(0, -3)}</p>
                     }
-                    {errors.bookingDate && <span className="form__error-notification"> {errors.bookingDate.message} </span>}
+                    {errors.bookingDate && <span className="form__error-validation"> {errors.bookingDate.message} </span>}
                 </div>
                 <p className="text-lg font-semibold">Detalle</p>
                 <p className="text-xs">Comprueba los datos para la reserva</p>
@@ -187,7 +177,7 @@ const Book: React.FC = () => {
                         id="people"
                         max={experience?.capacity}
                     />
-                    {errors.participants && <span className="form__error-notification"> {errors.participants.message} </span>}
+                    {errors.participants && <span className="form__error-validation"> {errors.participants.message} </span>}
                 </div>
                 <div className="">
                     <label htmlFor="phone">Teléfono</label>
@@ -199,7 +189,7 @@ const Book: React.FC = () => {
                             id="phone"
                         />
                     </div>
-                    {errors.phone && <span className="form__error-notification">{errors.phone.message}</span>}
+                    {errors.phone && <span className="form__error-validation">{errors.phone.message}</span>}
                 </div>
                 <div>
                     <label htmlFor="email">Email</label>
@@ -209,9 +199,11 @@ const Book: React.FC = () => {
                         id="email"
                         placeholder="john@doe.com"
                     />
-                    {errors.email && <span className="form__error-notification">{errors.email.message}</span>}
+                    {errors.email && <span className="form__error-validation">{errors.email.message}</span>}
                 </div>
 
+                { watch("email") !== user?.email &&
+                    <p className="p-2 bg-yellow-200 text-yellow-600 text-xs rounded-md">IMPORTANTE: si cambias el correo electrónico para la reserva, asegúrate de que usas una dirección correcta y a la que tengas acceso. Es posible que la utilicemos para enviarte notificaciones sobre la experiencia.</p>}
                 <div className="actions shadow-top fixed right-0 left-0 bottom-0 w-full p-6 !flex-row flex-1 bg-white [&>button]:w-full [&>button]:p-2">
                     <button disabled={isSubmitting} type="submit" className="bg-neutral-100 hover:text-white text-neutral-500" onClick={handleGoBack}>
                         Volver

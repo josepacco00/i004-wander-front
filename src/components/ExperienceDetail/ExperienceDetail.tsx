@@ -15,7 +15,7 @@ import { DetailExperience } from "../../types/detailexperience";
 function ExperienceDetail() {
   const navigate = useNavigate();
 
-  const { setExperience } = useContext(ReservationContext);
+  const { setExperience, removeReservationData } = useContext(ReservationContext);
 
   const [experience, setDataExperience] = useState<DetailExperience>(
     {} as DetailExperience
@@ -24,6 +24,8 @@ function ExperienceDetail() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const reservation = localStorage.getItem("reservation")
+    reservation && removeReservationData()
 
     setIsLoading(true);
 
@@ -42,14 +44,14 @@ function ExperienceDetail() {
         () => {
           setIsLoading(false);
         }
-      )
-      ;
+      );
   }, []);
 
   // Redirige a booking y manda informacion al contexto
   const handleBooking = () => {
     // @ts-ignore
      setExperience(experience);
+    localStorage.setItem("experience", JSON.stringify(experience))
     navigate("/booking");
   };
 
