@@ -11,6 +11,20 @@ class BookingServices {
             booking
         )
     }
+    async getBookingsFromUser(id: unknown) {
+        const responde = await this.api.get(`/user/${id}`);
+        return responde.data;
+    }
+
+    async getBookingsFromExperience(id: unknown) {
+        const responde = await this.api.get(`/experience/${id}`);
+        return responde.data;
+    }
+
+    async updateBooking(bookingId: unknown, data: unknown) {
+        await this.api.put(`/${bookingId}`, data);
+    }
+
 }
 
 const bookingServices = new BookingServices()

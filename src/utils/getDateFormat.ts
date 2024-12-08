@@ -18,4 +18,18 @@ export function formatCategory(category: string | string[]) {
 
     if (!categoryString) return '';
     return categoryString.charAt(0).toUpperCase() + categoryString.slice(1);
-  }
+}
+
+
+export const getStatus = (state: string) => {
+    switch (state) {
+      case "CONFIRMED":
+        return { text: "Confirmado", color: "text-green-600" };
+      case "CANCELLED":
+        return { text: "Cancelado", color: "text-red-600" };
+      case "PENDING":
+        return { text: "Pendiente", color: "text-gray-500" };
+      default:
+        return { text: "Desconocido", color: "text-gray-400" };
+    }
+  };
