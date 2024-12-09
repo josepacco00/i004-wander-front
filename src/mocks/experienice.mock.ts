@@ -12,5 +12,6 @@ export const experienceMock: IExperience = {
     price: 100,
     rating: 3.7,
     tags: ["Tag1", "Tag2", "Tag3"],
-    title: "Experience Title"
+    title: "Experience Title",
+    experienceImages: ["https://www.subexpuesta.com/img/content/paisajes-naturales_1.webp"]
   }
