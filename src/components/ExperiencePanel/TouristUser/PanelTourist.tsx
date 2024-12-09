@@ -21,7 +21,7 @@ function PanelTourist() {
       try {
         const response = await bookingServices.getBookingsFromUser(userId);
         setBookings(response);
-        console.log(bookings)
+        // console.log(response)
       } catch (error) {
         console.error("Error fetching bookings:", error);
       } finally {
@@ -42,12 +42,14 @@ function PanelTourist() {
         </div>
       ) : bookings && bookings.length > 0 ? (
         
+        
         <div className="flex flex-col gap-2 mt-4">
           {bookings.map((booking) => (
             <ExperienceCard
               bookingInfo={booking}
               key={booking.id}
               idBooking={booking.id}
+              // image={booking.experienceImages[0]}
             />
           ))}
         </div>

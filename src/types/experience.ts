@@ -10,5 +10,6 @@ export interface IExperience {
   rating: number;
   capacity: number;
   createdAt: Date;
+  experienceImages: string[]
 }
 

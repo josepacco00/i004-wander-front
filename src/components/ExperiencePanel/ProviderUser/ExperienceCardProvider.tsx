@@ -1,14 +1,14 @@
 import imageSafari from "../../../assets/img/Safari.jpg";
 import { useNavigate } from "react-router-dom";
 
-function ExperienceCardProvider({ title, experienceId , price, status } : {title: string, experienceId: string, price: number, status:string  } ) {
+function ExperienceCardProvider({ title, experienceId , price, status, image } : {title: string, experienceId: string, price: number, status:string, image: string } ) {
   const navigate = useNavigate();
 
   return (
     <div className="flex gap-4 p-4 border rounded-lg">
       <div>
         <img
-          src={imageSafari}
+          src={image ? image : imageSafari}
           alt=""
           className="max-w-[95px] h-28 rounded-xl"
         />
@@ -23,7 +23,7 @@ function ExperienceCardProvider({ title, experienceId , price, status } : {title
           </p> : <p>
             Estado: <span className="text-red-600">Inactivo</span>
           </p>}
-          <p>Precio: ${price}</p>
+          <p>Precio: {price}€</p>
         </div>
 
         <div className="flex gap-2 text-xs">

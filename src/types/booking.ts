@@ -9,5 +9,6 @@ export interface Booking {
     status: string;
     totalPrice: number;
     userId: string;
+    experienceImages: string[]
   }
   

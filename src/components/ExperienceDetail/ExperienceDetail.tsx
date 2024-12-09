@@ -21,7 +21,7 @@ function ExperienceDetail() {
     {} as DetailExperience
   );
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const reservation = localStorage.getItem("reservation")
@@ -67,6 +67,7 @@ function ExperienceDetail() {
     <div className="mb-28">
       {/* Seccion de imagenes (Posible slider u otra forma de mostrar las imagenes) */}
       <ImageCardExperience
+        images={experience.experienceImages}
         title={experience?.title}
         rating={experience?.rating}
       />

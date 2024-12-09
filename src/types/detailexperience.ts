@@ -10,5 +10,6 @@ export interface DetailExperience {
     rating: number,
     capacity: number,
     createdAt: string,
-    status: boolean
+    status: boolean,
+    experienceImages: string[]
 }
