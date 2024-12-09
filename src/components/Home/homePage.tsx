@@ -132,7 +132,7 @@ const Home: React.FC = () => {
                       <div
                         className="w-11/12 h-40 mx-auto mt-2 bg-center bg-cover rounded-lg"
                         style={{
-                          backgroundImage: `url(${imageCity})`,
+                          backgroundImage: `url(${experience.experienceImages ? experience.experienceImages[0] : imageCity})`,
                         }}
                       ></div>
                       <div className="flex items-center justify-between p-4">
@@ -164,7 +164,7 @@ const Home: React.FC = () => {
                   ultimaLlamadaExperiences.map((experience) => (
                     <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50" onClick={() => handleImageClick(experience.id)}>
                       <img
-                        src={imageCity}
+                        src={experience.experienceImages ? experience.experienceImages[0] : imageCity}
                         alt={experience.title}
                         className="object-cover w-full h-auto"
                       />

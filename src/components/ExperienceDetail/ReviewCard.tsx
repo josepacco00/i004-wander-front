@@ -13,6 +13,8 @@ interface IReview {
 function ReviewCard({review} : {review: IReview}) {
 
   const { rating, comment, createdAt, userName, userAvatar } = review;
+  const userImage = "https://medvirturials.com/img/default-image.png"
+
   console.log(review)
 
   const getRating = (rating: number) => {
@@ -34,7 +36,7 @@ function ReviewCard({review} : {review: IReview}) {
   return (
     <div className="border-gray-300 border-[1.5px] rounded-xl p-4">
         <div className="flex gap-4">
-            <img className="w-12 h-12 rounded-full" src={userAvatar ?? ""} alt="" />
+            <img className="w-12 h-12 rounded-full" src={userAvatar ?? userImage} alt="" />
             <div className="flex flex-col">
                 <h1>{userName ?? "Usuario"}</h1>
                 <p className=""><span className="text-primary">{getRating(rating)?.stars}</span> {formatToShortDate(createdAt)}</p>

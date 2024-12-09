@@ -266,7 +266,7 @@ const Filters: React.FC = () => {
                   >
                     <img
                       alt={experience.title}
-                      src={imageSafari}
+                      src={experience.experienceImages ? experience.experienceImages[0] : imageSafari}
                       className="object-cover w-full rounded-xl h-44"
                     />
                     <div className="mt-2">

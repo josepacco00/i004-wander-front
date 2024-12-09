@@ -24,13 +24,22 @@ const ConfirmRegister = () => {
     } else {
       setResendEnabled(true); // Habilitar el botón de reenviar cuando los 60 segundos se hayan agotado
     }
+
+    // return () => localStorage.removeItem("tempEmail")
   }, [timeLeft]);
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimeLeft(60); // Resetear cuenta regresiva
     setResendEnabled(false); // Deshabilitar el botón hasta pasar otros 60 segundos
     // Lógica para reenviar el código
-    console.log("Código reenviado.");
+    const email = localStorage.getItem("tempEmail")
+
+    try {
+      const res = await authServices.resendCode(email!)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,9 +52,9 @@ const ConfirmRegister = () => {
     }
 
     try {
-      const res = await authServices.confirmAccount({ email: tempEmail, verificationCode: code })
-      console.log(res)
-      localStorage.removeItem("tempEmail")
+      await authServices.confirmAccount({ email: tempEmail, verificationCode: code })
+      // console.log(res)
+      // localStorage.removeItem("tempEmail")
       setShowModal(true); // Si el código es válido, mostramos el modal de éxito
     } catch (error) {
       if(error instanceof AxiosError) {
@@ -85,6 +94,7 @@ const ConfirmRegister = () => {
 
   // Función para redirigir a la página de login
   const handleLoginRedirect = () => {
+    localStorage.removeItem("tempEmail")
     navigate("/login"); // Redirigir al login
   };
 
