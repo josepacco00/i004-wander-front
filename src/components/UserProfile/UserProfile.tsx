@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 
 import userServices from "../../services/user.services"
 import { userInitialValues } from "../../consts/userInitialValues"
@@ -8,11 +8,13 @@ import DetailsCard from "./DetailsCard"
 import Logout from "../Logout"
 import AddExperienceButton from "./AddExperienceButton"
 import { useLocation } from "react-router-dom";
+import { AuthContext } from "../../contexts/auth.context"
 
 const UserProfile: React.FC = () => {
 
     const path = useLocation();
 
+    const { user } = useContext(AuthContext)
     const [userInfo, setUserInfo] = useState<User>(userInitialValues)
 
     const loadUserInfo = async () => {
@@ -36,14 +38,14 @@ const UserProfile: React.FC = () => {
 
     const {  email, location, name, phone, role } = userInfo
     const userImage = "https://medvirturials.com/img/default-image.png"
-    
+    console.log(userInfo)
 
     return (
         <div className='flex flex-col items-center mt-4'>
             <div className='w-full px-8 mb-12'>
                 <ProfileCard
                     name={name}
-                    avatar={userImage || userImage}
+                    avatar={user?.avatar || userImage}
                 />
             </div>
             {role.toUpperCase() === 'PROVIDER' && (

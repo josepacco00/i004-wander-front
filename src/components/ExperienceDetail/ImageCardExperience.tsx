@@ -1,11 +1,11 @@
-import exampleImage from "../../assets/exampleImage.png";
+// import exampleImage from "../../assets/exampleImage.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-function ImageCardExperience({title, rating} : {title: string, rating: number}) {
-  const photos = [exampleImage, exampleImage, exampleImage];
+function ImageCardExperience({title, rating, images} : {title: string, rating: number, images: string[]}) {
+  // const photos = [exampleImage, exampleImage, exampleImage];
 
   const getRating = (rating: number) => {
     switch (rating) {
@@ -22,7 +22,6 @@ function ImageCardExperience({title, rating} : {title: string, rating: number}) 
     }
   };
 
-
   return (
     <div className="relative z-10">
       <Swiper
@@ -36,7 +35,7 @@ function ImageCardExperience({title, rating} : {title: string, rating: number}) 
         }}
         className="mySwiper"
       >
-        {photos.map((photo, index) => (
+        {images.map((photo, index) => (
           <SwiperSlide key={index}>
             <img
               className="w-full max-h-[300px] object-cover"
@@ -49,7 +48,7 @@ function ImageCardExperience({title, rating} : {title: string, rating: number}) 
               <h1 className="text-2xl font-bold text-white">
                 {title}
               </h1>
-              <p className="text-sm text-white"><span>{getRating(rating)?.stars}</span> 10 Reviews </p>
+              <p className="text-sm text-white"><span>{getRating(rating)?.stars}</span> {/* 10 Reviews */} </p>
             </div>
           </SwiperSlide>
         ))}

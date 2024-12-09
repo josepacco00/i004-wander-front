@@ -36,6 +36,10 @@ class AuthServices {
     logout(token: string) {
         return this.api.post('/logout', null, { headers: { Authorization: `Bearer ${token}` } });
     }
+
+    async resendCode(email: string) {
+        return this.api.post("/resend-code", { email })
+    }
 }
 
 const authServices = new AuthServices()
