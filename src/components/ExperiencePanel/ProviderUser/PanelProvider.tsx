@@ -47,6 +47,7 @@ function PanelProvider() {
               status={experience.status}
               price={experience.price}
               title={experience.title}
+              image={experience?.experienceImages[0]}
             />
           ))}
         </div>
