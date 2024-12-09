@@ -5,7 +5,7 @@ import { formatCategory, formatToShortDate } from "../../utils/getDateFormat";
 import { DetailExperience } from "../../types/detailexperience";
 import { IoIosWarning } from "react-icons/io";
 import imageCity from '../../assets/img/City.jpg';
-import { PuffLoader } from "react-spinners";
+import { PuffLoader } from 'react-spinners';
 
 const Home: React.FC = () => {
   const BACK_URL = import.meta.env.VITE_API_URL;
@@ -148,7 +148,7 @@ const Home: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                  ))) : <p className="p-2 bg-neutral-200 text-neutral-500 rounded-md"><IoIosWarning className="inline" /> {experiencesNotFound}</p>
+                  ))) : <p className="p-2 rounded-md bg-neutral-200 text-neutral-500"><IoIosWarning className="inline" /> {experiencesNotFound}</p>
               ) : <PuffLoader />
             }
           </div>
@@ -174,7 +174,7 @@ const Home: React.FC = () => {
                       </div>
                     </div>
                   ))
-                ) : <p className="p-2 bg-neutral-200 text-neutral-500 rounded-md col-span-2"><IoIosWarning className="inline" /> {experiencesNotFound}</p>
+                ) : <p className="col-span-2 p-2 rounded-md bg-neutral-200 text-neutral-500"><IoIosWarning className="inline" /> {experiencesNotFound}</p>
               ) : <PuffLoader />
             }
           </div>
