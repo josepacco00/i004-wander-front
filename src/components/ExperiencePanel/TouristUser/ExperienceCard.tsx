@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 interface ExperienceCardProps {
   idBooking: string;
   bookingInfo: Booking;
+  // image: string
   // userId: string;
 }
 
@@ -17,8 +18,7 @@ function ExperienceCard({ idBooking, bookingInfo }: ExperienceCardProps) {
   const navigate = useNavigate();
 
   // experienceId posiblemente tenga que extraerlo 
-  const { status, bookingDate, experienceTitle  } = bookingInfo; 
-  console.log(bookingInfo)
+  const { status, bookingDate, experienceTitle, experienceImages  } = bookingInfo; 
 
   const dateFormatted = formatToShortDate(bookingDate);
 
@@ -36,7 +36,7 @@ function ExperienceCard({ idBooking, bookingInfo }: ExperienceCardProps) {
     <div className="flex gap-4 p-4 border rounded-lg">
       <div>
         <img
-          src={imageSafari} // Usamos la imagen de la experiencia si está disponible
+          src={experienceImages[0] ?? imageSafari} // Usamos la imagen de la experiencia si está disponible
           alt="Imagen de Safari"
           className="max-w-[95px] h-28 rounded-xl"
         />
@@ -47,6 +47,7 @@ function ExperienceCard({ idBooking, bookingInfo }: ExperienceCardProps) {
         </h1>
         <p>
           Estado: <span className={color}>{text}</span>
+          
         </p>
         <p>Fecha: {dateFormatted}</p>
         <div className="flex gap-2 text-xs">

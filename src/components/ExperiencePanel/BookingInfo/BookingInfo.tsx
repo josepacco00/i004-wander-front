@@ -134,7 +134,7 @@ function BookingInfo() {
       <HeaderPanel title="Información de Reserva" />
       <div className="px-5 my-5">
         <img
-          src={imageSafari}
+          src={experience.experienceImages[0] ?? imageSafari}
           alt="Imagen de Safari"
           className="object-cover w-full h-32 rounded-3xl"
         />

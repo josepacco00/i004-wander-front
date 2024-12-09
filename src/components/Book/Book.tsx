@@ -44,7 +44,7 @@ const Book: React.FC = () => {
             bookingDate: reservation && reservation.bookingDate ? new Date(reservation.bookingDate) : undefined,
             participants: reservation && reservation.participants ? String(reservation.participants) : "1",
             email: reservation && reservation.email ? reservation.email : user?.email,
-            phone: reservation && reservation.phone ? reservation.phone : user?.phone
+            phone: reservation && reservation.phone?.slice(1) ? reservation.phone : user?.phone.split("+")[1]
         },
         mode: "onChange",
         resolver: zodResolver(createNewReservationSchema(experience!.availabilityDates, experience!.capacity)),
