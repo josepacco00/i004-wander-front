@@ -27,9 +27,7 @@ function ExperienceCardProvider({ title, experienceId , price, status } : {title
         </div>
 
         <div className="flex gap-2 text-xs">
-          <button className="px-2 py-1 text-white rounded">Editar Experiencia</button>
           <button onClick={() => navigate(`/customers/${experienceId}`)} className="px-2 py-1 text-white rounded">Ver Clientes</button>
-          
         </div>
       </div>
     </div>

@@ -3,8 +3,9 @@ import "./homePage.css";
 import { useNavigate } from "react-router-dom";
 import { formatCategory, formatToShortDate } from "../../utils/getDateFormat";
 import { DetailExperience } from "../../types/detailexperience";
-
+import { IoIosWarning } from "react-icons/io";
 import imageCity from '../../assets/img/City.jpg';
+import { PuffLoader } from 'react-spinners';
 
 const Home: React.FC = () => {
   const BACK_URL = import.meta.env.VITE_API_URL;
@@ -13,6 +14,8 @@ const Home: React.FC = () => {
   const [popularExperiences, setPopularExperiences] = useState<DetailExperience[]>([]);
   const [ultimaLlamadaExperiences, setUltimaLlamadaExperiences] = useState<DetailExperience[]>([]);
   const navigate = useNavigate();
+  const [loadingExperiences, setLoadingExperiences] = useState<boolean>(true)
+  const [experiencesNotFound, setExperiencesNotFound] = useState<string | null>(null)
 
   const getCodeCountry = (country: string) => {
     switch (country) {
@@ -40,9 +43,17 @@ const Home: React.FC = () => {
       try {
         const response = await fetch(`${BACK_URL}/experiences/get-all`);
         const data = await response.json();
-        setPopularExperiences(data.slice(0, 2));
+
+        if (data.length > 1) {
+          setPopularExperiences(data.slice(0, 2));
+        } else {
+          setPopularExperiences(data);
+          setExperiencesNotFound(`Error recuperando las experiencias. Por favor, inténtelo de nuevo más tarde.`)
+        }
       } catch (error) {
         console.error("Error fetching popular experiences:", error);
+      } finally {
+        setLoadingExperiences(false)
       }
     };
     fetchPopularExperiences();
@@ -53,9 +64,16 @@ const Home: React.FC = () => {
       try {
         const response = await fetch(`${BACK_URL}/experiences/latest`);
         const data = await response.json();
-        setUltimaLlamadaExperiences(data.slice(0, 4));
+        if (data.length > 1) {
+          setUltimaLlamadaExperiences(data.slice(0, 4));
+        } else {
+          setUltimaLlamadaExperiences(data);
+          setExperiencesNotFound(`Error recuperando las experiencias. Por favor, inténtelo de nuevo más tarde.`)
+        }
       } catch (error) {
         console.error("Error fetching última llamada experiences:", error);
+      } finally {
+        setLoadingExperiences(false)
       }
     };
     fetchUltimaLlamadaExperiences();
@@ -106,28 +124,33 @@ const Home: React.FC = () => {
         <section className="mt-8">
           <h2 className="mb-3 text-xl font-semibold">Popular</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {popularExperiences.map((experience) => (
-              <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50">
-                <div
-                  className="w-11/12 h-40 mx-auto mt-2 bg-center bg-cover rounded-lg"
-                  style={{
-                    backgroundImage: `url(${imageCity})`,
-                  }}
-                ></div>
-                <div className="flex items-center justify-between p-4">
-                  <div>
-                    <h3 className="mb-2 text-lg font-semibold">{experience.title} {getCodeCountry(experience.location[0])}</h3>
-                    <p className="text-sm text-gray-600">{formatCategory(experience.tags)} - {formatToShortDate(experience.createdAt)}</p>
-                  </div>
-                  <button
-                    className="px-4 py-2 text-white transition-all rounded-md bg-brandYellow hover:bg-orange-600"
-                    onClick={() => handleImageClick(experience.id)}
-                  >
-                    Ver más
-                  </button>
-                </div>
-              </div>
-            ))}
+            {
+              !loadingExperiences ? (
+                popularExperiences.length > 1 ? (
+                  popularExperiences.map((experience) => (
+                    <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50">
+                      <div
+                        className="w-11/12 h-40 mx-auto mt-2 bg-center bg-cover rounded-lg"
+                        style={{
+                          backgroundImage: `url(${imageCity})`,
+                        }}
+                      ></div>
+                      <div className="flex items-center justify-between p-4">
+                        <div>
+                          <h3 className="mb-2 text-lg font-semibold">{experience.title} {getCodeCountry(experience.location[0])}</h3>
+                          <p className="text-sm text-gray-600">{formatCategory(experience.tags)} - {formatToShortDate(experience.createdAt)}</p>
+                        </div>
+                        <button
+                          className="px-4 py-2 text-white transition-all rounded-md bg-brandYellow hover:bg-orange-600"
+                          onClick={() => handleImageClick(experience.id)}
+                        >
+                          Ver más
+                        </button>
+                      </div>
+                    </div>
+                  ))) : <p className="p-2 rounded-md bg-neutral-200 text-neutral-500"><IoIosWarning className="inline" /> {experiencesNotFound}</p>
+              ) : <PuffLoader />
+            }
           </div>
         </section>
 
@@ -135,19 +158,25 @@ const Home: React.FC = () => {
         <section className="mt-8">
           <h2 className="mb-3 text-xl font-semibold">Más recientes</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {ultimaLlamadaExperiences.map((experience) => (
-              <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50" onClick={() => handleImageClick(experience.id)}>
-                <img
-                  src={imageCity}
-                  alt={experience.title}
-                  className="object-cover w-full h-auto"
-                />
-                <div className="p-4">
-                  <h3 className="text-[15px] font-semibold max-h-[80px] truncate">{experience.title}</h3>
-                  <p className="text-sm text-gray-600"></p>
-                </div>
-              </div>
-            ))}
+            {
+              !loadingExperiences ? (
+                ultimaLlamadaExperiences.length > 1 ? (
+                  ultimaLlamadaExperiences.map((experience) => (
+                    <div key={experience.id} className="overflow-hidden rounded-md bg-gray-50" onClick={() => handleImageClick(experience.id)}>
+                      <img
+                        src={imageCity}
+                        alt={experience.title}
+                        className="object-cover w-full h-auto"
+                      />
+                      <div className="p-4">
+                        <h3 className="text-[15px] font-semibold max-h-[80px] truncate">{experience.title}</h3>
+                        <p className="text-sm text-gray-600"></p>
+                      </div>
+                    </div>
+                  ))
+                ) : <p className="col-span-2 p-2 rounded-md bg-neutral-200 text-neutral-500"><IoIosWarning className="inline" /> {experiencesNotFound}</p>
+              ) : <PuffLoader />
+            }
           </div>
         </section>
 

@@ -7,6 +7,9 @@ import { experienceServices } from "../../services/addExperience.services";
 import SelectCords from "./Map/SelectionCoords";
 import { AuthContext } from "../../contexts/auth.context";
 import { useNavigate } from "react-router-dom";
+import { registerLocale } from  "react-datepicker";
+import { es } from 'date-fns/locale/es';
+registerLocale('es', es)
 
 type Coords = [number | undefined, number | undefined];
 type infoCoords = any;
@@ -50,10 +53,18 @@ const AddExperience = () => {
       setErrorMessage("El campo 'Título' es obligatorio.");
       return false;
     }
+    if (title.length < 3 || title.length > 50) {
+      setErrorMessage("El título debe tener entre 3 y 50 caracteres.");
+      return false;
+    }
     if (!isValidText(title)) {
       setErrorMessage(
         "El título solo puede contener letras, números y espacios."
       );
+      return false;
+    }
+    if (description.length < 10 || description.length > 300) {
+      setErrorMessage("El título debe tener entre 10 y 300 caracteres.");
       return false;
     }
     if (!description.trim()) {
@@ -62,7 +73,7 @@ const AddExperience = () => {
     }
     if (!isValidText(description)) {
       setErrorMessage(
-        "La descripción solo puede contener letras, números y espacios."
+        "La descripción solo puede contener letras y números."
       );
       return false;
     }
@@ -357,7 +368,6 @@ const AddExperience = () => {
           className="titulo-input"
           placeholder="Escribe el Titulo de la Experiencia"
           value={title}
-          maxLength={20}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
@@ -369,7 +379,8 @@ const AddExperience = () => {
           className="description-input"
           placeholder="Escribe una descripción de la experiencia"
           value={description}
-          maxLength={250}
+          minLength={10}
+          maxLength={300}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
@@ -406,6 +417,7 @@ const AddExperience = () => {
         {/* Selección de rango de fechas */}
         <div className="date-picker">
           <DatePicker
+            locale={es}
             selected={selectedDate}
             onChange={handleDateChange} // Ahora actualiza la fecha seleccionada
             minDate={new Date()}
@@ -479,7 +491,6 @@ const AddExperience = () => {
           type="number"
           className="input"
           placeholder="Ejemplo: 2"
-          min="1"
         />
       </div>
 
@@ -500,7 +511,6 @@ const AddExperience = () => {
             type="number"
             className="input price-field"
             placeholder="Ejemplo: 20"
-            min="0"
             value={price || ""}
             onChange={(e) => setPrice(Number(e.target.value))}
           />

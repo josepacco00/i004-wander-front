@@ -7,7 +7,7 @@ import image from "../../assets/img/vacationImage.png"; // Imagen de la experien
 import { ReservationContext } from '../../contexts/reservation.context';
 
 const PaymentMethod: React.FC = () => {
-    const { reservation, updateReservationData, removeReservationData } = useContext(ReservationContext)
+    const { experience, reservation, updateReservationData, removeReservationData } = useContext(ReservationContext)
     const [selectedMethod, setSelectedMethod] = useState<'mastercard' | 'visa' | null>(reservation?.paymentMethod ? reservation.paymentMethod : null);
     const [error, setError] = useState<string>(''); // Estado para el error
     const navigate = useNavigate(); // Hook de React Router para navegación
@@ -101,7 +101,7 @@ const PaymentMethod: React.FC = () => {
                         />
                     </div>
                     <div>
-                        <h2 className="font-bold">Cocktail en la playa</h2>
+                        <h2 className="font-bold">{ experience?.title }</h2>
                         <p className="text-sm text-gray-500">
                             Fecha de reserva:<span> </span>
                             {reservation?.bookingDate?.toLocaleDateString()},<span> </span>

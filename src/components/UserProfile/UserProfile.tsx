@@ -7,7 +7,6 @@ import ProfileCard from "./ProfileCard"
 import DetailsCard from "./DetailsCard"
 import Logout from "../Logout"
 import AddExperienceButton from "./AddExperienceButton"
-import userImage from "../../assets/person2.jpg"
 import { useLocation } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
@@ -35,7 +34,8 @@ const UserProfile: React.FC = () => {
         }
     }, [])
 
-    const {  email, avatar , location, name, phone, role } = userInfo
+    const {  email, location, name, phone, role } = userInfo
+    const userImage = "https://medvirturials.com/img/default-image.png"
     
 
     return (
@@ -43,7 +43,7 @@ const UserProfile: React.FC = () => {
             <div className='w-full px-8 mb-12'>
                 <ProfileCard
                     name={name}
-                    avatar={avatar || userImage}
+                    avatar={userImage || userImage}
                 />
             </div>
             {role.toUpperCase() === 'PROVIDER' && (
